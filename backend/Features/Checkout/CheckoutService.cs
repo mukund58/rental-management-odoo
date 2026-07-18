@@ -44,13 +44,33 @@ public class CheckoutService
         // -----------------------------
         // Vendor
         // -----------------------------
-
-        var vendor = await _db.Users
-            .FirstOrDefaultAsync(x =>
-                x.Id == request.VendorId);
+        
+        // If VendorId is not passed or doesn't exist, we fallback to an admin or the customer themselves
+        var vendor = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.VendorId) 
+                     ?? customer; // Fallback to customer as vendor if not provided
 
         if (vendor == null)
             return Results.BadRequest("Vendor not found.");
+
+        // -----------------------------
+        // Address Processing
+        // -----------------------------
+        if (request.DeliveryAddress != null)
+        {
+            var address = new Address
+            {
+                Id = Guid.NewGuid(),
+                UserId = customer.Id,
+                FullName = request.DeliveryAddress.FullName,
+                Phone = request.DeliveryAddress.Phone,
+                AddressLine1 = request.DeliveryAddress.AddressLine1,
+                City = request.DeliveryAddress.City,
+                State = request.DeliveryAddress.State,
+                PostalCode = request.DeliveryAddress.PostalCode,
+                IsDefault = true
+            };
+            _db.Addresses.Add(address);
+        }
 
         decimal subtotal = 0;
         decimal deposit = 0;
@@ -140,6 +160,10 @@ public class CheckoutService
 
             IsPaid = true,
 
+            PaymentMethod = request.PaymentMethod.ToString(),
+
+            DeliveryMethod = "Standard",
+
             Items = rentalItems
         };
         _db.RentalOrders.Add(order);
@@ -207,13 +231,28 @@ public class CheckoutService
 
         return $"INV-{(count + 1):D6}";
     }
-    public async Task<IResult> GetOrders()
+    public async Task<IResult> GetOrders(ClaimsPrincipal user)
     {
-        var orders = await _db.RentalOrders
+        var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        var role = user.FindFirstValue(ClaimTypes.Role);
+
+        var query = _db.RentalOrders
             .Include(x => x.Customer)
             .Include(x => x.Vendor)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Product)
+            .AsQueryable();
+
+        if (role == "Vendor" && Guid.TryParse(userIdStr, out var vendorId))
+        {
+            query = query.Where(x => x.VendorId == vendorId);
+        }
+        else if (role == "Customer" && Guid.TryParse(userIdStr, out var customerId))
+        {
+            query = query.Where(x => x.CustomerId == customerId);
+        }
+
+        var orders = await query
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
 
@@ -225,24 +264,41 @@ public class CheckoutService
             Customer = $"{x.Customer.FirstName} {x.Customer.LastName}",
             Vendor = $"{x.Vendor.FirstName} {x.Vendor.LastName}",
             x.Status,
+            x.PickupDate,
+            x.ReturnDate,
             x.SubTotal,
             x.Deposit,
             x.LateFee,
             x.TotalAmount,
-            x.CreatedAt
+            x.CreatedAt,
+            Items = x.Items.Select(i => new { i.Product.Name, i.Quantity })
         });
 
         return Results.Ok(result);
     }
-    public async Task<IResult> GetOrder(Guid id)
+    public async Task<IResult> GetOrder(Guid id, ClaimsPrincipal user)
     {
-        var order = await _db.RentalOrders
+        var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        var role = user.FindFirstValue(ClaimTypes.Role);
+
+        var query = _db.RentalOrders
             .Include(x => x.Customer)
             .Include(x => x.Vendor)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Product)
             .Include(x => x.Payment)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .AsQueryable();
+
+        if (role == "Vendor" && Guid.TryParse(userIdStr, out var vendorId))
+        {
+            query = query.Where(x => x.VendorId == vendorId);
+        }
+        else if (role == "Customer" && Guid.TryParse(userIdStr, out var customerId))
+        {
+            query = query.Where(x => x.CustomerId == customerId);
+        }
+
+        var order = await query.FirstOrDefaultAsync(x => x.Id == id);
 
         if (order == null)
             return Results.NotFound();
@@ -318,5 +374,17 @@ public class CheckoutService
         await _db.SaveChangesAsync();
 
         return Results.Ok("Order cancelled.");
+    }
+
+    public async Task<IResult> UpdateOrderStatus(Guid id, backend.Features.Rentals.Enums.RentalStatus newStatus)
+    {
+        var order = await _db.RentalOrders.FirstOrDefaultAsync(x => x.Id == id);
+        if (order == null) return Results.NotFound();
+
+        order.Status = newStatus;
+        order.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Results.Ok(new { message = "Order status updated successfully." });
     }
 }
