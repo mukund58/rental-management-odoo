@@ -2,7 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { MainLayout } from '../layouts/MainLayout';
-import { ProtectedRoute } from '../components/auth/ProtectedRoute';
+import { PrivateRoute } from './PrivateRoute';
+import { PublicRoute } from './PublicRoute';
 import { PATHS } from './paths';
 
 // Lazy loading page views for enhanced load performance
@@ -23,13 +24,15 @@ export const AppRoutes = () => {
     <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* Public Authentication Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path={PATHS.LOGIN} element={<Login />} />
-          <Route path={PATHS.REGISTER} element={<Register />} />
+        <Route element={<PublicRoute />}>
+          <Route element={<AuthLayout />}>
+            <Route path={PATHS.LOGIN} element={<Login />} />
+            <Route path={PATHS.REGISTER} element={<Register />} />
+          </Route>
         </Route>
 
         {/* Protected Application Routes */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
             <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
           </Route>
