@@ -1,7 +1,9 @@
-﻿LoginRequestValidator.csusing System;
+﻿using backend.Features.Auth;
+using FluentValidation;
 
-public class LoginRequestValidator
-    : AbstractValidator<LoginRequestDto>
+namespace backend.Features.Auth.Validators;
+
+public class LoginRequestValidator : AbstractValidator<LoginRequestDto>
 {
     public LoginRequestValidator()
     {

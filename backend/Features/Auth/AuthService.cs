@@ -191,8 +191,63 @@ public class AuthService
         VendorRegisterRequestDto request,
         HttpContext context)
     {
-        // implement later
-        return Results.Ok();
+        var email = request.Email.Trim().ToLowerInvariant();
+
+        if (await _db.Users.AnyAsync(x => x.Email == email))
+            return Results.BadRequest("Email already exists");
+
+        var categoryExists = await _db.Categories.AnyAsync(x => x.Id == request.CategoryId);
+
+        if (!categoryExists)
+            return Results.BadRequest("Selected category does not exist");
+
+        var user = new User
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = UserRole.Vendor
+        };
+
+        var vendor = new Vendor
+        {
+            User = user,
+            CompanyName = request.CompanyName,
+            GstNumber = request.GstNumber,
+            CategoryId = request.CategoryId,
+            IsApproved = false
+        };
+
+        var accessToken = _jwt.GenerateToken(user);
+        var refreshToken = _jwt.GenerateRefreshToken();
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        _db.Users.Add(user);
+        _db.Vendors.Add(vendor);
+
+        await _db.SaveChangesAsync();
+
+        CookieHelper.SetTokens(context, accessToken, refreshToken);
+
+        _logger.LogInformation("Vendor registration completed for user {Email}", user.Email);
+
+        return Results.Ok(new AuthResponseDto
+        {
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+            User = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role.ToString()
+            }
+        });
     }
 
     public async Task<IResult> ForgotPassword(

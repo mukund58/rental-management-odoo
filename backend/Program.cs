@@ -1,12 +1,15 @@
 
 using backend.Data;
 using backend.Features.Auth;
+using backend.Features.Auth.Validators;
+using backend.Features.Products;
 using backend.Extensions;
 using System.Text;
 using backend.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapProductEndpoints();
 
 // auto migration 
 using (var scope = app.Services.CreateScope())
@@ -90,6 +94,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
+    await CatalogSeeder.SeedAsync(db);
 }
 app.Run();
