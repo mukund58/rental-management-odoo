@@ -46,6 +46,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [offlineWarning, setOfflineWarning] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState('');
   const [wishlist, setWishlist] = useState(false);
@@ -59,6 +60,9 @@ const ProductPage = () => {
       try {
         setLoading(true);
         setErrorMsg('');
+
+        setOfflineWarning('');
+
         const productData = await getProductById(productId).catch(() => null);
         if (!productData) {
           setErrorMsg('We could not find this product right now.');
@@ -207,6 +211,11 @@ const ProductPage = () => {
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
+        {offlineWarning && (
+          <Alert severity="warning" sx={{ mb: 3, borderRadius: 3, fontWeight: 600 }}>
+            {offlineWarning}
+          </Alert>
+        )}
         <Button
           variant="outlined"
           startIcon={<ArrowLeft size={16} />}

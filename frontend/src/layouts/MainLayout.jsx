@@ -78,11 +78,17 @@ export const MainLayout = () => {
   };
 
   const menuItems = [
+
     { text: 'Orders', icon: <ShoppingBag size={20} />, path: PATHS.ADMIN_ORDERS },
     { text: 'Schedule', icon: <Calendar size={20} />, path: PATHS.ADMIN_SCHEDULE },
     { text: 'Products', icon: <BoxIcon size={20} />, path: PATHS.ADMIN_PRODUCTS },
     { text: 'Reports', icon: <BarChart2 size={20} />, path: PATHS.ADMIN_REPORTS },
     { text: 'Settings', icon: <Settings size={20} />, path: PATHS.ADMIN_SETTINGS },
+    { text: 'Dashboard', icon: <LayoutDashboard size={20} />, path: PATHS.DASHBOARD },
+    { text: 'Filters', icon: <SlidersHorizontal size={20} />, path: PATHS.ROOT, search: '?openFilters=1' },
+    { text: 'Profile', icon: <User size={20} />, path: PATHS.PROFILE },
+    { text: 'Settings', icon: <Settings size={20} />, path: PATHS.PROFILE },
+
   ];
 
   const sidebarContent = (
@@ -303,10 +309,10 @@ export const MainLayout = () => {
                   sx: { mt: 1, minWidth: 180 },
                 }}
               >
-                <MenuItem onClick={handleProfileMenuClose} sx={{ gap: 1.5, py: 1 }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
                   <User size={16} /> My Profile
                 </MenuItem>
-                <MenuItem onClick={handleProfileMenuClose} sx={{ gap: 1.5, py: 1 }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
                   <Settings size={16} /> Settings
                 </MenuItem>
                 <Divider />

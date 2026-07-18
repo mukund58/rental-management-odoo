@@ -25,4 +25,11 @@ export const PATHS = {
   ADMIN_REPORTS: '/dashboard/reports',
   ADMIN_SETTINGS: '/dashboard/settings',
   ADMIN_USERS: '/dashboard/settings/users',
+
+  ORDER_DETAILS: '/orders/:orderId',
+  TRACK_RENTAL: '/track/:orderId',
+  PROFILE: '/profile',
+  INVOICE: '/invoice/:orderId',
+  ADMIN_DASHBOARD: '/admin/dashboard',
+
 };
