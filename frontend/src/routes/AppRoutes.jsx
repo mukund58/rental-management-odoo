@@ -9,6 +9,9 @@ import { PATHS } from './paths';
 // Lazy loading page views for enhanced load performance
 const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/auth/Register'));
+const VendorRegister = lazy(() => import('../pages/auth/VendorRegister'));
+const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
+const Coupon = lazy(() => import('../pages/auth/Coupon'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 
 const PageLoader = () => (
@@ -28,6 +31,9 @@ export const AppRoutes = () => {
           <Route element={<AuthLayout />}>
             <Route path={PATHS.LOGIN} element={<Login />} />
             <Route path={PATHS.REGISTER} element={<Register />} />
+            <Route path={PATHS.REGISTER_VENDOR} element={<VendorRegister />} />
+            <Route path={PATHS.FORGOT_PASSWORD} element={<ForgotPassword />} />
+            <Route path={PATHS.COUPON} element={<Coupon />} />
           </Route>
         </Route>
 

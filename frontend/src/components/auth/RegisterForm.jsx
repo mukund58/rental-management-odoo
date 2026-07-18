@@ -187,11 +187,7 @@ export const RegisterForm = ({ onSuccess, onError }) => {
 
         <MuiLink
           component={Link}
-          to="#"
-          onClick={(e) => {
-            e.preventDefault();
-            toast('Vendor registration interface coming soon!');
-          }}
+          to={PATHS.REGISTER_VENDOR}
           sx={{
             fontSize: '0.875rem',
             fontWeight: 600,
