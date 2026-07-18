@@ -12,6 +12,7 @@ const Register = lazy(() => import('../pages/auth/Register'));
 const VendorRegister = lazy(() => import('../pages/auth/VendorRegister'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 const Coupon = lazy(() => import('../pages/auth/Coupon'));
+const Home = lazy(() => import('../pages/user/Home'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 
 const PageLoader = () => (
@@ -26,6 +27,9 @@ export const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
+        {/* Public Landing Route */}
+        <Route path={PATHS.ROOT} element={<Home />} />
+
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>
           <Route element={<AuthLayout />}>
