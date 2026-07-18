@@ -21,9 +21,8 @@ public class AppDbContext : DbContext
         // --- USER VALIDATIONS ---
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(256);
-            entity.Property(u => u.ProfileImagePath).HasMaxLength(500);
             entity.HasIndex(u => u.Email).IsUnique();
         });
 

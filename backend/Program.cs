@@ -17,6 +17,7 @@ builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("Jwt"));
 
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
