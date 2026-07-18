@@ -62,5 +62,8 @@ export const registerVendor = async (payload) => {
  */
 export const getCategories = async () => {
   const response = await api.get('/auth/categories');
-  return response.data;
+  return (response.data || []).map((category) => ({
+    id: category.id ?? category.Id,
+    name: category.name ?? category.Name,
+  }));
 };

@@ -4,4 +4,6 @@ export const PATHS = {
   REGISTER: '/register',
   REGISTER_VENDOR: '/register/vendor',
   DASHBOARD: '/dashboard',
+  PRODUCTS: '/products',
+  PRODUCT_DETAILS: '/products/:productId',
 };

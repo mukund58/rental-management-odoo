@@ -11,6 +11,8 @@ const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/auth/Register'));
 const VendorRegister = lazy(() => import('../pages/auth/VendorRegister'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
+const ProductCatalog = lazy(() => import('../pages/products/ProductCatalog'));
+const ProductDetails = lazy(() => import('../pages/products/ProductDetails'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -37,6 +39,8 @@ export const AppRoutes = () => {
         <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
             <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+            <Route path={PATHS.PRODUCTS} element={<ProductCatalog />} />
+            <Route path={PATHS.PRODUCT_DETAILS} element={<ProductDetails />} />
           </Route>
         </Route>
 
