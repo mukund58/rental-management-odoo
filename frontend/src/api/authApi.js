@@ -64,3 +64,12 @@ export const getCategories = async () => {
   const response = await api.get('/auth/categories');
   return response.data;
 };
+
+/**
+ * Request password reset
+ * @param {string} email
+ */
+export const forgotPassword = async (email) => {
+  const response = await api.post('/auth/forgot-password', { email });
+  return response.data;
+};
