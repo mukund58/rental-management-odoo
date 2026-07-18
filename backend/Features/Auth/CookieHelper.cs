@@ -7,15 +7,17 @@ public static class CookieHelper
         string accessToken,
         string refreshToken)
     {
+        var isHttps = context.Request.IsHttps;
+
         context.Response.Cookies.Append(
             "accessToken",
             accessToken,
-            CreateCookie(TimeSpan.FromMinutes(15)));
+            CreateCookie(isHttps, TimeSpan.FromMinutes(15)));
 
         context.Response.Cookies.Append(
             "refreshToken",
             refreshToken,
-            CreateCookie(TimeSpan.FromDays(7)));
+            CreateCookie(isHttps, TimeSpan.FromDays(7)));
     }
 
     public static void Clear(HttpContext context)
@@ -24,13 +26,13 @@ public static class CookieHelper
         context.Response.Cookies.Delete("refreshToken");
     }
 
-    private static CookieOptions CreateCookie(TimeSpan expiry)
+    private static CookieOptions CreateCookie(bool secure, TimeSpan expiry)
     {
         return new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = secure,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.Add(expiry)
         };
     }

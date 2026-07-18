@@ -50,8 +50,13 @@ public class AuthService
 
         CookieHelper.SetTokens(context, accessToken, refreshToken);
 
+        _logger.LogInformation("Returning tokens for user {Email}: accessToken length={Length}, refreshToken length={RLength}", user.Email, accessToken?.Length ?? 0, refreshToken?.Length ?? 0);
+
         return Results.Ok(new AuthResponseDto
         {
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15),
             User = new UserDto
             {
                 Id = user.Id,
@@ -87,8 +92,13 @@ public class AuthService
 
         CookieHelper.SetTokens(context, accessToken, refreshToken);
 
+        _logger.LogInformation("Returning tokens for user {Email}: accessToken length={Length}, refreshToken length={RLength}", user.Email, accessToken?.Length ?? 0, refreshToken?.Length ?? 0);
+
         return Results.Ok(new AuthResponseDto
         {
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15),
             User = new UserDto
             {
                 Id = user.Id,

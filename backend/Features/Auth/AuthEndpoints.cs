@@ -7,7 +7,7 @@ public static class AuthEndpoints
 {
     public static RouteGroupBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/auth").WithTags("Authentication");
+        var group = app.MapGroup("/api/auth").WithTags("Authentication");
 
         group.MapPost("/register", (RegisterRequestDto request, HttpContext context, AuthService authService) => authService.Register(request, context));
 
