@@ -72,7 +72,7 @@ const OrderSuccessPage = () => {
   };
 
   const handleDownloadInvoice = () => {
-    window.print();
+    window.open(`/invoice/${order.id}`, '_blank');
   };
 
   if (!order) {

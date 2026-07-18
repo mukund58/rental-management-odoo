@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
 import { authService } from '../api/authService';
+import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     authService.getMe()
-      .then(data => setUser(data))
+      .then(data => {
+        setUser(data);
+        if (data && (String(data.role).toLowerCase() === 'admin')) {
+          navigate('/admin/dashboard', { replace: true });
+        }
+      })
       .catch((err) => {
         console.error('Failed to fetch user profiles:', err);
         authService.logout().finally(() => {
           window.location.href = '/login';
         });
       });
-  }, []);
+  }, [navigate]);
 
   if (!user) {
     return (

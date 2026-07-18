@@ -4,6 +4,7 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { MainLayout } from '../layouts/MainLayout';
 import { PrivateRoute } from './PrivateRoute';
 import { PublicRoute } from './PublicRoute';
+import { AdminRoute } from './AdminRoute';
 import { PATHS } from './paths';
 
 // Lazy loading page views for enhanced load performance
@@ -30,6 +31,8 @@ const ContactPage = lazy(() => import('../pages/customer/ContactPage'));
 const OrderDetailsPage = lazy(() => import('../pages/customer/OrderDetailsPage'));
 const TrackingPage = lazy(() => import('../pages/customer/TrackingPage'));
 const ProfilePage = lazy(() => import('../pages/customer/ProfilePage'));
+const InvoicePage = lazy(() => import('../pages/customer/InvoicePage'));
+const AdminDashboard = lazy(() => import('../pages/customer/AdminDashboard'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -57,6 +60,7 @@ export const AppRoutes = () => {
         <Route path={PATHS.ORDER_DETAILS} element={<OrderDetailsPage />} />
         <Route path={PATHS.TRACK_RENTAL} element={<TrackingPage />} />
         <Route path={PATHS.PROFILE} element={<ProfilePage />} />
+        <Route path={PATHS.INVOICE} element={<InvoicePage />} />
 
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>
@@ -76,6 +80,13 @@ export const AppRoutes = () => {
             <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
             <Route path={PATHS.PRODUCTS} element={<ProductCatalog />} />
             <Route path={PATHS.PRODUCT_DETAILS} element={<ProductDetails />} />
+          </Route>
+        </Route>
+
+        {/* Protected Admin Routes */}
+        <Route element={<AdminRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path={PATHS.ADMIN_DASHBOARD} element={<AdminDashboard />} />
           </Route>
         </Route>
 

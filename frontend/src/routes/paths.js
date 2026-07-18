@@ -20,4 +20,6 @@ export const PATHS = {
   ORDER_DETAILS: '/orders/:orderId',
   TRACK_RENTAL: '/track/:orderId',
   PROFILE: '/profile',
+  INVOICE: '/invoice/:orderId',
+  ADMIN_DASHBOARD: '/admin/dashboard',
 };

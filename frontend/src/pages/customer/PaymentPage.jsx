@@ -247,6 +247,8 @@ const PaymentPage = () => {
       } catch (apiErr) {
         console.warn('Could not clear backend cart (API might be offline or dummy data is active):', apiErr);
       }
+      localStorage.removeItem('cart_items');
+      window.dispatchEvent(new Event('cart-updated'));
 
       // Save order info to local storage
       const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');

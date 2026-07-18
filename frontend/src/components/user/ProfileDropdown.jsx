@@ -6,10 +6,21 @@ import { User, Settings, LogOut, FileText } from 'lucide-react';
 export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
   const navigate = useNavigate();
 
+  const handleProfileClick = () => {
+    onClose();
+    navigate('/profile');
+  };
+
+  const handleSettingsClick = () => {
+    onClose();
+    navigate('/profile');
+  };
+
   const handleOrdersClick = () => {
     onClose();
     navigate('/orders');
   };
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -22,13 +33,13 @@ export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
         sx: { mt: 1, minWidth: 200, borderRadius: '12px' },
       }}
     >
-      <MenuItem onClick={onClose} sx={{ gap: 1.5, py: 1.2 }}>
+      <MenuItem onClick={handleProfileClick} sx={{ gap: 1.5, py: 1.2 }}>
         <User size={18} /> My Account / My Profile
       </MenuItem>
       <MenuItem onClick={handleOrdersClick} sx={{ gap: 1.5, py: 1.2 }}>
         <FileText size={18} /> My Orders
       </MenuItem>
-      <MenuItem onClick={onClose} sx={{ gap: 1.5, py: 1.2 }}>
+      <MenuItem onClick={handleSettingsClick} sx={{ gap: 1.5, py: 1.2 }}>
         <Settings size={18} /> Settings
       </MenuItem>
       <Divider />

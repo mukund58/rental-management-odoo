@@ -45,6 +45,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [offlineWarning, setOfflineWarning] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [rentalDuration, setRentalDuration] = useState(7);
   const [selectedVariant, setSelectedVariant] = useState('');
@@ -60,6 +61,7 @@ const ProductPage = () => {
       try {
         setLoading(true);
         setErrorMsg('');
+        setOfflineWarning('');
         const productData = await getProductById(productId).catch(() => null);
         if (!productData) {
           const localProd = localMockProducts.find(p => String(p.id) === String(productId));
@@ -67,7 +69,7 @@ const ProductPage = () => {
             setProduct(localProd);
             setSelectedVariant(localProd.variantColors?.[0] || '');
             setSelectedImage(localProd.images?.[0] || localProd.imageUrl || '');
-            setErrorMsg('Backend API offline. Showing fallback product details.');
+            setOfflineWarning('Backend API offline. Showing fallback product details.');
           } else {
             setErrorMsg('We could not find this product right now.');
             setProduct(null);
@@ -178,6 +180,7 @@ const ProductPage = () => {
         { label: 'Availability', value: product?.available ? 'In stock for rental' : 'Currently unavailable' },
         { label: 'Stock', value: `${product?.stockQuantity ?? 1} available` },
         { label: 'Rental window', value: `${rentalDuration} day${rentalDuration > 1 ? 's' : ''}` },
+        { label: 'Dummy Test Details', value: 'Verified Ok (Test Mode)' }
       ];
 
   if (loading) {
@@ -207,6 +210,11 @@ const ProductPage = () => {
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
+        {offlineWarning && (
+          <Alert severity="warning" sx={{ mb: 3, borderRadius: 3, fontWeight: 600 }}>
+            {offlineWarning}
+          </Alert>
+        )}
         <Button
           variant="outlined"
           startIcon={<ArrowLeft size={16} />}

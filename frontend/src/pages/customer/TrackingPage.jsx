@@ -115,6 +115,7 @@ const normalizeOrder = (o) => {
 
   return {
     id: o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+    productId: o.productId || (o.id === 'ORD-1001' ? 'p4' : o.id === 'ORD-1002' ? 'p2' : o.id === 'ORD-1003' ? 'p3' : 'p5'),
     orderNumber: o.orderNumber || o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
     transactionId: o.transactionId || `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`,
     productName: o.productName || o.itemName || 'Rental Item',
@@ -280,8 +281,7 @@ const TrackingPage = () => {
   };
 
   const handleDownloadInvoice = (orderItem) => {
-    toast.success(`Downloading Invoice for Order ${orderItem.orderNumber}`);
-    window.print();
+    window.open(`/invoice/${orderItem.id}`, '_blank');
   };
 
   if (loading) {
