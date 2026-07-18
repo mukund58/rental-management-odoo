@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using backend.Data;
 using backend.Constants;
 namespace backend.Features.Auth;
 
@@ -8,6 +10,21 @@ public static class AuthEndpoints
     public static RouteGroupBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/auth").WithTags("Authentication");
+
+        group.MapGet("/categories", async (AppDbContext db) =>
+        {
+            var categories = await db.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.Name)
+                .Select(category => new
+                {
+                    id = category.Id,
+                    name = category.Name
+                })
+                .ToListAsync();
+
+            return Results.Ok(categories);
+        });
 
         group.MapPost("/register", (RegisterRequestDto request, HttpContext context, AuthService authService) => authService.Register(request, context));
 

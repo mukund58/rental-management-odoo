@@ -62,14 +62,8 @@ export const registerVendor = async (payload) => {
  */
 export const getCategories = async () => {
   const response = await api.get('/auth/categories');
-  return response.data;
-};
-
-/**
- * Request password reset
- * @param {string} email
- */
-export const forgotPassword = async (email) => {
-  const response = await api.post('/auth/forgot-password', { email });
-  return response.data;
+  return (response.data || []).map((category) => ({
+    id: category.id ?? category.Id,
+    name: category.name ?? category.Name,
+  }));
 };

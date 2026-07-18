@@ -9,8 +9,9 @@ public class User
 
     public string LastName { get; set; } = string.Empty;
 
-    public string Name => $"{FirstName} {LastName}"; 
+    public string Name => $"{FirstName} {LastName}";
 
+   
     public string Email { get; set; } = string.Empty;
 
     public UserRole Role { get; set; } = UserRole.Customer;

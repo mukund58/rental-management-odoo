@@ -36,7 +36,7 @@ export const RegisterForm = ({ onSuccess, onError }) => {
     setLoading(true);
     try {
       const fullName = `${data.firstName.trim()} ${data.lastName.trim()}`;
-      
+
       const response = await apiRegister({
         fullName,
         email: data.email,

@@ -13,7 +13,11 @@ const VendorRegister = lazy(() => import('../pages/auth/VendorRegister'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 const Coupon = lazy(() => import('../pages/auth/Coupon'));
 const Home = lazy(() => import('../pages/user/Home'));
+
+
 const Dashboard = lazy(() => import('../pages/Dashboard'));
+const ProductCatalog = lazy(() => import('../pages/products/ProductCatalog'));
+const ProductDetails = lazy(() => import('../pages/products/ProductDetails'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -36,8 +40,10 @@ export const AppRoutes = () => {
             <Route path={PATHS.LOGIN} element={<Login />} />
             <Route path={PATHS.REGISTER} element={<Register />} />
             <Route path={PATHS.REGISTER_VENDOR} element={<VendorRegister />} />
+ frontend/product-list
             <Route path={PATHS.FORGOT_PASSWORD} element={<ForgotPassword />} />
             <Route path={PATHS.COUPON} element={<Coupon />} />
+
           </Route>
         </Route>
 
@@ -45,6 +51,8 @@ export const AppRoutes = () => {
         <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
             <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+            <Route path={PATHS.PRODUCTS} element={<ProductCatalog />} />
+            <Route path={PATHS.PRODUCT_DETAILS} element={<ProductDetails />} />
           </Route>
         </Route>
 

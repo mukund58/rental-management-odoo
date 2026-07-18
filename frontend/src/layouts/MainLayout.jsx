@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import {
   LayoutDashboard,
+  ShoppingBag,
   LogOut,
   Menu as MenuIcon,
   Moon,
@@ -64,6 +65,7 @@ export const MainLayout = () => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <LayoutDashboard size={20} />, path: PATHS.DASHBOARD },
+    { text: 'Products', icon: <ShoppingBag size={20} />, path: PATHS.PRODUCTS },
     { text: 'Profile', icon: <User size={20} />, path: '#' },
     { text: 'Settings', icon: <Settings size={20} />, path: '#' },
   ];
@@ -94,7 +96,9 @@ export const MainLayout = () => {
       <Box sx={{ flexGrow: 1, px: 2, py: 3 }}>
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
+            const isActive = item.path !== '#' && (
+              location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
+            );
             return (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
