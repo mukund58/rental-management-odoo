@@ -250,9 +250,16 @@ const PaymentPage = () => {
 
       // Save order info to local storage
       const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
+      const txnId = `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      const readablePaymentMethod = 
+        selectedMethod === 'card' ? 'Credit Card' :
+        selectedMethod === 'debit' ? 'Debit Card' :
+        selectedMethod === 'upi' ? 'UPI' : 'Net Banking';
+
       const newOrder = {
         id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
         orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+        transactionId: txnId,
         status: 'Upcoming',
         statusKey: 'upcoming',
         rentalStart: items[0]?.rentalStart || new Date().toISOString().split('T')[0],
@@ -262,15 +269,33 @@ const PaymentPage = () => {
         productName: items.map((item) => item.name).join(', '),
         totalAmount: grandTotal,
         total: grandTotal,
+        subtotal: subtotal,
+        securityDeposit: securityDeposit,
+        platformFee: platformFee,
+        taxes: taxes,
         deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         addressId: selectedAddressId || 'default',
-        paymentMethod: selectedMethod,
+        paymentMethod: readablePaymentMethod,
         createdAt: new Date().toISOString(),
+        items: items.map(item => ({
+          id: item.id,
+          productId: item.productId,
+          name: item.name,
+          imageUrl: item.imageUrl,
+          pricePerUnit: item.pricePerUnit,
+          quantity: item.quantity,
+          rentalDurationDays: item.rentalDurationDays || 7,
+          rentalStart: item.rentalStart || new Date().toISOString().split('T')[0],
+          rentalEnd: item.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          deposit: Math.round(item.pricePerUnit * item.quantity * 0.10),
+          rentalCharges: item.pricePerUnit * item.quantity,
+          category: item.category || 'General',
+        }))
       };
       localStorage.setItem('rental_orders', JSON.stringify([newOrder, ...savedOrders]));
 
       toast.success('Payment successful!');
-      navigate('/order-success');
+      navigate('/order-success', { state: { order: newOrder } });
     } catch (err) {
       console.error(err);
       toast.error('Payment processing failed. Please try again.');

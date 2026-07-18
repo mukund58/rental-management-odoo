@@ -17,4 +17,7 @@ export const PATHS = {
   TERMS: '/terms',
   ABOUT: '/about',
   CONTACT: '/contact',
+  ORDER_DETAILS: '/orders/:orderId',
+  TRACK_RENTAL: '/track/:orderId',
+  PROFILE: '/profile',
 };
