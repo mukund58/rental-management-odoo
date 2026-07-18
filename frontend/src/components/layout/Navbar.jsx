@@ -142,7 +142,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
 
           <IconButton
             color="inherit"
+
             onClick={() => navigate(PATHS.CART)}
+
             sx={{
               p: 1,
               borderRadius: '10px',
