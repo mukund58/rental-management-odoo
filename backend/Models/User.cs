@@ -33,5 +33,7 @@ public class User
 
     public ICollection<RentalOrder> VendorRentals { get; set; }
         = new List<RentalOrder>();
-
+    public ICollection<CartItem> CartItems { get; set; }
+    = new List<CartItem>();
+    public Cart? Cart { get; set; }
 }

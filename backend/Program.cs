@@ -14,6 +14,7 @@ using FluentValidation;
 using backend.Features.Rentals.Validators;
 using backend.Features.Rentals;
 using backend.Features.Dashboard;
+using backend.Features.Products.Validators;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -70,7 +71,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000") // Put your exact React URLs here (NO trailing slash)
+        policy.WithOrigins("http://10.206.143.240:5173","http://localhost:5173") // Put your exact React URLs here (NO trailing slash)
               .AllowAnyHeader()
               .AllowAnyMethod()
 	      .AllowCredentials();
@@ -78,15 +79,19 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRentalValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductUpsertValidator>();
 builder.Services.AddScoped<RentalService>();
 builder.Services.AddScoped<DashboardService>();
-
+builder.Services.AddScoped<ProductService>();
 var app = builder.Build();
 app.UseCors();
 app.UseHttpsRedirection();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+// Enable Swagger UI in development mode
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
 
 app.UseStaticFiles();
 app.UseAuthentication();
