@@ -1,14 +1,35 @@
 import axios from 'axios';
+import { API_URL } from '../constants/env';
 
-export const api = axios.create({
-  baseURL: 'http://localhost:5000', // Points directly to your mapped API port
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
   withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 });
 
-let isRefreshing = false;
-let failedQueue: any[] = [];
+// Request Interceptor
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-const processQueue = (error: any) => {
+// Response Interceptor & Refresh Token Queue
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -24,10 +45,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If unauthorized, and we haven't already retried this request
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    // Handle 401 Unauthorized errors
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Avoid infinite loop if refreshing itself fails
-      if (originalRequest.url === '/auth/refresh' || originalRequest.url === '/auth/login') {
+      // Prevent loops during refresh or login
+      if (
+        originalRequest.url === '/auth/refresh' ||
+        originalRequest.url === '/auth/login'
+      ) {
         return Promise.reject(error);
       }
 
@@ -50,12 +78,11 @@ api.interceptors.response.use(
         await api.post('/auth/refresh');
         isRefreshing = false;
         processQueue(null);
-        return api.request(originalRequest);
+        return api(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
         processQueue(refreshError);
-        // Clear local credentials/tokens and redirect
-        localStorage.removeItem('token'); // In case any legacy code expects it
+        localStorage.removeItem('token');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
@@ -65,3 +92,4 @@ api.interceptors.response.use(
   }
 );
 
+export default api;
