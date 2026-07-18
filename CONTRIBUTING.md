@@ -127,6 +127,7 @@ Project setup + Authentication
 * [ ] Register Page
 * [ ] Navbar
 * [ ] Protected Routes
+* [ ] fix vendor
 
 ✅ Deliverable
 
