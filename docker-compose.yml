@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: ./backend
+    container_name: api
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy # Fixed: Forces API to wait until DB is fully ready
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=starter;Username=admin;Password=admin
+      Jwt__Key: SUPER_SECRET_KEY_FOR_HACKATHON_123456789
+      Jwt__Issuer: backend
+      Jwt__Audience: frontend
+      Jwt__ExpiryMinutes: 1440
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: starter
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck: # Added: Verifies database software is listening for traffic
+      test: ["CMD-SHELL", "pg_isready -U admin -d starter"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
