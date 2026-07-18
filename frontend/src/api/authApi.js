@@ -2,19 +2,22 @@ import api from './axios';
 
 /**
  * Register a new user
- * @param {Object} data - Register credentials (name, email, password, etc.)
+ * @param {string} name 
+ * @param {string} email 
+ * @param {string} password 
  */
-export const register = async (data) => {
-  const response = await api.post('/auth/register', data);
+export const register = async (name, email, password) => {
+  const response = await api.post('/auth/register', { name, email, password });
   return response.data;
 };
 
 /**
  * Log in a user
- * @param {Object} data - Login credentials (email, password)
+ * @param {string} email 
+ * @param {string} password 
  */
-export const login = async (data) => {
-  const response = await api.post('/auth/login', data);
+export const login = async (email, password) => {
+  const response = await api.post('/auth/login', { email, password });
   return response.data;
 };
 

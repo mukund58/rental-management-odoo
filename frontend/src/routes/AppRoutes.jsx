@@ -7,7 +7,7 @@ import { PublicRoute } from './PublicRoute';
 import { PATHS } from './paths';
 
 // Lazy loading page views for enhanced load performance
-const Login = lazy(() => import('../pages/Login'));
+const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/Register'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 
