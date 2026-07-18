@@ -39,4 +39,6 @@ public class Product
 
     public ICollection<RentalItem> RentalItems { get; set; }
     = new List<RentalItem>();
+    public ICollection<CartItem> CartItems { get; set; }
+    = new List<CartItem>();
 }

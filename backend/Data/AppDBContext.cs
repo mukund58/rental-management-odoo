@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Vendor> Vendors => Set<Vendor>();
     public DbSet<RentalOrder> RentalOrders => Set<RentalOrder>();
     public DbSet<RentalItem> RentalItems => Set<RentalItem>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +38,13 @@ public class AppDbContext : DbContext
             entity.Property(product => product.Description).IsRequired().HasMaxLength(1000);
             entity.Property(product => product.ImageUrl).HasMaxLength(500);
             entity.Property(product => product.Price).HasPrecision(10, 2);
+            entity.HasIndex(product => product.Name);
+
+            entity.HasIndex(product => product.CategoryId);
+
+            entity.HasIndex(product => product.IsActive);
+
+            entity.HasIndex(product => product.Price);
             entity.HasOne(product => product.Category)
                 .WithMany(category => category.Products)
                 .HasForeignKey(product => product.CategoryId)
@@ -110,6 +119,34 @@ public class AppDbContext : DbContext
 
             entity.HasOne(x => x.Product)
                 .WithMany(x => x.RentalItems)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasIndex(x => x.UserId)
+                  .IsUnique();
+
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.Cart)
+                .HasForeignKey<Cart>(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(x => x.Items)
+                .WithOne(x => x.Cart)
+                .HasForeignKey(x => x.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasIndex(x => x.ProductId);
+
+            entity.HasOne(x => x.Product)
+                .WithMany(x => x.CartItems)
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
