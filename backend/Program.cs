@@ -3,6 +3,7 @@ using backend.Data;
 using backend.Features.Auth;
 using backend.Features.Auth.Validators;
 using backend.Features.Products;
+using backend.Features.Cart;
 using backend.Extensions;
 using System.Text;
 using backend.Configurations;
@@ -87,6 +88,7 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapProductEndpoints();
+app.MapCartEndpoints();
 
 // auto migration 
 using (var scope = app.Services.CreateScope())
