@@ -7,7 +7,7 @@ public static class RentalEndpoints
     public static void MapRentalEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/rentals")
-            .RequireAuthorization();
+            .RequireAuthorization().WithTags("Rentals"); ;
 
         group.MapPost("/",
             async (
