@@ -11,7 +11,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
-
+using backend.Features.Rentals.Validators;
+using backend.Features.Rentals;
+using backend.Features.Dashboard;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -75,6 +77,10 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRentalValidator>();
+builder.Services.AddScoped<RentalService>();
+builder.Services.AddScoped<DashboardService>();
+
 var app = builder.Build();
 app.UseCors();
 app.UseHttpsRedirection();
@@ -89,6 +95,8 @@ app.UseAuthorization();
 app.MapAuthEndpoints();
 app.MapProductEndpoints();
 app.MapCartEndpoints();
+app.MapRentalEndpoints();
+app.MapDashboardEndpoints();
 
 // auto migration 
 using (var scope = app.Services.CreateScope())

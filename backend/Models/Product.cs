@@ -31,7 +31,12 @@ public class Product
 
     public bool IsActive { get; set; } = true;
 
+    public decimal Deposit { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<RentalItem> RentalItems { get; set; }
+    = new List<RentalItem>();
 }
