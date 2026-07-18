@@ -70,6 +70,7 @@ builder.Services.AddCors(options =>
 	      .AllowCredentials();
     });
 });
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 var app = builder.Build();
 app.UseCors();
 app.UseHttpsRedirection();
