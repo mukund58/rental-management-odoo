@@ -9,15 +9,13 @@ import api from './axios';
  * @param {string} payload.confirmPassword
  * @param {string} payload.role
  */
-export const register = async ({ fullName, email, password, confirmPassword, role }) => {
-  // TODO: Add "phone" parameter when it is included in the registration screen wireframe
-  const response = await api.post('/auth/register', {
-    fullName,
+export const register = async ({ firstName, lastName, email, password, confirmPassword }) => {
+  const response = await api.post('/api/auth/register', {
+    firstName,
+    lastName,
     email,
     password,
     confirmPassword,
-    role,
-    phone: '', // Defaulting to empty string for now to satisfy backend requirement
   });
   return response.data;
 };
@@ -28,7 +26,7 @@ export const register = async ({ fullName, email, password, confirmPassword, rol
  * @param {string} password 
  */
 export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
+  const response = await api.post('/api/auth/login', { email, password });
   return response.data;
 };
 
@@ -36,7 +34,7 @@ export const login = async (email, password) => {
  * Fetch currently authenticated user profiles
  */
 export const getCurrentUser = async () => {
-  const response = await api.get('/auth/me');
+  const response = await api.get('/api/auth/me');
   return response.data;
 };
 
@@ -44,7 +42,7 @@ export const getCurrentUser = async () => {
  * Terminate the user session
  */
 export const logout = async () => {
-  const response = await api.post('/auth/logout');
+  const response = await api.post('/api/auth/logout');
   return response.data;
 };
 
@@ -53,7 +51,7 @@ export const logout = async () => {
  * @param {Object} payload
  */
 export const registerVendor = async (payload) => {
-  const response = await api.post('/auth/register/vendor', payload);
+  const response = await api.post('/api/auth/register/vendor', payload);
   return response.data;
 };
 
@@ -61,7 +59,7 @@ export const registerVendor = async (payload) => {
  * Fetch available product categories
  */
 export const getCategories = async () => {
-  const response = await api.get('/auth/categories');
+  const response = await api.get('/api/auth/categories');
   return (response.data || []).map((category) => ({
     id: category.id ?? category.Id,
     name: category.name ?? category.Name,
@@ -73,7 +71,7 @@ export const getCategories = async () => {
  * @param {string} email
  */
 export const forgotPassword = async (email) => {
-  const response = await api.post('/auth/forgot-password', { email });
+  const response = await api.post('/api/auth/forgot-password', { email });
   return response.data;
 };
 

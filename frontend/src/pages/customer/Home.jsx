@@ -12,14 +12,18 @@ import Navbar from '../../components/layout/Navbar';
 import SidebarFilters from '../../components/product/SidebarFilters';
 import ProductGrid from '../../components/product/ProductGrid';
 import Pagination from '../../components/common/Pagination';
-import productsData from '../../data/products';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
+import { getProducts } from '../../api/productApi';
 
 export const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Search & Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,6 +40,24 @@ export const Home = () => {
 
   // Cart Badge Counter (incremented upon Add To Cart click)
   const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setErrorMsg('');
+        const productData = await getProducts();
+        setProducts(productData || []);
+      } catch (err) {
+        console.error('Failed to load products from backend', err);
+        setErrorMsg('Unable to load products from the live server right now.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const handleAddToCart = () => {
     setCartCount((prev) => prev + 1);
@@ -55,7 +77,7 @@ export const Home = () => {
   };
 
   // Filter Logic (Instantly applied locally)
-  const filteredProducts = productsData.filter((prod) => {
+  const filteredProducts = products.filter((prod) => {
     // 1. Search filter (Product Name, Category, Description)
     if (searchQuery) {
       const q = searchQuery.toLowerCase().trim();
@@ -73,7 +95,7 @@ export const Home = () => {
     }
 
     // 3. Color filter
-    if (selectedColor && !prod.variantColors.map(c => c.toLowerCase()).includes(selectedColor.toLowerCase())) {
+    if (selectedColor && !((prod.variantColors || []).map((c) => c.toLowerCase()).includes(selectedColor.toLowerCase()))) {
       return false;
     }
 
@@ -141,11 +163,7 @@ export const Home = () => {
         <Grid container spacing={{ xs: 2, md: 3 }} sx={{ flexGrow: 1, alignItems: 'flex-start' }}>
           {/* Permanent Left Sidebar (Width 260px desktop only) */}
           <Grid
-            item
-            xs={12}
-            md={4}
-            lg={3}
-            xl={3}
+            size={{ xs: 12, md: 4, lg: 3, xl: 3 }}
             sx={{
               display: { xs: 'none', md: 'block' },
             }}
@@ -180,7 +198,7 @@ export const Home = () => {
           </Grid>
 
           {/* Scrollable Product Grid */}
-          <Grid item xs={12} md={8} lg={9} xl={9} sx={{ minWidth: 0 }}>
+          <Grid size={{ xs: 12, md: 8, lg: 9, xl: 9 }} sx={{ minWidth: 0 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minWidth: 0 }}>
               
               {/* Product Listing Header */}
@@ -193,8 +211,17 @@ export const Home = () => {
                 </Typography>
               </Box>
 
-              {/* Dynamic Empty States */}
-              {paginatedProducts.length === 0 ? (
+              {errorMsg && (
+                <Box sx={{ mb: 2, p: 2, borderRadius: 2, bgcolor: 'error.light', color: 'error.contrastText' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{errorMsg}</Typography>
+                </Box>
+              )}
+
+              {loading ? (
+                <Box sx={{ py: 10, textAlign: 'center', color: 'text.secondary' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>Loading live products...</Typography>
+                </Box>
+              ) : paginatedProducts.length === 0 ? (
                 <Box
                   sx={{
                     py: 12,

@@ -38,11 +38,11 @@ export const RegisterForm = ({ onSuccess, onError }) => {
       const fullName = `${data.firstName.trim()} ${data.lastName.trim()}`;
 
       const response = await apiRegister({
-        fullName,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        role: 'Customer', // Explicitly registering as Customer
       });
 
       toast.success('Registration successful! Please sign in.');

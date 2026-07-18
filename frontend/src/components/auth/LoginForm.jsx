@@ -122,6 +122,22 @@ export const LoginForm = ({ onSuccess, onError }) => {
       >
         {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
       </Button>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5 }}>
+        <MuiLink
+          component={Link}
+          to={PATHS.REGISTER}
+          sx={{
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: 'indigo.600',
+            textDecoration: 'none',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+        >
+          Register as a new member
+        </MuiLink>
+      </Box>
     </Box>
   );
 };

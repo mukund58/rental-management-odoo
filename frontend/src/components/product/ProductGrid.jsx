@@ -13,11 +13,7 @@ export const ProductGrid = ({ products, onAddToCartSuccess }) => {
     <Grid container spacing={3} sx={{ display: 'flex', alignItems: 'stretch' }}>
       {products.map((product) => (
         <Grid
-          item
-          xs={12}      // Mobile (1 Column)
-          sm={6}       // Tablet (2 Columns)
-          md={4}       // Laptop (3 Columns)
-          lg={3}       // Desktop (4 Columns)
+          size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
           key={product.id}
           sx={{ display: 'flex' }}
         >

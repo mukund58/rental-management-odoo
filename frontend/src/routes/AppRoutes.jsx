@@ -19,6 +19,11 @@ const Dashboard = lazy(() => import('../pages/Dashboard'));
 const ProductCatalog = lazy(() => import('../pages/products/ProductCatalog'));
 const ProductDetails = lazy(() => import('../pages/products/ProductDetails'));
 const ProductPage = lazy(() => import('../pages/products/ProductPage'));
+const CartPage = lazy(() => import('../pages/cart/CartPage'));
+const CheckoutPage = lazy(() => import('../pages/customer/CheckoutPage'));
+const PaymentPage = lazy(() => import('../pages/customer/PaymentPage'));
+const OrderSuccessPage = lazy(() => import('../pages/customer/OrderSuccessPage'));
+const MyOrdersPage = lazy(() => import('../pages/customer/MyOrdersPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -35,6 +40,11 @@ export const AppRoutes = () => {
         {/* Public Landing Route */}
         <Route path={PATHS.ROOT} element={<Home />} />
         <Route path={PATHS.PRODUCT_PAGE} element={<ProductPage />} />
+        <Route path={PATHS.CART} element={<CartPage />} />
+        <Route path={PATHS.CHECKOUT} element={<CheckoutPage />} />
+        <Route path={PATHS.PAYMENT} element={<PaymentPage />} />
+        <Route path={PATHS.ORDER_SUCCESS} element={<OrderSuccessPage />} />
+        <Route path={PATHS.ORDERS} element={<MyOrdersPage />} />
 
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>

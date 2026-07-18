@@ -16,7 +16,7 @@ export const PublicRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Navigate to={PATHS.DASHBOARD} replace /> : <Outlet />;
+  return isAuthenticated ? <Navigate to={PATHS.ROOT} replace /> : <Outlet />;
 };
 
 export default PublicRoute;

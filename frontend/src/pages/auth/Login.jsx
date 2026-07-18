@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/auth/LoginForm';
+import { PATHS } from '../../routes/paths';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -17,9 +18,9 @@ export const Login = () => {
       role === 1 ||
       String(role).toLowerCase() === 'admin'
     ) {
-      navigate('/admin/dashboard', { replace: true });
+      navigate(PATHS.DASHBOARD, { replace: true });
     } else {
-      navigate('/', { replace: true });
+      navigate(PATHS.ROOT, { replace: true });
     }
   };
 
