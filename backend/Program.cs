@@ -74,10 +74,11 @@ builder.Services.AddAuthentication(
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
                 "http://localhost:5173",
+                "http://localhost:5174",
                 "http://localhost:3000",
                 "http://10.206.143.170:5173",
                 "http://10.206.143.170:3000")
@@ -98,7 +99,8 @@ builder.Services.AddScoped<CheckoutService>();
 builder.Services.AddScoped<InvoiceService>();
 
 var app = builder.Build();
-app.UseCors();
+app.UseCors("AllowFrontend"); // Must be placed before UseAuthorization
+
 app.UseHttpsRedirection();
 
 // Enable Swagger UI in development mode
@@ -128,4 +130,5 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
     await CatalogSeeder.SeedAsync(db);
 }
+
 app.Run();

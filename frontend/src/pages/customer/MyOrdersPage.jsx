@@ -52,49 +52,15 @@ import { PATHS } from '../../routes/paths';
 import { customerMockOrders } from '../../data/customerMocks';
 import { getCart } from '../../api/cartApi';
 
+import { getOrders } from '../../api/checkoutApi';
+
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
-const normalizeOrder = (o) => {
-  const pickup = o.rentalStart ? new Date(o.rentalStart) : new Date();
-  const retDate = o.rentalEnd ? new Date(o.rentalEnd) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const diffTime = Math.abs(retDate - pickup);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-
-  // Deriving values
-  const status = o.status || 'Confirmed';
-  let statusKey = o.statusKey || 'upcoming';
-  if (status === 'Active' || status === 'Currently Renting' || status === 'Picked Up') statusKey = 'active';
-  else if (status === 'Completed') statusKey = 'completed';
-  else if (status === 'Cancelled') statusKey = 'cancelled';
-  else if (status === 'Upcoming' || status === 'Confirmed' || status === 'Vendor Approved') statusKey = 'upcoming';
-
-  const total = o.totalAmount || o.total || 5400;
-  const subtotal = o.subtotal || Math.round(total * 0.8);
-  const deposit = o.securityDeposit || Math.round(total * 0.1);
-
-  return {
-    id: o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-    productId: o.productId || (o.id === 'ORD-1001' ? 'p4' : o.id === 'ORD-1002' ? 'p2' : o.id === 'ORD-1003' ? 'p3' : 'p5'),
-    orderNumber: o.orderNumber || o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-    transactionId: o.transactionId || `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-    productName: o.productName || o.itemName || 'Rental Item',
-    productImage: o.productImage || o.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80',
-    category: o.category || 'General',
-    vendorName: o.vendorName || 'RentX Partner Vendor',
-    pickupDate: pickup.toLocaleDateString(),
-    returnDate: retDate.toLocaleDateString(),
-    rentalStart: o.rentalStart || pickup.toISOString().split('T')[0],
-    rentalEnd: o.rentalEnd || retDate.toISOString().split('T')[0],
-    rentalDurationDays: diffDays,
-    rentalCharges: subtotal,
-    securityDeposit: deposit,
-    totalPaid: total,
-    status: status,
-    statusKey: statusKey,
-    paymentStatus: o.paymentStatus || (status === 'Cancelled' ? 'Refunded' : 'Paid'),
-    createdAt: o.createdAt || new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    items: o.items || []
-  };
+const filterByTab = (orders, tab) => {
+  if (tab === 'upcoming') return orders.filter((order) => order.status === 'Upcoming' || order.status === 0 || order.status === 'Reserved');
+  if (tab === 'completed') return orders.filter((order) => order.status === 'Completed' || order.status === 3 || order.status === 'Returned');
+  if (tab === 'cancelled') return orders.filter((order) => order.status === 'Cancelled' || order.status === 4);
+  return orders;
 };
 
 const MyOrdersPage = () => {
@@ -152,19 +118,41 @@ const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-    const allOrders = [...saved, ...customerMockOrders].map((order) => ({
-      id: order.id,
-      orderNumber: order.orderNumber || order.id,
-      status: order.status,
-      statusKey: order.statusKey,
-      itemName: order.itemName || order.productName,
-      rentalDuration: order.rentalDuration || `${order.rentalStart} to ${order.rentalEnd}`,
-      deliveryDate: order.deliveryDate || new Date(order.rentalStart).toLocaleDateString(),
-      total: order.total || order.totalAmount,
-    }));
-    setOrders(allOrders);
+    let isMounted = true;
+    const fetchOrders = async () => {
+      try {
+        const backendOrders = await getOrders();
+        if (isMounted && backendOrders) {
+          const formattedOrders = backendOrders.map((order) => {
+            const rentalStart = order.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : '';
+            const rentalEnd = order.returnDate ? new Date(order.returnDate).toLocaleDateString() : '';
+            
+            // Map numeric status back to string if needed, depending on enum serialization
+            let statusString = order.status;
+            if (typeof order.status === 'number') {
+               const statuses = ['Reserved', 'Active', 'Overdue', 'Returned', 'Cancelled'];
+               statusString = statuses[order.status] || 'Unknown';
+            }
 
+            return {
+              id: order.id,
+              orderNumber: order.orderNumber || order.id,
+              status: statusString,
+              statusKey: String(statusString).toLowerCase(),
+              itemName: order.items?.map(i => i.name).join(', ') || 'Rental Items',
+              rentalDuration: `${rentalStart} to ${rentalEnd}`,
+              deliveryDate: rentalStart,
+              total: order.totalAmount,
+            };
+          });
+          setOrders(formattedOrders);
+        }
+      } catch (err) {
+        console.error('Failed to fetch backend orders:', err);
+      }
+    };
+    fetchOrders();
+    return () => { isMounted = false; };
   }, []);
 
   const handleLogout = async () => {

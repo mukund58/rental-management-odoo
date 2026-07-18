@@ -29,35 +29,11 @@ import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
 import { customerMockPaymentMethods, customerMockCoupons } from '../../data/customerMocks';
 import { getCart, removeCartItem } from '../../api/cartApi';
+import { checkout } from '../../api/checkoutApi';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
-const fallbackCartItems = [
-  {
-    id: 'fallback-1',
-    productId: 'p1',
-    name: 'MacBook Pro 16" (M3 Max)',
-    pricePerUnit: 450,
-    quantity: 2,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 7,
-    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
-    variant: 'Gray',
-  },
-  {
-    id: 'fallback-2',
-    productId: 'p3',
-    name: 'PlayStation 5 Console',
-    pricePerUnit: 200,
-    quantity: 1,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 5,
-    imageUrl: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=900&q=80',
-    variant: 'Standard',
-  }
-];
+
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -65,7 +41,7 @@ const PaymentPage = () => {
   const { logout } = useAuth();
 
   const checkoutState = location.state || {};
-  const selectedAddressId = checkoutState.addressId;
+  const deliveryAddress = checkoutState.deliveryAddress;
   const initialItems = checkoutState.items || [];
 
   const [items, setItems] = useState(initialItems);
@@ -106,14 +82,14 @@ const PaymentPage = () => {
             if (cartItems && cartItems.length > 0) {
               setItems(cartItems);
             } else {
-              setItems(fallbackCartItems);
+              setItems([]);
             }
           }
         } catch (err) {
           console.error(err);
           if (isMounted) {
-            setItems(fallbackCartItems);
-            setErrorMsg('Backend API not responding. Using offline fallback order summary.');
+            setItems([]);
+            setErrorMsg('Failed to fetch cart data. Please go back to checkout.');
           }
         } finally {
           if (isMounted) {
@@ -314,79 +290,36 @@ const PaymentPage = () => {
       setProcessing(true);
       setErrorMsg('');
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      let paymentEnum = 2; // Card
+      if (selectedMethod === 'upi') paymentEnum = 3;
+      if (selectedMethod === 'netbanking') paymentEnum = 2; // Treat netbanking as card for backend Enum purpose for now
 
-      // Clear the cart on the backend (ignore errors if API is offline or dummy items are used)
+      const payload = {
+        pickupDate: items[0]?.rentalStart || new Date().toISOString(),
+        returnDate: items[0]?.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        paymentMethod: paymentEnum,
+        deliveryAddress: deliveryAddress,
+        billingAddress: deliveryAddress, // Assuming billing is same as delivery for now
+        cardDetails: selectedMethod === 'card' || selectedMethod === 'debit' ? {
+          cardHolderName: cardName,
+          cardNumber: cardNumber,
+          expiryDate: expiryDate,
+          cvv: cvv
+        } : null,
+        items: items.map(item => ({
+          productId: item.productId || item.id,
+          quantity: item.quantity
+        }))
+      };
+
+      await checkout(payload);
+
+      // Clear the cart on the frontend (if API call to clear fails, we still consider checkout successful)
       try {
         await Promise.all(items.map((item) => removeCartItem(item.id)));
       } catch (apiErr) {
-        console.warn('Could not clear backend cart (API might be offline or dummy data is active):', apiErr);
+        console.warn('Could not clear backend cart:', apiErr);
       }
-
-      localStorage.removeItem('cart_items');
-      window.dispatchEvent(new Event('cart-updated'));
-
-      // Save order info to local storage
-      const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-      const txnId = `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-      const readablePaymentMethod = 
-        selectedMethod === 'card' ? 'Credit Card' :
-        selectedMethod === 'debit' ? 'Debit Card' :
-        selectedMethod === 'upi' ? 'UPI' : 'Net Banking';
-
-      const newOrder = {
-        id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-        orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-        transactionId: txnId,
-
-
-      // Save order info to local storage
-      const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-      const newOrder = {
-        id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-        orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-
-        status: 'Upcoming',
-        statusKey: 'upcoming',
-        rentalStart: items[0]?.rentalStart || new Date().toISOString().split('T')[0],
-        rentalEnd: items[0]?.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        rentalDuration: items[0]?.rentalDurationDays ? `${items[0].rentalDurationDays} day(s)` : '7 day(s)',
-        itemName: items.map((item) => item.name).join(', '),
-        productName: items.map((item) => item.name).join(', '),
-        totalAmount: grandTotal,
-        total: grandTotal,
-
-        subtotal: subtotal,
-        securityDeposit: securityDeposit,
-        platformFee: platformFee,
-        taxes: taxes,
-        deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        addressId: selectedAddressId || 'default',
-        paymentMethod: readablePaymentMethod,
-        createdAt: new Date().toISOString(),
-        items: items.map(item => ({
-          id: item.id,
-          productId: item.productId,
-          name: item.name,
-          imageUrl: item.imageUrl,
-          pricePerUnit: item.pricePerUnit,
-          quantity: item.quantity,
-          rentalDurationDays: item.rentalDurationDays || 7,
-          rentalStart: item.rentalStart || new Date().toISOString().split('T')[0],
-          rentalEnd: item.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          deposit: Math.round(item.pricePerUnit * item.quantity * 0.10),
-          rentalCharges: item.pricePerUnit * item.quantity,
-          category: item.category || 'General',
-        }))
-=======
-        deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        addressId: selectedAddressId || 'default',
-        paymentMethod: selectedMethod,
-        createdAt: new Date().toISOString(),
-
-      };
-      localStorage.setItem('rental_orders', JSON.stringify([newOrder, ...savedOrders]));
 
       toast.success('Payment successful!');
 

@@ -21,17 +21,19 @@ public static class CheckoutEndpoints
             });
         group.MapGet("/orders",
             async (
+                ClaimsPrincipal user,
                 CheckoutService service) =>
             {
-                return await service.GetOrders();
+                return await service.GetOrders(user);
             });
 
         group.MapGet("/orders/{id:guid}",
             async (
                 Guid id,
+                ClaimsPrincipal user,
                 CheckoutService service) =>
             {
-                return await service.GetOrder(id);
+                return await service.GetOrder(id, user);
             });
 
         group.MapPatch("/orders/{id:guid}/cancel",
@@ -40,6 +42,15 @@ public static class CheckoutEndpoints
                 CheckoutService service) =>
             {
                 return await service.CancelOrder(id);
+            });
+
+        group.MapPatch("/orders/{id:guid}/status",
+            async (
+                Guid id,
+                UpdateOrderStatusDto request,
+                CheckoutService service) =>
+            {
+                return await service.UpdateOrderStatus(id, request.Status);
             });
 
         return group;

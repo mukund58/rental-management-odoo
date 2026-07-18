@@ -7,7 +7,7 @@ import Logo from '../common/Logo';
 import SearchBar from './SearchBar';
 import ProfileDropdown from './ProfileDropdown';
 import { PATHS } from '../../routes/paths';
-import { products as localMockProducts } from '../../data/products';
+import { getProductById } from '../../api/productApi';
 
 import { getCart } from '../../api/cartApi';
 
@@ -45,10 +45,18 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
     }
   };
 
-  const loadWishlist = () => {
+  const loadWishlist = async () => {
     const wishlistedIds = JSON.parse(localStorage.getItem('wishlist_items') || '[]');
-    const mapped = wishlistedIds.map(id => localMockProducts.find(p => String(p.id) === String(id))).filter(Boolean);
-    setWishlistItems(mapped);
+    const items = [];
+    for (const id of wishlistedIds) {
+      try {
+        const prod = await getProductById(id);
+        if (prod) items.push(prod);
+      } catch (err) {
+        console.warn(`Failed to fetch wishlisted item ${id}`);
+      }
+    }
+    setWishlistItems(items);
   };
 
 

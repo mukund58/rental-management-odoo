@@ -17,6 +17,14 @@ export const PATHS = {
   TERMS: '/terms',
   ABOUT: '/about',
   CONTACT: '/contact',
+  // Admin / Vendor Routes
+  ADMIN_ORDERS: '/dashboard/orders',
+  ADMIN_ORDER_DETAILS: '/dashboard/orders/:orderId',
+  ADMIN_SCHEDULE: '/dashboard/schedule',
+  ADMIN_PRODUCTS: '/dashboard/products',
+  ADMIN_REPORTS: '/dashboard/reports',
+  ADMIN_SETTINGS: '/dashboard/settings',
+  ADMIN_USERS: '/dashboard/settings/users',
 
   ORDER_DETAILS: '/orders/:orderId',
   TRACK_RENTAL: '/track/:orderId',
