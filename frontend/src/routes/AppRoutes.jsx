@@ -24,6 +24,9 @@ const CheckoutPage = lazy(() => import('../pages/customer/CheckoutPage'));
 const PaymentPage = lazy(() => import('../pages/customer/PaymentPage'));
 const OrderSuccessPage = lazy(() => import('../pages/customer/OrderSuccessPage'));
 const MyOrdersPage = lazy(() => import('../pages/customer/MyOrdersPage'));
+const TermsPage = lazy(() => import('../pages/customer/TermsPage'));
+const AboutPage = lazy(() => import('../pages/customer/AboutPage'));
+const ContactPage = lazy(() => import('../pages/customer/ContactPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -45,6 +48,9 @@ export const AppRoutes = () => {
         <Route path={PATHS.PAYMENT} element={<PaymentPage />} />
         <Route path={PATHS.ORDER_SUCCESS} element={<OrderSuccessPage />} />
         <Route path={PATHS.ORDERS} element={<MyOrdersPage />} />
+        <Route path={PATHS.TERMS} element={<TermsPage />} />
+        <Route path={PATHS.ABOUT} element={<AboutPage />} />
+        <Route path={PATHS.CONTACT} element={<ContactPage />} />
 
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>

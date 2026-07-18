@@ -71,10 +71,14 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://10.206.143.240:5173","http://localhost:5173") // Put your exact React URLs here (NO trailing slash)
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://10.206.143.170:5173",
+                "http://10.206.143.170:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
-	      .AllowCredentials();
+              .AllowCredentials();
     });
 });
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

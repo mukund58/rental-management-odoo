@@ -14,4 +14,7 @@ export const PATHS = {
   PAYMENT: '/payment',
   ORDER_SUCCESS: '/order-success',
   ORDERS: '/orders',
+  TERMS: '/terms',
+  ABOUT: '/about',
+  CONTACT: '/contact',
 };
