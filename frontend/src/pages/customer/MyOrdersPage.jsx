@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
@@ -23,6 +24,10 @@ import {
   DialogActions,
   Divider,
 } from '@mui/material';
+
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Card, CardContent, Chip, Container, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
+
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -101,6 +106,7 @@ const MyOrdersPage = () => {
 
   // Tabs, Search & Filters State
   const [tab, setTab] = useState('all');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [paymentFilter, setPaymentFilter] = useState('all');
@@ -142,11 +148,29 @@ const MyOrdersPage = () => {
       }
     };
     fetchCart();
+
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
+    const allOrders = [...saved, ...customerMockOrders].map((order) => ({
+      id: order.id,
+      orderNumber: order.orderNumber || order.id,
+      status: order.status,
+      statusKey: order.statusKey,
+      itemName: order.itemName || order.productName,
+      rentalDuration: order.rentalDuration || `${order.rentalStart} to ${order.rentalEnd}`,
+      deliveryDate: order.deliveryDate || new Date(order.rentalStart).toLocaleDateString(),
+      total: order.total || order.totalAmount,
+    }));
+    setOrders(allOrders);
+
   }, []);
 
   const handleLogout = async () => {
     try { await logout(); } catch (err) { console.error(err); } finally { localStorage.removeItem('token'); localStorage.removeItem('user'); navigate('/login', { replace: true }); }
   };
+
 
   // Actions
   const handleTrackRental = (id) => {
@@ -340,6 +364,9 @@ const MyOrdersPage = () => {
       </CardContent>
     </Card>
   );
+
+  const filteredOrders = filterByTab(orders, tab);
+
 
   return (
     <Box sx={{

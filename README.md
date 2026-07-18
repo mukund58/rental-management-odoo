@@ -595,42 +595,41 @@ For a **2-member team** in a **24-hour hackathon**, the best approach is to buil
 
 ### Backend
 
-* [ ] User table
-* [ ] Register API
-* [ ] Login API
-* [ ] JWT Token generation
-* [ ] Password hashing
-* [ ] Role-based authorization
+* [x] User table
+* [x] Register API
+* [x] Login API
+* [x] JWT Token generation
+* [x] Password hashing
+* [x] Role-based authorization
 
 ### Frontend
 
-* [ ] Login page
-* [ ] Register page
-* [ ] Form validation
-* [ ] Store JWT
-* [ ] Logout
-* [ ] Route protection
-
+* [x] Login page
+* [x] Register page
+* [x] Form validation
+* [x] Store JWT
+* [x] Logout
+* [x] Route protection
 ---
 
 # 📦 Module 3: Product Management
 
 ### Backend
 
-* [ ] Product Entity
-* [ ] Category Entity
-* [ ] CRUD APIs
-* [ ] Product Images
-* [ ] Availability Status
+* [x] Product Entity
+* [x] Category Entity
+* [x] CRUD APIs
+* [x] Product Images
+* [x] Availability Status
 
 ### Frontend
 
-* [ ] Home page
-* [ ] Product Cards
-* [ ] Product Details page
-* [ ] Search
-* [ ] Category Filter
-* [ ] Product CRUD (Admin)
+* [x] Home page
+* [x] Product Cards
+* [x] Product Details page
+* [x] Search
+* [x] Category Filter
+* [x] Product CRUD (Admin)
 
 ---
 

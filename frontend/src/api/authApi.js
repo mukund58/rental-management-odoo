@@ -71,7 +71,8 @@ export const getCategories = async () => {
  * @param {string} email
  */
 export const forgotPassword = async (email) => {
-  const response = await api.post('/api/auth/forgot-password', { email });
+
+  const response = await api.post('/auth/forgot-password', { email });
   return response.data;
 };
 

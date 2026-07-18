@@ -8,7 +8,9 @@ import SearchBar from './SearchBar';
 import ProfileDropdown from './ProfileDropdown';
 import { PATHS } from '../../routes/paths';
 import { products as localMockProducts } from '../../data/products';
+
 import { getCart } from '../../api/cartApi';
+
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -23,7 +25,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [wishlistItems, setWishlistItems] = useState([]);
+
   const [localCartCount, setLocalCartCount] = useState(cartCount || 0);
+
   const navigate = useNavigate();
 
   const handleProfileClick = (event) => {
@@ -46,6 +50,7 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
     const mapped = wishlistedIds.map(id => localMockProducts.find(p => String(p.id) === String(id))).filter(Boolean);
     setWishlistItems(mapped);
   };
+
 
   const loadCartCount = async () => {
     try {
@@ -73,6 +78,13 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
       setLocalCartCount(cartCount);
     }
   }, [cartCount]);
+
+  useEffect(() => {
+    loadWishlist();
+    window.addEventListener('wishlist-updated', loadWishlist);
+    return () => window.removeEventListener('wishlist-updated', loadWishlist);
+  }, []);
+
 
   const handleRemoveFromWishlist = (id) => {
     const wishlisted = JSON.parse(localStorage.getItem('wishlist_items') || '[]');
@@ -165,7 +177,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
 
           <IconButton
             color="inherit"
+
             onClick={() => navigate(PATHS.CART)}
+
             sx={{
               p: 1,
               borderRadius: '10px',

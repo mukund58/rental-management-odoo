@@ -61,7 +61,9 @@ const ProductPage = () => {
       try {
         setLoading(true);
         setErrorMsg('');
+
         setOfflineWarning('');
+
         const productData = await getProductById(productId).catch(() => null);
         if (!productData) {
           const localProd = localMockProducts.find(p => String(p.id) === String(productId));
@@ -69,7 +71,11 @@ const ProductPage = () => {
             setProduct(localProd);
             setSelectedVariant(localProd.variantColors?.[0] || '');
             setSelectedImage(localProd.images?.[0] || localProd.imageUrl || '');
+
             setOfflineWarning('Backend API offline. Showing fallback product details.');
+
+            setErrorMsg('Backend API offline. Showing fallback product details.');
+
           } else {
             setErrorMsg('We could not find this product right now.');
             setProduct(null);

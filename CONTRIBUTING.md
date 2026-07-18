@@ -142,17 +142,17 @@ User can Login
 
 Backend
 
-* [ ] Category
-* [ ] Product Entity
-* [ ] CRUD
-* [ ] Seed Products
+* [x] Category
+* [x] Product Entity
+* [x] CRUD
+* [x] Seed Products
 
 Frontend
 
-* [ ] Product Cards
-* [ ] Product Details
-* [ ] Search
-* [ ] Filter
+* [x] Product Cards
+* [x] Product Details
+* [x] Search
+* [x] Filter
 
 ✅ Deliverable
 

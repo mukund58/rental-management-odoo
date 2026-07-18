@@ -28,6 +28,7 @@ const MyOrdersPage = lazy(() => import('../pages/customer/MyOrdersPage'));
 const TermsPage = lazy(() => import('../pages/customer/TermsPage'));
 const AboutPage = lazy(() => import('../pages/customer/AboutPage'));
 const ContactPage = lazy(() => import('../pages/customer/ContactPage'));
+
 const OrderDetailsPage = lazy(() => import('../pages/customer/OrderDetailsPage'));
 const TrackingPage = lazy(() => import('../pages/customer/TrackingPage'));
 const ProfilePage = lazy(() => import('../pages/customer/ProfilePage'));
@@ -57,10 +58,12 @@ export const AppRoutes = () => {
         <Route path={PATHS.TERMS} element={<TermsPage />} />
         <Route path={PATHS.ABOUT} element={<AboutPage />} />
         <Route path={PATHS.CONTACT} element={<ContactPage />} />
+
         <Route path={PATHS.ORDER_DETAILS} element={<OrderDetailsPage />} />
         <Route path={PATHS.TRACK_RENTAL} element={<TrackingPage />} />
         <Route path={PATHS.PROFILE} element={<ProfilePage />} />
         <Route path={PATHS.INVOICE} element={<InvoicePage />} />
+
 
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>
