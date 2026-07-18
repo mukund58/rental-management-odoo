@@ -71,8 +71,8 @@ builder.Services.AddCors(options =>
     });
 });
 var app = builder.Build();
-app.UseHttpsRedirection();
 app.UseCors();
+app.UseHttpsRedirection();
 
 app.UseSwagger();
 app.UseSwaggerUI();

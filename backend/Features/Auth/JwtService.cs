@@ -44,7 +44,7 @@ public class JwtService
             expires: DateTime.UtcNow.AddMinutes(15), // Short-lived Access Token
             signingCredentials: credentials
         );
-
+        Console.WriteLine($"Generated JWT Token for user {user.Email}: {new JwtSecurityTokenHandler().WriteToken(token)}");
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
