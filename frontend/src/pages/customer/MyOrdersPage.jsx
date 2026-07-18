@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Card, CardContent, Chip, Container, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, PackageOpen } from 'lucide-react';
@@ -20,12 +20,28 @@ const MyOrdersPage = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [tab, setTab] = useState('all');
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
+    const allOrders = [...saved, ...customerMockOrders].map((order) => ({
+      id: order.id,
+      orderNumber: order.orderNumber || order.id,
+      status: order.status,
+      statusKey: order.statusKey,
+      itemName: order.itemName || order.productName,
+      rentalDuration: order.rentalDuration || `${order.rentalStart} to ${order.rentalEnd}`,
+      deliveryDate: order.deliveryDate || new Date(order.rentalStart).toLocaleDateString(),
+      total: order.total || order.totalAmount,
+    }));
+    setOrders(allOrders);
+  }, []);
 
   const handleLogout = async () => {
     try { await logout(); } catch (err) { console.error(err); } finally { localStorage.removeItem('token'); localStorage.removeItem('user'); navigate('/login', { replace: true }); }
   };
 
-  const filteredOrders = filterByTab(customerMockOrders, tab);
+  const filteredOrders = filterByTab(orders, tab);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>

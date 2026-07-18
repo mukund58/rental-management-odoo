@@ -6,6 +6,7 @@ import {
   Paper,
   Typography,
   Drawer,
+  Alert,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
@@ -15,6 +16,8 @@ import Pagination from '../../components/common/Pagination';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
 import { getProducts } from '../../api/productApi';
+import { products as localMockProducts } from '../../data/products';
+import { getCart } from '../../api/cartApi';
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -47,16 +50,33 @@ export const Home = () => {
         setLoading(true);
         setErrorMsg('');
         const productData = await getProducts();
-        setProducts(productData || []);
+        if (productData && productData.length > 0) {
+          setProducts(productData);
+        } else {
+          setProducts(localMockProducts);
+        }
       } catch (err) {
         console.error('Failed to load products from backend', err);
-        setErrorMsg('Unable to load products from the live server right now.');
+        setProducts(localMockProducts);
+        setErrorMsg('Backend API not responding. Showing offline fallback products.');
       } finally {
         setLoading(false);
       }
     };
 
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      try {
+        const cartItems = await getCart();
+        setCartCount(cartItems.length);
+      } catch (err) {
+        console.warn('Could not fetch cart count:', err);
+      }
+    };
+    fetchCartCount();
   }, []);
 
   const handleAddToCart = () => {
