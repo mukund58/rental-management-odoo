@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
     public DbSet<RentalItem> RentalItems => Set<RentalItem>();
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Address> Addresses => Set<Address>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -150,6 +152,31 @@ public class AppDbContext : DbContext
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+        modelBuilder.Entity<Payment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
 
+            entity.Property(x => x.Amount)
+                  .HasPrecision(10, 2);
+
+            entity.Property(x => x.TransactionId)
+                  .HasMaxLength(100);
+
+            entity.HasIndex(x => x.TransactionId);
+
+            entity.HasOne(x => x.RentalOrder)
+                .WithOne(x => x.Payment)
+                .HasForeignKey<Payment>(x => x.RentalOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<Address>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Addresses)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

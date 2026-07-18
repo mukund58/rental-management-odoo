@@ -46,4 +46,15 @@ public class RentalOrder
     // Navigation
     public ICollection<RentalItem> Items { get; set; }
         = new List<RentalItem>();
+
+    public string InvoiceNumber { get; set; } = "";
+    public bool IsPaid { get; set; }
+    public string PaymentMethod { get; set; } = "";
+    public string DeliveryMethod { get; set; } = "";
+
+    public Payment? Payment { get; set; }
+
+    //public bool IsPaid { get; set; }
+
+    //public string InvoiceNumber { get; set; } = string.Empty;
 }

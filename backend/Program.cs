@@ -15,6 +15,11 @@ using backend.Features.Rentals.Validators;
 using backend.Features.Rentals;
 using backend.Features.Dashboard;
 using backend.Features.Products.Validators;
+using backend.Features.Checkout.Validators;
+using backend.Features.Checkout;
+using backend.Features.Invoice;
+//using backend.Features.Invoice.Validators;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -80,9 +85,14 @@ builder.Services.AddCors(options =>
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRentalValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ProductUpsertValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CheckoutValidator>();
 builder.Services.AddScoped<RentalService>();
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<CheckoutService>();
+builder.Services.AddScoped<CheckoutService>();
+builder.Services.AddScoped<InvoiceService>();
+
 var app = builder.Build();
 app.UseCors();
 app.UseHttpsRedirection();
@@ -102,6 +112,8 @@ app.MapProductEndpoints();
 app.MapCartEndpoints();
 app.MapRentalEndpoints();
 app.MapDashboardEndpoints();
+app.MapCheckoutEndpoints();
+app.MapInvoiceEndpoints();
 
 // auto migration 
 using (var scope = app.Services.CreateScope())
