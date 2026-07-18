@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, MenuItem, Divider, Typography } from '@mui/material';
 import { User, FileText, Settings, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Profile dropdown menu displayed when clicking the user profile avatar.
@@ -11,6 +12,13 @@ import { User, FileText, Settings, LogOut } from 'lucide-react';
  * @param {Function} props.onLogout - Function to trigger the logout operation
  */
 export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleItemClick = (path) => {
+    onClose();
+    navigate(path);
+  };
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -47,17 +55,17 @@ export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
         },
       }}
     >
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={() => handleItemClick('/profile')}>
         <User size={18} />
         <Typography variant="body2" sx={{ fontWeight: 600 }}>My Profile</Typography>
       </MenuItem>
 
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={() => handleItemClick('/orders')}>
         <FileText size={18} />
         <Typography variant="body2" sx={{ fontWeight: 600 }}>My Orders</Typography>
       </MenuItem>
 
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={() => handleItemClick('/profile')}>
         <Settings size={18} />
         <Typography variant="body2" sx={{ fontWeight: 600 }}>Settings</Typography>
       </MenuItem>

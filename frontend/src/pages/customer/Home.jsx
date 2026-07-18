@@ -17,6 +17,8 @@ import Pagination from '../../components/common/Pagination';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
 import { getProducts } from '../../api/productApi';
+import { products as localMockProducts } from '../../data/products';
+import { getCart } from '../../api/cartApi';
 
 import { products as localMockProducts } from '../../data/products';
 import { getCart } from '../../api/cartApi';

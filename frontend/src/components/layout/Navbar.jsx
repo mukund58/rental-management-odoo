@@ -9,6 +9,9 @@ import ProfileDropdown from './ProfileDropdown';
 import { PATHS } from '../../routes/paths';
 import { products as localMockProducts } from '../../data/products';
 
+import { getCart } from '../../api/cartApi';
+
+
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
 /**
@@ -22,6 +25,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [wishlistItems, setWishlistItems] = useState([]);
+
+  const [localCartCount, setLocalCartCount] = useState(cartCount || 0);
+
   const navigate = useNavigate();
 
   const handleProfileClick = (event) => {
@@ -45,11 +51,40 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
     setWishlistItems(mapped);
   };
 
+
+  const loadCartCount = async () => {
+    try {
+      const items = await getCart();
+      const count = items.reduce((acc, curr) => acc + (curr.quantity || 1), 0);
+      setLocalCartCount(count);
+    } catch (err) {
+      console.warn('Could not load cart count:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadWishlist();
+    loadCartCount();
+    window.addEventListener('wishlist-updated', loadWishlist);
+    window.addEventListener('cart-updated', loadCartCount);
+    return () => {
+      window.removeEventListener('wishlist-updated', loadWishlist);
+      window.removeEventListener('cart-updated', loadCartCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (cartCount !== undefined) {
+      setLocalCartCount(cartCount);
+    }
+  }, [cartCount]);
+
   useEffect(() => {
     loadWishlist();
     window.addEventListener('wishlist-updated', loadWishlist);
     return () => window.removeEventListener('wishlist-updated', loadWishlist);
   }, []);
+
 
   const handleRemoveFromWishlist = (id) => {
     const wishlisted = JSON.parse(localStorage.getItem('wishlist_items') || '[]');
@@ -153,7 +188,7 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
             }}
           >
             <Badge
-              badgeContent={cartCount}
+              badgeContent={localCartCount}
               color="primary"
               sx={{
                 '& .MuiBadge-badge': {

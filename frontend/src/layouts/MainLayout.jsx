@@ -68,8 +68,8 @@ export const MainLayout = () => {
     { text: 'Dashboard', icon: <LayoutDashboard size={20} />, path: PATHS.DASHBOARD },
     { text: 'Products', icon: <ShoppingBag size={20} />, path: PATHS.PRODUCTS },
     { text: 'Filters', icon: <SlidersHorizontal size={20} />, path: PATHS.ROOT, search: '?openFilters=1' },
-    { text: 'Profile', icon: <User size={20} />, path: '#' },
-    { text: 'Settings', icon: <Settings size={20} />, path: '#' },
+    { text: 'Profile', icon: <User size={20} />, path: PATHS.PROFILE },
+    { text: 'Settings', icon: <Settings size={20} />, path: PATHS.PROFILE },
   ];
 
   const sidebarContent = (
@@ -290,10 +290,10 @@ export const MainLayout = () => {
                   sx: { mt: 1, minWidth: 180 },
                 }}
               >
-                <MenuItem onClick={handleProfileMenuClose} sx={{ gap: 1.5, py: 1 }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
                   <User size={16} /> My Profile
                 </MenuItem>
-                <MenuItem onClick={handleProfileMenuClose} sx={{ gap: 1.5, py: 1 }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
                   <Settings size={16} /> Settings
                 </MenuItem>
                 <Divider />

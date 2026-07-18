@@ -157,6 +157,82 @@ const PaymentPage = () => {
       : coupon.discount;
     setDiscount(calculatedDiscount);
     toast.success(`Coupon applied! Saved ${money.format(calculatedDiscount)}`);
+
+  };
+
+  // Form formatting helpers
+  const handleCardNumberChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    const formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
+    setCardNumber(formattedValue.substring(0, 19));
+  };
+
+  const handleExpiryDateChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 2) {
+      setExpiryDate(value);
+    } else {
+      setExpiryDate(`${value.substring(0, 2)}/${value.substring(2, 4)}`);
+    }
+  };
+
+  const handleCvvChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setCvv(value.substring(0, 3));
+  };
+
+  // Validations
+  const validateForm = () => {
+    if (selectedMethod === 'card' || selectedMethod === 'debit') {
+      const rawCard = cardNumber.replace(/\s/g, '');
+      if (!/^\d{16}$/.test(rawCard)) {
+        toast.error('Card number must be exactly 16 digits.');
+        return false;
+      }
+      if (!cardName.trim()) {
+        toast.error('Card holder name is required.');
+        return false;
+      }
+      if (!/^[a-zA-Z\s]+$/.test(cardName)) {
+        toast.error('Card holder name must contain only letters and spaces.');
+        return false;
+      }
+      if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+        toast.error('Expiry date must be MM/YY.');
+        return false;
+      }
+      const [month, year] = expiryDate.split('/').map(Number);
+      if (month < 1 || month > 12) {
+        toast.error('Expiry month must be between 01 and 12.');
+        return false;
+      }
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear() % 100;
+      if (year < currentYear || (year === currentYear && month < currentMonth)) {
+        toast.error('Card is expired.');
+        return false;
+      }
+      if (!/^\d{3}$/.test(cvv)) {
+        toast.error('CVV must be 3 digits.');
+        return false;
+      }
+    } else if (selectedMethod === 'upi') {
+      const upiPattern = /^[\w.\-_]{2,256}@[\w]{2,64}$/;
+      if (!upiPattern.test(upiId.trim())) {
+        toast.error('Please enter a valid UPI ID (e.g. user@bank).');
+        return false;
+      }
+    } else if (selectedMethod === 'netbanking') {
+      if (!selectedBank) {
+        toast.error('Please select a bank.');
+        return false;
+      }
+    }
+    return true;
+  };
+
+
   };
 
   // Form formatting helpers
@@ -248,11 +324,29 @@ const PaymentPage = () => {
         console.warn('Could not clear backend cart (API might be offline or dummy data is active):', apiErr);
       }
 
+      localStorage.removeItem('cart_items');
+      window.dispatchEvent(new Event('cart-updated'));
+
+      // Save order info to local storage
+      const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
+      const txnId = `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      const readablePaymentMethod = 
+        selectedMethod === 'card' ? 'Credit Card' :
+        selectedMethod === 'debit' ? 'Debit Card' :
+        selectedMethod === 'upi' ? 'UPI' : 'Net Banking';
+
+      const newOrder = {
+        id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+        orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+        transactionId: txnId,
+
+
       // Save order info to local storage
       const savedOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
       const newOrder = {
         id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
         orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+
         status: 'Upcoming',
         statusKey: 'upcoming',
         rentalStart: items[0]?.rentalStart || new Date().toISOString().split('T')[0],
@@ -262,15 +356,44 @@ const PaymentPage = () => {
         productName: items.map((item) => item.name).join(', '),
         totalAmount: grandTotal,
         total: grandTotal,
+
+        subtotal: subtotal,
+        securityDeposit: securityDeposit,
+        platformFee: platformFee,
+        taxes: taxes,
+        deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        addressId: selectedAddressId || 'default',
+        paymentMethod: readablePaymentMethod,
+        createdAt: new Date().toISOString(),
+        items: items.map(item => ({
+          id: item.id,
+          productId: item.productId,
+          name: item.name,
+          imageUrl: item.imageUrl,
+          pricePerUnit: item.pricePerUnit,
+          quantity: item.quantity,
+          rentalDurationDays: item.rentalDurationDays || 7,
+          rentalStart: item.rentalStart || new Date().toISOString().split('T')[0],
+          rentalEnd: item.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          deposit: Math.round(item.pricePerUnit * item.quantity * 0.10),
+          rentalCharges: item.pricePerUnit * item.quantity,
+          category: item.category || 'General',
+        }))
+=======
         deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         addressId: selectedAddressId || 'default',
         paymentMethod: selectedMethod,
         createdAt: new Date().toISOString(),
+
       };
       localStorage.setItem('rental_orders', JSON.stringify([newOrder, ...savedOrders]));
 
       toast.success('Payment successful!');
+
+      navigate('/order-success', { state: { order: newOrder } });
+
       navigate('/order-success');
+
     } catch (err) {
       console.error(err);
       toast.error('Payment processing failed. Please try again.');
