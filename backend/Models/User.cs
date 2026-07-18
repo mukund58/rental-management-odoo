@@ -28,12 +28,17 @@ public class User
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    public Cart? Cart { get; set; }
+    
     public ICollection<RentalOrder> CustomerRentals { get; set; }
     = new List<RentalOrder>();
 
     public ICollection<RentalOrder> VendorRentals { get; set; }
         = new List<RentalOrder>();
+
     public ICollection<CartItem> CartItems { get; set; }
     = new List<CartItem>();
-    public Cart? Cart { get; set; }
+
+    public ICollection<Address> Addresses { get; set; }
+    = new List<Address>();
 }
