@@ -8,4 +8,5 @@ export const PATHS = {
   DASHBOARD: '/dashboard',
   PRODUCTS: '/products',
   PRODUCT_DETAILS: '/products/:productId',
+  PRODUCT_PAGE: '/product/:productId',
 };

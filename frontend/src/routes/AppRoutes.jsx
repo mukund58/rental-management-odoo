@@ -18,6 +18,7 @@ const Home = lazy(() => import('../pages/user/Home'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const ProductCatalog = lazy(() => import('../pages/products/ProductCatalog'));
 const ProductDetails = lazy(() => import('../pages/products/ProductDetails'));
+const ProductPage = lazy(() => import('../pages/products/ProductPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -33,6 +34,7 @@ export const AppRoutes = () => {
       <Routes>
         {/* Public Landing Route */}
         <Route path={PATHS.ROOT} element={<Home />} />
+        <Route path={PATHS.PRODUCT_PAGE} element={<ProductPage />} />
 
         {/* Public Authentication Routes */}
         <Route element={<PublicRoute />}>
