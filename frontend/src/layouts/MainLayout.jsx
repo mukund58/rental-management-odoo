@@ -30,6 +30,7 @@ import {
   User,
   Bell,
   Settings,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { useAppTheme } from '../context/ThemeContext';
 import { PATHS } from '../routes/paths';
@@ -66,6 +67,7 @@ export const MainLayout = () => {
   const menuItems = [
     { text: 'Dashboard', icon: <LayoutDashboard size={20} />, path: PATHS.DASHBOARD },
     { text: 'Products', icon: <ShoppingBag size={20} />, path: PATHS.PRODUCTS },
+    { text: 'Filters', icon: <SlidersHorizontal size={20} />, path: PATHS.ROOT, search: '?openFilters=1' },
     { text: 'Profile', icon: <User size={20} />, path: '#' },
     { text: 'Settings', icon: <Settings size={20} />, path: '#' },
   ];
@@ -97,12 +99,14 @@ export const MainLayout = () => {
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {menuItems.map((item) => {
             const isActive = item.path !== '#' && (
-              location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
+              item.search
+                ? location.pathname === item.path && location.search.includes('openFilters=1')
+                : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
             );
             return (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
-                  onClick={() => item.path !== '#' && navigate(item.path)}
+                  onClick={() => item.path !== '#' && navigate(item.search ? { pathname: item.path, search: item.search } : item.path)}
                   sx={{
                     borderRadius: '8px',
                     py: 1.2,

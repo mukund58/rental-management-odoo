@@ -12,7 +12,7 @@ const Register = lazy(() => import('../pages/auth/Register'));
 const VendorRegister = lazy(() => import('../pages/auth/VendorRegister'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 const Coupon = lazy(() => import('../pages/auth/Coupon'));
-const Home = lazy(() => import('../pages/user/Home'));
+const Home = lazy(() => import('../pages/customer/Home'));
 
 
 const Dashboard = lazy(() => import('../pages/Dashboard'));
@@ -42,7 +42,6 @@ export const AppRoutes = () => {
             <Route path={PATHS.LOGIN} element={<Login />} />
             <Route path={PATHS.REGISTER} element={<Register />} />
             <Route path={PATHS.REGISTER_VENDOR} element={<VendorRegister />} />
- frontend/product-list
             <Route path={PATHS.FORGOT_PASSWORD} element={<ForgotPassword />} />
             <Route path={PATHS.COUPON} element={<Coupon />} />
 
