@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Box, Typography, IconButton, Badge, Avatar } from '@mui/material';
 import { Heart, ShoppingCart } from 'lucide-react';
+
+import { useNavigate } from 'react-router-dom';
 import Logo from '../common/Logo';
 import SearchBar from './SearchBar';
 import ProfileDropdown from './ProfileDropdown';
+import { PATHS } from '../../routes/paths';
+import Logo from '../common/Logo';
+import SearchBar from './SearchBar';
+import ProfileDropdown from './ProfileDropdown';
+
 
 /**
  * RentX 70px fixed Navbar layout component
@@ -14,6 +21,8 @@ import ProfileDropdown from './ProfileDropdown';
  */
 export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
   const [profileAnchor, setProfileAnchor] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleProfileClick = (event) => {
     setProfileAnchor(event.currentTarget);
@@ -97,6 +106,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
 
           <IconButton
             color="inherit"
+
+            onClick={() => navigate(PATHS.CART)}
+
             sx={{
               p: 1,
               borderRadius: '10px',

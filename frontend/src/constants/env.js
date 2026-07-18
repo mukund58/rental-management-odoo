@@ -1,3 +1,3 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API_URL = 'http://10.206.143.170:5000';
 export const MODE = import.meta.env.MODE || 'development';
 export const IS_DEV = MODE === 'development';

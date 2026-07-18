@@ -10,8 +10,16 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
+
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Eye } from 'lucide-react';
 import filtersData from '../../data/filters';
+import { addToCart } from '../../api/cartApi';
+import { PATHS } from '../../routes/paths';
+
+import { ShoppingCart, Eye } from 'lucide-react';
+import filtersData from '../../data/filters';
+
 
 /**
  * ProductCard component representing a single rental product
@@ -22,8 +30,50 @@ import filtersData from '../../data/filters';
 export const ProductCard = ({ product, onAddToCartSuccess }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  const [snackbarMessage, setSnackbarMessage] = useState('Product Added To Cart');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const navigate = useNavigate();
+
+
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
+  };
+
+
+  const handleAddToCart = async (e) => {
+    e.stopPropagation();
+
+    try {
+      const rentalStart = new Date();
+      const rentalEnd = new Date();
+      rentalEnd.setDate(rentalEnd.getDate() + 7);
+
+      await addToCart({
+        productId: String(product.id),
+        quantity: 1,
+        rentalStart: rentalStart.toISOString(),
+        rentalEnd: rentalEnd.toISOString(),
+        pricePerUnit: Number(product.price),
+      });
+
+      setSnackbarMessage('Product added to cart');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+
+      if (onAddToCartSuccess) {
+        onAddToCartSuccess();
+      }
+    } catch (err) {
+      console.error('Unable to add item to cart', err);
+      setSnackbarMessage('Unable to add this item to the cart right now.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleViewDetails = (event) => {
+    event.stopPropagation();
+    navigate(PATHS.PRODUCT_PAGE.replace(':productId', product.id));
   };
 
   const handleAddToCart = (e) => {
@@ -72,7 +122,11 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
         <Box sx={{ position: 'relative', pt: '75%', bgcolor: '#f8fafc', overflow: 'hidden' }}>
           <CardMedia
             component="img"
+
+            image={product.imageUrl || product.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'}
+
             image={product.image}
+
             alt={product.name}
             sx={{
               position: 'absolute',
@@ -156,6 +210,9 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
             <Button
               variant="outlined"
               fullWidth
+
+              onClick={handleViewDetails}
+
               startIcon={<Eye size={14} />}
               sx={{
                 borderRadius: '8px',
@@ -208,11 +265,19 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
       >
         <Alert
           onClose={handleCloseSnackbar}
+
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ borderRadius: '8px', fontWeight: 650 }}
+        >
+          {snackbarMessage}
+
           severity="success"
           variant="filled"
           sx={{ borderRadius: '8px', fontWeight: 650 }}
         >
           Product Added To Cart
+
         </Alert>
       </Snackbar>
     </>

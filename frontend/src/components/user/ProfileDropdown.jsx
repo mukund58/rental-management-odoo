@@ -1,8 +1,15 @@
 import React from 'react';
 import { Menu, MenuItem, Divider } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { User, Settings, LogOut, FileText } from 'lucide-react';
 
 export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleOrdersClick = () => {
+    onClose();
+    navigate('/orders');
+  };
   return (
     <Menu
       anchorEl={anchorEl}
@@ -18,7 +25,7 @@ export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
       <MenuItem onClick={onClose} sx={{ gap: 1.5, py: 1.2 }}>
         <User size={18} /> My Account / My Profile
       </MenuItem>
-      <MenuItem onClick={onClose} sx={{ gap: 1.5, py: 1.2 }}>
+      <MenuItem onClick={handleOrdersClick} sx={{ gap: 1.5, py: 1.2 }}>
         <FileText size={18} /> My Orders
       </MenuItem>
       <MenuItem onClick={onClose} sx={{ gap: 1.5, py: 1.2 }}>

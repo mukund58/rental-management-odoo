@@ -9,4 +9,9 @@ export const PATHS = {
   PRODUCTS: '/products',
   PRODUCT_DETAILS: '/products/:productId',
   PRODUCT_PAGE: '/product/:productId',
+  CART: '/cart',
+  CHECKOUT: '/checkout',
+  PAYMENT: '/payment',
+  ORDER_SUCCESS: '/order-success',
+  ORDERS: '/orders',
 };
