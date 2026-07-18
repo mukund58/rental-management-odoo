@@ -22,7 +22,7 @@ const normalizeCartItem = (item) => {
 };
 
 export const getCart = async () => {
-  const response = await api.get('/api/cart');
+  const response = await api.get('/cart');
   return (response.data || []).map(normalizeCartItem);
 };
 
@@ -35,12 +35,12 @@ export const addToCart = async (payload) => {
     pricePerUnit: Number(payload?.pricePerUnit ?? 0),
   };
 
-  const response = await api.post('/api/cart/add', cartPayload);
+  const response = await api.post('/cart/add', cartPayload);
   return normalizeCartItem(response.data);
 };
 
 export const removeCartItem = async (id) => {
-  const response = await api.delete(`/api/cart/${id}`);
+  const response = await api.delete(`/cart/${id}`);
   return response.data;
 };
 

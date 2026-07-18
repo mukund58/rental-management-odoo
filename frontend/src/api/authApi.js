@@ -10,7 +10,7 @@ import api from './axios';
  * @param {string} payload.role
  */
 export const register = async ({ firstName, lastName, email, password, confirmPassword }) => {
-  const response = await api.post('/api/auth/register', {
+  const response = await api.post('/auth/register', {
     firstName,
     lastName,
     email,
@@ -26,7 +26,7 @@ export const register = async ({ firstName, lastName, email, password, confirmPa
  * @param {string} password 
  */
 export const login = async (email, password) => {
-  const response = await api.post('/api/auth/login', { email, password });
+  const response = await api.post('/auth/login', { email, password });
   return response.data;
 };
 
@@ -34,7 +34,7 @@ export const login = async (email, password) => {
  * Fetch currently authenticated user profiles
  */
 export const getCurrentUser = async () => {
-  const response = await api.get('/api/auth/me');
+  const response = await api.get('/auth/me');
   return response.data;
 };
 
@@ -42,7 +42,7 @@ export const getCurrentUser = async () => {
  * Terminate the user session
  */
 export const logout = async () => {
-  const response = await api.post('/api/auth/logout');
+  const response = await api.post('/auth/logout');
   return response.data;
 };
 
@@ -51,7 +51,7 @@ export const logout = async () => {
  * @param {Object} payload
  */
 export const registerVendor = async (payload) => {
-  const response = await api.post('/api/auth/register/vendor', payload);
+  const response = await api.post('/auth/register/vendor', payload);
   return response.data;
 };
 
@@ -59,7 +59,7 @@ export const registerVendor = async (payload) => {
  * Fetch available product categories
  */
 export const getCategories = async () => {
-  const response = await api.get('/api/auth/categories');
+  const response = await api.get('/auth/categories');
   return (response.data || []).map((category) => ({
     id: category.id ?? category.Id,
     name: category.name ?? category.Name,

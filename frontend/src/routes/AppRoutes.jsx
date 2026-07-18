@@ -27,6 +27,10 @@ const MyOrdersPage = lazy(() => import('../pages/customer/MyOrdersPage'));
 const TermsPage = lazy(() => import('../pages/customer/TermsPage'));
 const AboutPage = lazy(() => import('../pages/customer/AboutPage'));
 const ContactPage = lazy(() => import('../pages/customer/ContactPage'));
+const OrdersDashboard = lazy(() => import('../pages/admin/OrdersDashboard'));
+const OrderDetailPage = lazy(() => import('../pages/admin/OrderDetailPage'));
+const SettingsPage = lazy(() => import('../pages/admin/SettingsPage'));
+const UserSettingsPage = lazy(() => import('../pages/admin/UserSettingsPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -68,6 +72,10 @@ export const AppRoutes = () => {
         <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
             <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+            <Route path={PATHS.ADMIN_ORDERS} element={<OrdersDashboard />} />
+            <Route path={PATHS.ADMIN_ORDER_DETAILS} element={<OrderDetailPage />} />
+            <Route path={PATHS.ADMIN_SETTINGS} element={<SettingsPage />} />
+            <Route path={PATHS.ADMIN_USERS} element={<UserSettingsPage />} />
             <Route path={PATHS.PRODUCTS} element={<ProductCatalog />} />
             <Route path={PATHS.PRODUCT_DETAILS} element={<ProductDetails />} />
           </Route>

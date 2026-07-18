@@ -18,12 +18,8 @@ import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
 import { getProducts } from '../../api/productApi';
 
-import { products as localMockProducts } from '../../data/products';
-import { getCart } from '../../api/cartApi';
 
-import productsData from '../../data/products';
-import useAuth from '../../hooks/useAuth';
-import { PATHS } from '../../routes/paths';
+import { getCart } from '../../api/cartApi';
 
 
 export const Home = () => {
@@ -60,15 +56,15 @@ export const Home = () => {
         setLoading(true);
         setErrorMsg('');
         const productData = await getProducts();
-        if (productData && productData.length > 0) {
-          setProducts(productData);
+        if (productData && (productData.items || productData.length > 0)) {
+          setProducts(productData.items || productData);
         } else {
-          setProducts(localMockProducts);
+          setProducts([]);
         }
       } catch (err) {
         console.error('Failed to load products from backend', err);
-        setProducts(localMockProducts);
-        setErrorMsg('Backend API not responding. Showing offline fallback products.');
+        setProducts([]);
+        setErrorMsg('Failed to fetch products from the server.');
       } finally {
         setLoading(false);
       }
@@ -110,8 +106,6 @@ export const Home = () => {
 
   const filteredProducts = products.filter((prod) => {
 
-  const filteredProducts = productsData.filter((prod) => {
-
     // 1. Search filter (Product Name, Category, Description)
     if (searchQuery) {
       const q = searchQuery.toLowerCase().trim();
@@ -129,11 +123,7 @@ export const Home = () => {
     }
 
     // 3. Color filter
-
     if (selectedColor && !((prod.variantColors || []).map((c) => c.toLowerCase()).includes(selectedColor.toLowerCase()))) {
-
-    if (selectedColor && !prod.variantColors.map(c => c.toLowerCase()).includes(selectedColor.toLowerCase())) {
-
       return false;
     }
 
@@ -201,15 +191,7 @@ export const Home = () => {
         <Grid container spacing={{ xs: 2, md: 3 }} sx={{ flexGrow: 1, alignItems: 'flex-start' }}>
           {/* Permanent Left Sidebar (Width 260px desktop only) */}
           <Grid
-
             size={{ xs: 12, md: 4, lg: 3, xl: 3 }}
-
-            item
-            xs={12}
-            md={4}
-            lg={3}
-            xl={3}
-
             sx={{
               display: { xs: 'none', md: 'block' },
             }}
@@ -247,8 +229,6 @@ export const Home = () => {
 
           <Grid size={{ xs: 12, md: 8, lg: 9, xl: 9 }} sx={{ minWidth: 0 }}>
 
-          <Grid item xs={12} md={8} lg={9} xl={9} sx={{ minWidth: 0 }}>
-
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minWidth: 0 }}>
               
               {/* Product Listing Header */}
@@ -273,9 +253,6 @@ export const Home = () => {
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>Loading live products...</Typography>
                 </Box>
               ) : paginatedProducts.length === 0 ? (
-
-              {/* Dynamic Empty States */}
-              {paginatedProducts.length === 0 ? (
 
                 <Box
                   sx={{

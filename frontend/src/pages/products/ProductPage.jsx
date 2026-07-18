@@ -14,6 +14,14 @@ import {
   Snackbar,
   Stack,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Checkbox
 } from '@mui/material';
 import { ArrowLeft, CheckCircle2, Clock3, Heart, Minus, Plus, ShieldCheck, ShoppingCart, Truck } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -23,7 +31,6 @@ import { addToCart, getCart } from '../../api/cartApi';
 import { getProductById } from '../../api/productApi';
 import { PATHS } from '../../routes/paths';
 import useAuth from '../../hooks/useAuth';
-import { products as localMockProducts } from '../../data/products';
 
 const money = new Intl.NumberFormat('en-IN', {
   style: 'currency',
@@ -31,12 +38,6 @@ const money = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 0,
 });
 
-const rentalDurations = [
-  { label: '1 Day', value: 1 },
-  { label: '3 Days', value: 3 },
-  { label: '1 Week', value: 7 },
-  { label: '2 Weeks', value: 14 },
-];
 
 const ProductPage = () => {
   const { productId } = useParams();
@@ -46,8 +47,6 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [rentalDuration, setRentalDuration] = useState(7);
-  const [selectedVariant, setSelectedVariant] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [wishlist, setWishlist] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -62,19 +61,10 @@ const ProductPage = () => {
         setErrorMsg('');
         const productData = await getProductById(productId).catch(() => null);
         if (!productData) {
-          const localProd = localMockProducts.find(p => String(p.id) === String(productId));
-          if (localProd) {
-            setProduct(localProd);
-            setSelectedVariant(localProd.variantColors?.[0] || '');
-            setSelectedImage(localProd.images?.[0] || localProd.imageUrl || '');
-            setErrorMsg('Backend API offline. Showing fallback product details.');
-          } else {
-            setErrorMsg('We could not find this product right now.');
-            setProduct(null);
-          }
+          setErrorMsg('We could not find this product right now.');
+          setProduct(null);
         } else {
           setProduct(productData);
-          setSelectedVariant(productData.variantColors?.[0] || '');
           setSelectedImage(productData.images?.[0] || productData.imageUrl || '');
         }
       } catch (err) {
@@ -121,16 +111,27 @@ const ProductPage = () => {
     setQuantity((current) => Math.max(1, current + delta));
   };
 
-  const handleAddToCart = async () => {
-    if (!product) {
-      return;
-    }
+  const [configureModalOpen, setConfigureModalOpen] = useState(false);
+  const [modalVariant, setModalVariant] = useState('');
 
+  const handleInitialAddToCart = () => {
+    if (product?.variantColors?.length > 0) {
+      setModalVariant(product.variantColors[0]);
+      setConfigureModalOpen(true);
+    } else {
+      executeAddToCart();
+    }
+  };
+
+  const executeAddToCart = async () => {
+    if (!product) return;
     setAdding(true);
+    setConfigureModalOpen(false);
+    const defaultRentalDuration = 7; // Defaulting to 7 days, actual dates chosen in Cart
     try {
       const rentalStart = new Date();
       const rentalEnd = new Date();
-      rentalEnd.setDate(rentalEnd.getDate() + rentalDuration);
+      rentalEnd.setDate(rentalEnd.getDate() + defaultRentalDuration);
 
       await addToCart({
         productId: String(product.id),
@@ -170,14 +171,13 @@ const ProductPage = () => {
     window.dispatchEvent(new Event('wishlist-updated'));
   };
 
-  const subtotal = product ? product.price * quantity * rentalDuration : 0;
+  const subtotal = product ? product.price * quantity : 0;
   const listingSpecs = product?.specifications?.length
     ? product.specifications
     : [
         { label: 'Category', value: product?.categoryName || product?.category || 'General' },
         { label: 'Availability', value: product?.available ? 'In stock for rental' : 'Currently unavailable' },
-        { label: 'Stock', value: `${product?.stockQuantity ?? 1} available` },
-        { label: 'Rental window', value: `${rentalDuration} day${rentalDuration > 1 ? 's' : ''}` },
+        { label: 'Stock', value: `${product?.stockQuantity ?? 1} available` }
       ];
 
   if (loading) {
@@ -265,86 +265,45 @@ const ProductPage = () => {
                 <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.2, mb: 1 }}>
                   {product.name}
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                  {product.description}
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main', mb: 3 }}>
-                  {money.format(product.price)}
-                </Typography>
+                
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main', display: 'inline' }}>
+                    {money.format(product.price)}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ display: 'inline', ml: 1, fontWeight: 500 }}>
+                    (Price for the product / per day)
+                  </Typography>
+                </Box>
 
-                <Stack spacing={2.5}>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Quantity</Typography>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <IconButton onClick={() => handleQuantityChange(-1)} size="small" sx={{ border: '1px solid', borderColor: 'divider' }}>
-                        <Minus size={16} />
-                      </IconButton>
-                      <Typography variant="h6" sx={{ minWidth: 36, textAlign: 'center', fontWeight: 700 }}>
-                        {quantity}
-                      </Typography>
-                      <IconButton onClick={() => handleQuantityChange(1)} size="small" sx={{ border: '1px solid', borderColor: 'divider' }}>
-                        <Plus size={16} />
-                      </IconButton>
-                    </Stack>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Rental duration</Typography>
-                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-                      {rentalDurations.map((duration) => (
-                        <Button
-                          key={duration.value}
-                          variant={rentalDuration === duration.value ? 'contained' : 'outlined'}
-                          size="small"
-                          onClick={() => setRentalDuration(duration.value)}
-                          sx={{ borderRadius: 999, textTransform: 'none' }}
-                        >
-                          {duration.label}
-                        </Button>
-                      ))}
-                    </Stack>
-                  </Box>
-
-                  {product.variantColors?.length > 0 && (
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Choose a variant</Typography>
-                      <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-                        {product.variantColors.map((variant) => (
-                          <Button
-                            key={variant}
-                            variant={selectedVariant === variant ? 'contained' : 'outlined'}
-                            size="small"
-                            onClick={() => setSelectedVariant(variant)}
-                            sx={{ borderRadius: 999, textTransform: 'none' }}
-                          >
-                            {variant}
-                          </Button>
-                        ))}
-                      </Stack>
-                    </Box>
-                  )}
-
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<ShoppingCart size={16} />}
-                      onClick={handleAddToCart}
-                      disabled={adding || !product.available}
-                      sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
-                    >
-                      {adding ? 'Adding...' : 'Add to cart'}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      startIcon={<Heart size={16} fill={wishlist ? 'currentColor' : 'none'} />}
-                      onClick={handleToggleWishlist}
-                      sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
-                    >
-                      {wishlist ? 'Saved' : 'Wishlist'}
-                    </Button>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 999, px: 1, py: 0.5 }}>
+                    <IconButton onClick={() => handleQuantityChange(-1)} size="small">
+                      <Minus size={16} />
+                    </IconButton>
+                    <Typography variant="h6" sx={{ minWidth: 36, textAlign: 'center', fontWeight: 700 }}>
+                      {quantity}
+                    </Typography>
+                    <IconButton onClick={() => handleQuantityChange(1)} size="small">
+                      <Plus size={16} />
+                    </IconButton>
                   </Stack>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<ShoppingCart size={16} />}
+                    onClick={handleInitialAddToCart}
+                    disabled={adding || !product.available}
+                    sx={{ borderRadius: 999, px: 4, py: 1.1, textTransform: 'none', fontWeight: 700, flexGrow: 1 }}
+                  >
+                    {adding ? 'Adding...' : 'Add to cart'}
+                  </Button>
+                  
+                  <IconButton
+                    onClick={handleToggleWishlist}
+                    sx={{ border: '1px solid', borderColor: 'divider' }}
+                  >
+                    <Heart size={20} fill={wishlist ? 'currentColor' : 'none'} color={wishlist ? '#ef4444' : 'currentColor'} />
+                  </IconButton>
                 </Stack>
               </CardContent>
             </Card>
@@ -430,6 +389,49 @@ const ProductPage = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Configure Modal for Variants */}
+      <Dialog open={configureModalOpen} onClose={() => setConfigureModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 800, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Configure
+          <IconButton onClick={() => setConfigureModalOpen(false)} size="small">
+            <Minus style={{ transform: 'rotate(45deg)' }} size={20} />
+          </IconButton>
+        </DialogTitle>
+        <Divider />
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 700 }}>Choose Variant</Typography>
+          <RadioGroup value={modalVariant} onChange={(e) => setModalVariant(e.target.value)}>
+            <Stack spacing={1}>
+              {(product?.variantColors || []).map((variant) => (
+                <FormControlLabel
+                  key={variant}
+                  value={variant}
+                  control={<Radio />}
+                  label={variant}
+                  sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    p: 1,
+                    m: 0,
+                    bgcolor: modalVariant === variant ? 'primary.50' : 'transparent'
+                  }}
+                />
+              ))}
+            </Stack>
+          </RadioGroup>
+        </DialogContent>
+        <Divider />
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setConfigureModalOpen(false)} sx={{ color: 'text.secondary', fontWeight: 700 }}>
+            Cancel
+          </Button>
+          <Button onClick={executeAddToCart} variant="contained" sx={{ borderRadius: 999, px: 4, fontWeight: 700 }}>
+            Configure
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

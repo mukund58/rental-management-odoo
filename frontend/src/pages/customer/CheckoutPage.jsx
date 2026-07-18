@@ -5,46 +5,15 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
-import { customerMockAddresses } from '../../data/customerMocks';
 import { getCart } from '../../api/cartApi';
 import Loader from '../../components/ui/Loader';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
-const fallbackCartItems = [
-  {
-    id: 'fallback-1',
-    productId: 'p1',
-    name: 'MacBook Pro 16" (M3 Max)',
-    pricePerUnit: 450,
-    quantity: 2,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 7,
-    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
-    variant: 'Gray',
-  },
-  {
-    id: 'fallback-2',
-    productId: 'p3',
-    name: 'PlayStation 5 Console',
-    pricePerUnit: 200,
-    quantity: 1,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 5,
-    imageUrl: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=900&q=80',
-    variant: 'Standard',
-  }
-];
-
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [addresses, setAddresses] = useState(customerMockAddresses);
-  const [selectedAddressId, setSelectedAddressId] = useState(customerMockAddresses.find((item) => item.isDefault)?.id || customerMockAddresses[0]?.id);
-  const [showNewAddress, setShowNewAddress] = useState(false);
-  const [newAddress, setNewAddress] = useState({ fullName: '', phone: '', street: '', city: '', state: '', pincode: '', country: '' });
+  const [deliveryAddress, setDeliveryAddress] = useState({ fullName: '', phone: '', addressLine1: '', city: '', state: '', postalCode: '', country: '' });
   const [errorMsg, setErrorMsg] = useState('');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,14 +27,14 @@ const CheckoutPage = () => {
           if (cartItems && cartItems.length > 0) {
             setItems(cartItems);
           } else {
-            setItems(fallbackCartItems);
+            setItems([]);
           }
         }
       } catch (err) {
         console.error('Error fetching cart:', err);
         if (isMounted) {
-          setItems(fallbackCartItems);
-          setErrorMsg('Backend API not responding. Using offline fallback cart data.');
+          setItems([]);
+          setErrorMsg('Failed to fetch cart. Please try again.');
         }
       } finally {
         if (isMounted) {
@@ -81,8 +50,6 @@ const CheckoutPage = () => {
     try { await logout(); } catch (err) { console.error(err); } finally { localStorage.removeItem('token'); localStorage.removeItem('user'); navigate('/login', { replace: true }); }
   };
 
-  const selectedAddress = useMemo(() => addresses.find((item) => item.id === selectedAddressId) || addresses[0], [addresses, selectedAddressId]);
-
   const subtotal = useMemo(() => {
     return items.reduce((sum, item) => sum + (item.pricePerUnit * item.quantity), 0);
   }, [items]);
@@ -91,8 +58,8 @@ const CheckoutPage = () => {
   const grandTotal = subtotal + taxes;
 
   const handleContinueToPayment = () => {
-    if (!selectedAddressId) {
-      setErrorMsg('Please select a delivery address.');
+    if (!deliveryAddress.fullName || !deliveryAddress.phone || !deliveryAddress.addressLine1 || !deliveryAddress.city || !deliveryAddress.state || !deliveryAddress.postalCode) {
+      setErrorMsg('Please fill all required delivery address fields.');
       return;
     }
     if (items.length === 0) {
@@ -101,27 +68,13 @@ const CheckoutPage = () => {
     }
     navigate(PATHS.PAYMENT, {
       state: {
-        addressId: selectedAddressId,
+        deliveryAddress,
         items,
         subtotal,
         taxes,
         grandTotal
       }
     });
-  };
-
-  const handleAddAddress = () => {
-    if (!newAddress.fullName || !newAddress.phone || !newAddress.street || !newAddress.city || !newAddress.state || !newAddress.pincode) {
-      setErrorMsg('Please fill all required address fields.');
-      return;
-    }
-
-    const nextAddress = { id: `addr-${Date.now()}`, ...newAddress, isDefault: false };
-    setAddresses((current) => [nextAddress, ...current]);
-    setSelectedAddressId(nextAddress.id);
-    setNewAddress({ fullName: '', phone: '', street: '', city: '', state: '', pincode: '', country: '' });
-    setShowNewAddress(false);
-    setErrorMsg('');
   };
 
   return (
@@ -146,45 +99,19 @@ const CheckoutPage = () => {
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 3 }}>
                 <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 800, mb: 2 }}>Delivery Address</Typography>
-                  <Stack spacing={1.5}>
-                    {addresses.map((address) => (
-                      <Box key={address.id} sx={{ border: '1px solid', borderColor: selectedAddressId === address.id ? 'primary.main' : 'divider', borderRadius: 3, p: 2.25, bgcolor: selectedAddressId === address.id ? 'primary.50' : 'background.paper' }}>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={1}>
-                          <Box>
-                            <FormControlLabel
-                              value={address.id}
-                              control={<Radio checked={selectedAddressId === address.id} onChange={() => setSelectedAddressId(address.id)} />}
-                              label={<Typography sx={{ fontWeight: 700 }}>{address.label}</Typography>}
-                            />
-                            <Typography variant="body2" color="text.secondary">{address.fullName} • {address.phone}</Typography>
-                            <Typography variant="body2" color="text.secondary">{address.street}, {address.city}, {address.state} - {address.pincode}</Typography>
-                          </Box>
-                          {address.isDefault && <Chip label="Default" color="success" size="small" />}
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Stack>
-
-                  <Button startIcon={<Plus size={16} />} onClick={() => setShowNewAddress((current) => !current)} sx={{ mt: 2.5, borderRadius: 999, textTransform: 'none', fontWeight: 700 }}>
-                    {showNewAddress ? 'Hide form' : 'Add new address'}
-                  </Button>
-
-                  {showNewAddress && (
-                    <Box sx={{ mt: 2.5, p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
-                      <Stack spacing={1.5}>
-                        <TextField label="Full name" fullWidth size="small" value={newAddress.fullName} onChange={(e) => setNewAddress((current) => ({ ...current, fullName: e.target.value }))} />
-                        <TextField label="Phone" fullWidth size="small" value={newAddress.phone} onChange={(e) => setNewAddress((current) => ({ ...current, phone: e.target.value }))} />
-                        <TextField label="Street address" fullWidth size="small" value={newAddress.street} onChange={(e) => setNewAddress((current) => ({ ...current, street: e.target.value }))} />
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                          <TextField label="City" fullWidth size="small" value={newAddress.city} onChange={(e) => setNewAddress((current) => ({ ...current, city: e.target.value }))} />
-                          <TextField label="State" fullWidth size="small" value={newAddress.state} onChange={(e) => setNewAddress((current) => ({ ...current, state: e.target.value }))} />
-                        </Stack>
-                        <TextField label="Pincode" fullWidth size="small" value={newAddress.pincode} onChange={(e) => setNewAddress((current) => ({ ...current, pincode: e.target.value }))} />
-                        <TextField label="Country" fullWidth size="small" value={newAddress.country} onChange={(e) => setNewAddress((current) => ({ ...current, country: e.target.value }))} />
-                        <Button variant="contained" sx={{ borderRadius: 999, py: 1, textTransform: 'none', fontWeight: 700 }} onClick={handleAddAddress}>Save address</Button>
+                  <Box sx={{ mt: 2.5, p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
+                    <Stack spacing={1.5}>
+                      <TextField label="Full name" fullWidth size="small" value={deliveryAddress.fullName} onChange={(e) => setDeliveryAddress((current) => ({ ...current, fullName: e.target.value }))} />
+                      <TextField label="Phone" fullWidth size="small" value={deliveryAddress.phone} onChange={(e) => setDeliveryAddress((current) => ({ ...current, phone: e.target.value }))} />
+                      <TextField label="Street address" fullWidth size="small" value={deliveryAddress.addressLine1} onChange={(e) => setDeliveryAddress((current) => ({ ...current, addressLine1: e.target.value }))} />
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                        <TextField label="City" fullWidth size="small" value={deliveryAddress.city} onChange={(e) => setDeliveryAddress((current) => ({ ...current, city: e.target.value }))} />
+                        <TextField label="State" fullWidth size="small" value={deliveryAddress.state} onChange={(e) => setDeliveryAddress((current) => ({ ...current, state: e.target.value }))} />
                       </Stack>
-                    </Box>
-                  )}
+                      <TextField label="Postal Code" fullWidth size="small" value={deliveryAddress.postalCode} onChange={(e) => setDeliveryAddress((current) => ({ ...current, postalCode: e.target.value }))} />
+                      <TextField label="Country" fullWidth size="small" value={deliveryAddress.country} onChange={(e) => setDeliveryAddress((current) => ({ ...current, country: e.target.value }))} />
+                    </Stack>
+                  </Box>
                 </CardContent>
               </Card>
 

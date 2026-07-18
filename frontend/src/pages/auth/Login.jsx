@@ -12,11 +12,13 @@ export const Login = () => {
     const user = response?.data?.user;
     const role = user?.role;
 
+    const roleStr = String(role).toLowerCase();
+    
     if (
-      role === 'Admin' ||
-      role === 'admin' ||
-      role === 1 ||
-      String(role).toLowerCase() === 'admin'
+      roleStr === 'admin' || 
+      roleStr === 'vendor' ||
+      role === 1 || 
+      role === 2 // Assuming 1=Admin, 2=Vendor
     ) {
       navigate(PATHS.DASHBOARD, { replace: true });
     } else {

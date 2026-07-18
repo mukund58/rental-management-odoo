@@ -17,9 +17,6 @@ import filtersData from '../../data/filters';
 import { addToCart } from '../../api/cartApi';
 import { PATHS } from '../../routes/paths';
 
-import { ShoppingCart, Eye } from 'lucide-react';
-import filtersData from '../../data/filters';
-
 
 /**
  * ProductCard component representing a single rental product
@@ -74,14 +71,6 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
   const handleViewDetails = (event) => {
     event.stopPropagation();
     navigate(PATHS.PRODUCT_PAGE.replace(':productId', product.id));
-  };
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    setSnackbarOpen(true);
-    if (onAddToCartSuccess) {
-      onAddToCartSuccess();
-    }
   };
 
   const isAvailable = product.available !== false;
@@ -265,19 +254,11 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
       >
         <Alert
           onClose={handleCloseSnackbar}
-
           severity={snackbarSeverity}
           variant="filled"
           sx={{ borderRadius: '8px', fontWeight: 650 }}
         >
           {snackbarMessage}
-
-          severity="success"
-          variant="filled"
-          sx={{ borderRadius: '8px', fontWeight: 650 }}
-        >
-          Product Added To Cart
-
         </Alert>
       </Snackbar>
     </>

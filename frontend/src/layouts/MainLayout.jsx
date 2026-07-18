@@ -31,9 +31,13 @@ import {
   Bell,
   Settings,
   SlidersHorizontal,
+  Calendar,
+  BarChart2,
+  Package as BoxIcon,
 } from 'lucide-react';
 import { useAppTheme } from '../context/ThemeContext';
 import { PATHS } from '../routes/paths';
+import useAuth from '../hooks/useAuth';
 
 const SIDEBAR_WIDTH = 260;
 
@@ -58,18 +62,27 @@ export const MainLayout = () => {
     setProfileAnchor(null);
   };
 
-  const handleLogout = () => {
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
     handleProfileMenuClose();
-    localStorage.removeItem('token');
-    navigate(PATHS.LOGIN);
+    try {
+      await logout();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate(PATHS.LOGIN);
+    }
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <LayoutDashboard size={20} />, path: PATHS.DASHBOARD },
-    { text: 'Products', icon: <ShoppingBag size={20} />, path: PATHS.PRODUCTS },
-    { text: 'Filters', icon: <SlidersHorizontal size={20} />, path: PATHS.ROOT, search: '?openFilters=1' },
-    { text: 'Profile', icon: <User size={20} />, path: '#' },
-    { text: 'Settings', icon: <Settings size={20} />, path: '#' },
+    { text: 'Orders', icon: <ShoppingBag size={20} />, path: PATHS.ADMIN_ORDERS },
+    { text: 'Schedule', icon: <Calendar size={20} />, path: PATHS.ADMIN_SCHEDULE },
+    { text: 'Products', icon: <BoxIcon size={20} />, path: PATHS.ADMIN_PRODUCTS },
+    { text: 'Reports', icon: <BarChart2 size={20} />, path: PATHS.ADMIN_REPORTS },
+    { text: 'Settings', icon: <Settings size={20} />, path: PATHS.ADMIN_SETTINGS },
   ];
 
   const sidebarContent = (

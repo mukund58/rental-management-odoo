@@ -11,7 +11,7 @@ export const Dashboard = () => {
       .catch((err) => {
         console.error('Failed to fetch user profiles:', err);
         authService.logout().finally(() => {
-          window.location.href = '/login';
+          window.location.hash = '#/login';
         });
       });
   }, []);
