@@ -45,11 +45,11 @@ export const RegisterForm = ({ onSuccess, onError }) => {
         role: 'Customer', // Explicitly registering as Customer
       });
 
-      toast.success('Registration successful! Please sign in.');
+      toast.success('Registration successful! Welcome.');
       if (onSuccess) {
         onSuccess(response);
       } else {
-        navigate(PATHS.LOGIN);
+        navigate(PATHS.DASHBOARD, { state: { newSignup: true } });
       }
     } catch (err) {
       const backendError = err.response?.data?.message || err.response?.data || 'Registration failed. Please try again.';

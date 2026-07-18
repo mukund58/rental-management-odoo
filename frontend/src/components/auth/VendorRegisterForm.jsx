@@ -71,7 +71,7 @@ export const VendorRegisterForm = ({ onSuccess, onError }) => {
       if (onSuccess) {
         onSuccess(response);
       } else {
-        navigate(PATHS.DASHBOARD);
+        navigate(PATHS.DASHBOARD, { state: { newSignup: true } });
       }
     } catch (err) {
       const backendError = err.response?.data?.message || err.response?.data || 'Vendor registration failed. Please try again.';

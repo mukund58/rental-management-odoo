@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Alert, CircularProgress } from '@mui/material';
+import { Box, Alert, CircularProgress, Link as MuiLink } from '@mui/material';
+import { Link } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import { PATHS } from '../../routes/paths';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import PasswordInput from '../ui/PasswordInput';
@@ -93,6 +95,21 @@ export const LoginForm = ({ onSuccess, onError }) => {
             />
           )}
         />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.5 }}>
+          <MuiLink
+            component={Link}
+            to={PATHS.FORGOT_PASSWORD}
+            sx={{
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              color: 'indigo.600',
+              textDecoration: 'none',
+              '&:hover': { textDecoration: 'underline' }
+            }}
+          >
+            Forgot Password?
+          </MuiLink>
+        </Box>
       </Box>
 
       <Button
