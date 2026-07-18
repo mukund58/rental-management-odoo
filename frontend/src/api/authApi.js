@@ -47,3 +47,20 @@ export const logout = async () => {
   const response = await api.post('/auth/logout');
   return response.data;
 };
+
+/**
+ * Register a new vendor
+ * @param {Object} payload
+ */
+export const registerVendor = async (payload) => {
+  const response = await api.post('/auth/register/vendor', payload);
+  return response.data;
+};
+
+/**
+ * Fetch available product categories
+ */
+export const getCategories = async () => {
+  const response = await api.get('/auth/categories');
+  return response.data;
+};

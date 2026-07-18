@@ -36,7 +36,7 @@ export const RegisterForm = ({ onSuccess, onError }) => {
     setLoading(true);
     try {
       const fullName = `${data.firstName.trim()} ${data.lastName.trim()}`;
-      
+
       const response = await apiRegister({
         fullName,
         email: data.email,
@@ -187,11 +187,7 @@ export const RegisterForm = ({ onSuccess, onError }) => {
 
         <MuiLink
           component={Link}
-          to="#"
-          onClick={(e) => {
-            e.preventDefault();
-            toast('Vendor registration interface coming soon!');
-          }}
+          to={PATHS.REGISTER_VENDOR}
           sx={{
             fontSize: '0.875rem',
             fontWeight: 600,
