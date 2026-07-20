@@ -1,7 +1,42 @@
-# rental-management-odoo
-Yes. For a 24-hour hackathon, the first thing you should do is **freeze the API contract**. That way, your React teammate can develop against mock JSON while you implement the .NET APIs independently.
+# Rental Management System
 
----
+A full-stack rental management platform built during the **Odoo × KSV Hackathon 2026**.
+
+## ✨ Features
+- User authentication with JWT
+- Product catalog and category management
+- Rental booking workflow
+- Payment simulation
+- Pickup and return management
+- Admin dashboard
+- RESTful API
+- PostgreSQL database
+- Docker support
+
+## 🛠️ Tech Stack
+
+**Backend**
+- ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
+- JWT Authentication
+- Docker
+
+**Frontend**
+- React
+- Vite
+- Axios
+
+## 📸 Screenshots
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/3769fe29-9878-49d8-a856-ee2cdb839b9d" />
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/1f822f7a-5c50-4e14-a38a-2bd963ea7124" />
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/d882b002-9da1-4686-b8be-788883a4cf1f" />
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/71f79763-f641-43b2-8bf3-f74b9ae417ba" />
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/11c6203b-7cc0-43e7-ad8a-5c1d3322d722" />
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/cddb9bf1-bf9b-491f-97c2-034744f5f7f5" />
+
+## 📖 API Documentation
+
 
 # Base URL
 
