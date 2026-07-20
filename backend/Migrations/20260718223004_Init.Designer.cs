@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260718155549_AddCart")]
-    partial class AddCart
+    [Migration("20260718223004_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,53 @@ namespace backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("backend.Models.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressLine2")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("backend.Models.Cart", b =>
                 {
@@ -97,6 +144,43 @@ namespace backend.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("backend.Models.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RentalOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RentalOrderId")
+                        .IsUnique();
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>
@@ -206,9 +290,20 @@ namespace backend.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("DeliveryMethod")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Deposit")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("boolean");
 
                     b.Property<decimal>("LateFee")
                         .HasPrecision(10, 2)
@@ -221,6 +316,10 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("PickupDate")
                         .HasColumnType("timestamp with time zone");
@@ -353,6 +452,17 @@ namespace backend.Migrations
                     b.ToTable("Vendors");
                 });
 
+            modelBuilder.Entity("backend.Models.Address", b =>
+                {
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.Cart", b =>
                 {
                     b.HasOne("backend.Models.User", "User")
@@ -385,6 +495,17 @@ namespace backend.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("backend.Models.Payment", b =>
+                {
+                    b.HasOne("backend.Models.RentalOrder", "RentalOrder")
+                        .WithOne("Payment")
+                        .HasForeignKey("backend.Models.Payment", "RentalOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RentalOrder");
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>
@@ -475,10 +596,14 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.RentalOrder", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
                 {
+                    b.Navigation("Addresses");
+
                     b.Navigation("Cart");
 
                     b.Navigation("CartItems");

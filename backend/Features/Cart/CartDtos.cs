@@ -9,15 +9,16 @@ public record AddToCartRequest(
 public record UpdateCartRequest(
     int Quantity);
 
-public record CartItemDto(
-    Guid CartItemId,
+public sealed record CartItemDto(
+    Guid Id,
     Guid ProductId,
-    string ProductName,
-    string? ImageUrl,
-    decimal Price,
-    decimal Deposit,
     int Quantity,
-    decimal LineTotal);
+    DateTime RentalStart,
+    DateTime RentalEnd,
+    decimal PricePerUnit,
+    string Name,
+    string? ImageUrl,
+    int RentalDurationDays);
 
 public record CartDto(
     Guid CartId,
@@ -25,3 +26,10 @@ public record CartDto(
     decimal Subtotal,
     decimal Deposit,
     decimal Total);
+
+public sealed record AddCartItemRequest(
+    Guid ProductId,
+    int Quantity,
+    DateTime RentalStart,
+    DateTime RentalEnd,
+    decimal PricePerUnit);

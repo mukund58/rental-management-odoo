@@ -9,18 +9,19 @@ public static class CartMapper
         var items = cart.Items.Select(x => new CartItemDto(
             x.Id,
             x.ProductId,
-            x.Product.Name,
-            x.Product.ImageUrl,
-            x.Product.Price,
-            x.Product.Deposit,
             x.Quantity,
-            x.Product.Price * x.Quantity
+            x.PickupDate,
+            x.ReturnDate,
+            x.Product?.Price ?? 0,
+            x.Product?.Name ?? "Unknown",
+            x.Product?.ImageUrl,
+            (int)(x.ReturnDate - x.PickupDate).TotalDays
         )).ToList();
 
-        var subtotal = items.Sum(x => x.LineTotal);
+        var subtotal = items.Sum(i => i.PricePerUnit * i.Quantity * Math.Max(1, i.RentalDurationDays));
 
         var deposit = cart.Items.Sum(x =>
-            x.Product.Deposit * x.Quantity);
+            (x.Product?.Deposit ?? 0) * x.Quantity);
 
         return new CartDto(
             cart.Id,

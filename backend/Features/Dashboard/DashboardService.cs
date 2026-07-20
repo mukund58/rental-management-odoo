@@ -63,20 +63,29 @@ public class DashboardService
     }
     public async Task<IResult> GetRevenueChart()
     {
-        var data = await _db.RentalOrders
+        var rawData = await _db.RentalOrders
             .GroupBy(x => new
             {
                 x.CreatedAt.Year,
                 x.CreatedAt.Month
             })
-            .Select(x => new RevenueChartDto
+            .Select(x => new
             {
-                Month = $"{x.Key.Month}/{x.Key.Year}",
-
+                x.Key.Month,
+                x.Key.Year,
                 Revenue = x.Sum(r => r.TotalAmount)
             })
-            .OrderBy(x => x.Month)
             .ToListAsync();
+
+        var data = rawData
+            .OrderBy(x => x.Year)
+            .ThenBy(x => x.Month)
+            .Select(x => new RevenueChartDto
+            {
+                Month = $"{x.Month}/{x.Year}",
+                Revenue = x.Revenue
+            })
+            .ToList();
 
         return Results.Ok(data);
     }
