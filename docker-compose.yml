@@ -14,6 +14,8 @@ services:
       Jwt__Issuer: backend
       Jwt__Audience: frontend
       Jwt__ExpiryMinutes: 1440
+    volumes:
+      - product_images:/app/wwwroot/images/products
 
   postgres:
     image: postgres:17
@@ -35,4 +37,5 @@ services:
 
 volumes:
   postgres_data:
+  product_images:
 
