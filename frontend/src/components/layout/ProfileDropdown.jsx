@@ -1,17 +1,8 @@
 import React from 'react';
-import { Menu, MenuItem, Divider, Typography } from '@mui/material';
 import { User, FileText, Settings, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-/**
- * Profile dropdown menu displayed when clicking the user profile avatar.
- * @param {Object} props
- * @param {HTMLElement} props.anchorEl - The element anchoring the menu dropdown
- * @param {boolean} props.open - Whether the menu is open
- * @param {Function} props.onClose - Function to close the dropdown
- * @param {Function} props.onLogout - Function to trigger the logout operation
- */
-export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
+export const ProfileDropdown = ({ open, onClose, onLogout }) => {
   const navigate = useNavigate();
 
   const handleItemClick = (path) => {
@@ -19,64 +10,44 @@ export const ProfileDropdown = ({ anchorEl, open, onClose, onLogout }) => {
     navigate(path);
   };
 
+  if (!open) return null;
+
   return (
-    <Menu
-      anchorEl={anchorEl}
-      open={open}
-      onClose={onClose}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      PaperProps={{
-        elevation: 4,
-        sx: {
-          mt: 1.5,
-          minWidth: 190,
-          borderRadius: '12px',
-          border: '1px solid',
-          borderColor: 'divider',
-          '& .MuiMenuItem-root': {
-            px: 2,
-            py: 1.2,
-            gap: 1.5,
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            borderRadius: '6px',
-            mx: 1,
-            my: 0.5,
-            transition: 'all 0.15s ease',
-            '&:hover': {
-              backgroundColor: 'action.hover',
-              color: 'primary.main',
-              '& svg': {
-                color: 'primary.main',
-              },
-            },
-          },
-        },
-      }}
-    >
-      <MenuItem onClick={() => handleItemClick('/profile')}>
-        <User size={18} />
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>My Profile</Typography>
-      </MenuItem>
-
-      <MenuItem onClick={() => handleItemClick('/orders')}>
-        <FileText size={18} />
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>My Orders</Typography>
-      </MenuItem>
-
-      <MenuItem onClick={() => handleItemClick('/profile')}>
-        <Settings size={18} />
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>Settings</Typography>
-      </MenuItem>
-
-      <Divider sx={{ my: '4px !important' }} />
-
-      <MenuItem onClick={onLogout} sx={{ color: 'error.main', '&:hover': { backgroundColor: 'error.lighter', color: 'error.dark' } }}>
-        <LogOut size={18} />
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>Logout</Typography>
-      </MenuItem>
-    </Menu>
+    <div className="absolute right-0 mt-2 w-48 rounded-xl border bg-popover text-popover-foreground shadow-lg outline-none animate-in fade-in-80 zoom-in-95 z-50">
+      <div className="p-1">
+        <button
+          onClick={() => handleItemClick('/profile')}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <User size={18} />
+          My Profile
+        </button>
+        <button
+          onClick={() => handleItemClick('/orders')}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <FileText size={18} />
+          My Orders
+        </button>
+        <button
+          onClick={() => handleItemClick('/profile')}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <Settings size={18} />
+          Settings
+        </button>
+      </div>
+      <hr className="border-border my-1" />
+      <div className="p-1">
+        <button
+          onClick={onLogout}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
+      </div>
+    </div>
   );
 };
 

@@ -1,25 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import {
-  Box,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Avatar,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Divider,
-  useTheme,
-  Container,
-} from '@mui/material';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -34,38 +14,35 @@ import {
   Calendar,
   BarChart2,
   Package as BoxIcon,
+  X,
 } from 'lucide-react';
 import { useAppTheme } from '../context/ThemeContext';
 import { PATHS } from '../routes/paths';
 import useAuth from '../hooks/useAuth';
 
-const SIDEBAR_WIDTH = 260;
-
 export const MainLayout = () => {
-  const muiTheme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useAppTheme();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileAnchor, setProfileAnchor] = useState(null);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const handleProfileMenuOpen = (event) => {
-    setProfileAnchor(event.currentTarget);
-  };
-
-  const handleProfileMenuClose = () => {
-    setProfileAnchor(null);
-  };
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
 
   const { logout } = useAuth();
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleLogout = async () => {
-    handleProfileMenuClose();
+    setProfileOpen(false);
     try {
       await logout();
     } catch (error) {
@@ -78,7 +55,6 @@ export const MainLayout = () => {
   };
 
   const menuItems = [
-
     { text: 'Orders', icon: <ShoppingBag size={20} />, path: PATHS.ADMIN_ORDERS },
     { text: 'Schedule', icon: <Calendar size={20} />, path: PATHS.ADMIN_SCHEDULE },
     { text: 'Products', icon: <BoxIcon size={20} />, path: PATHS.ADMIN_PRODUCTS },
@@ -88,258 +64,177 @@ export const MainLayout = () => {
     { text: 'Filters', icon: <SlidersHorizontal size={20} />, path: PATHS.ROOT, search: '?openFilters=1' },
     { text: 'Profile', icon: <User size={20} />, path: PATHS.PROFILE },
     { text: 'Settings', icon: <Settings size={20} />, path: PATHS.PROFILE },
-
   ];
 
   const sidebarContent = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Toolbar sx={{ px: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Box
-          sx={{
-            width: 32,
-            height: 32,
-            borderRadius: '8px',
-            background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 'bold',
-          }}
-        >
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-3 px-6 py-4">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 font-bold text-white">
           R
-        </Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '-0.025em' }}>
-          RentalSystem
-        </Typography>
-      </Toolbar>
-      <Divider />
-      <Box sx={{ flexGrow: 1, px: 2, py: 3 }}>
-        <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        </div>
+        <span className="text-lg font-bold tracking-tight text-foreground">RentalSystem</span>
+      </div>
+      <hr className="border-border" />
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        <ul className="flex flex-col gap-1.5">
           {menuItems.map((item) => {
-            const isActive = item.path !== '#' && (
-              item.search
+            const isActive =
+              item.path !== '#' &&
+              (item.search
                 ? location.pathname === item.path && location.search.includes('openFilters=1')
-                : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
-            );
+                : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`));
+            
             return (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton
-                  onClick={() => item.path !== '#' && navigate(item.search ? { pathname: item.path, search: item.search } : item.path)}
-                  sx={{
-                    borderRadius: '8px',
-                    py: 1.2,
-                    px: 2,
-                    backgroundColor: isActive 
-                      ? (theme) => theme.palette.mode === 'light' ? '#e0e7ff' : '#1e1b4b'
-                      : 'transparent',
-                    color: isActive 
-                      ? (theme) => theme.palette.primary.main 
-                      : (theme) => theme.palette.text.secondary,
-                    '&:hover': {
-                      backgroundColor: isActive
-                        ? (theme) => theme.palette.mode === 'light' ? '#e0e7ff' : '#1e1b4b'
-                        : (theme) => theme.palette.mode === 'light' ? '#f1f5f9' : '#1f2937',
-                    },
+              <li key={item.text}>
+                <button
+                  onClick={() => {
+                    if (item.path !== '#') {
+                      navigate(item.search ? { pathname: item.path, search: item.search } : item.path);
+                      setMobileOpen(false);
+                    }
                   }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400'
+                      : 'text-muted-foreground hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800'
+                  }`}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 40,
-                      color: isActive 
-                        ? (theme) => theme.palette.primary.main 
-                        : (theme) => theme.palette.text.secondary,
-                    }}
+                  <span
+                    className={
+                      isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'
+                    }
                   >
                     {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    primaryTypographyProps={{
-                      fontSize: '0.925rem',
-                      fontWeight: isActive ? 600 : 500,
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                  </span>
+                  {item.text}
+                </button>
+              </li>
             );
           })}
-        </List>
-      </Box>
-      <Box sx={{ p: 2 }}>
-        <ListItemButton
+        </ul>
+      </div>
+      <div className="p-4">
+        <button
           onClick={handleLogout}
-          sx={{
-            borderRadius: '8px',
-            color: 'error.main',
-            '&:hover': {
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'light' ? '#fef2f2' : 'rgba(239, 68, 68, 0.08)',
-            },
-          }}
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
         >
-          <ListItemIcon sx={{ minWidth: 40, color: 'error.main' }}>
-            <LogOut size={20} />
-          </ListItemIcon>
-          <ListItemText
-            primary="Sign Out"
-            primaryTypographyProps={{ fontSize: '0.925rem', fontWeight: 600 }}
-          />
-        </ListItemButton>
-      </Box>
-    </Box>
+          <LogOut size={20} />
+          Sign Out
+        </button>
+      </div>
+    </div>
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Sidebar - Desktop */}
-      <Box
-        component="nav"
-        sx={{ width: { md: SIDEBAR_WIDTH }, flexShrink: { md: 0 } }}
-        aria-label="mailbox folders"
+    <div className="flex min-h-screen bg-background text-foreground">
+      {/* Mobile sidebar backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Mobile */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-[260px] transform border-r bg-background transition-transform duration-300 ease-in-out md:hidden ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: SIDEBAR_WIDTH,
-              borderRight: `1px solid ${muiTheme.palette.divider}`,
-              backgroundImage: 'none',
-              bgcolor: 'background.paper',
-            },
-          }}
-        >
-          {sidebarContent}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: SIDEBAR_WIDTH,
-              borderRight: `1px solid ${muiTheme.palette.divider}`,
-              backgroundImage: 'none',
-              bgcolor: 'background.paper',
-            },
-          }}
-          open
-        >
-          {sidebarContent}
-        </Drawer>
-      </Box>
+        <div className="absolute right-4 top-4">
+          <button onClick={() => setMobileOpen(false)} className="text-muted-foreground">
+            <X size={20} />
+          </button>
+        </div>
+        {sidebarContent}
+      </div>
+
+      {/* Sidebar - Desktop */}
+      <div className="hidden w-[260px] shrink-0 border-r bg-background md:block">
+        <div className="fixed h-full w-[260px]">{sidebarContent}</div>
+      </div>
 
       {/* Main Workspace */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header Appbar */}
-        <AppBar
-          position="sticky"
-          elevation={0}
-          sx={{
-            bgcolor: 'background.paper',
-            color: 'text.primary',
-            borderBottom: `1px solid ${muiTheme.palette.divider}`,
-          }}
-        >
-          <Toolbar sx={{ px: { xs: 2, sm: 3 }, justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { md: 'none' } }}
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-4 sm:px-6">
+          <div className="flex items-center">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="mr-4 text-muted-foreground md:hidden"
+            >
+              <MenuIcon size={20} />
+            </button>
+            <h2 className="text-sm font-semibold">Workspace</h2>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="rounded-md p-2 text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
+              title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}
+            >
+              {mode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+            <button className="rounded-md p-2 text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800">
+              <Bell size={20} />
+            </button>
+            <div className="mx-2 h-6 w-px bg-border"></div>
+
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
-                <MenuIcon size={20} />
-              </IconButton>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                Workspace
-              </Typography>
-            </Box>
+                U
+              </button>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* Theme Toggle */}
-              <Tooltip title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}>
-                <IconButton onClick={toggleTheme} color="inherit" size="small" sx={{ p: 1 }}>
-                  {mode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-                </IconButton>
-              </Tooltip>
-
-              <IconButton color="inherit" size="small" sx={{ p: 1 }}>
-                <Bell size={20} />
-              </IconButton>
-
-              <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 0.5, height: 24 }} />
-
-              <Tooltip title="Account Settings">
-                <IconButton onClick={handleProfileMenuOpen} size="small" sx={{ ml: 0.5 }}>
-                  <Avatar
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      bgcolor: 'primary.main',
-                    }}
-                  >
-                    U
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                anchorEl={profileAnchor}
-                open={Boolean(profileAnchor)}
-                onClose={handleProfileMenuClose}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                PaperProps={{
-                  elevation: 4,
-                  sx: { mt: 1, minWidth: 180 },
-                }}
-              >
-                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
-                  <User size={16} /> My Profile
-                </MenuItem>
-                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(PATHS.PROFILE); }} sx={{ gap: 1.5, py: 1 }}>
-                  <Settings size={16} /> Settings
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={handleLogout} sx={{ gap: 1.5, py: 1, color: 'error.main' }}>
-                  <LogOut size={16} /> Sign Out
-                </MenuItem>
-              </Menu>
-            </Box>
-          </Toolbar>
-        </AppBar>
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in fade-in-80 zoom-in-95">
+                  <div className="p-1">
+                    <button
+                      onClick={() => {
+                        setProfileOpen(false);
+                        navigate(PATHS.PROFILE);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <User size={16} /> My Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        setProfileOpen(false);
+                        navigate(PATHS.PROFILE);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <Settings size={16} /> Settings
+                    </button>
+                  </div>
+                  <hr className="border-border" />
+                  <div className="p-1">
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive outline-none hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <LogOut size={16} /> Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
 
         {/* Content Outlet */}
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            py: { xs: 3, sm: 4 },
-            px: { xs: 2, sm: 3 },
-            bgcolor: (theme) => theme.palette.mode === 'light' ? '#f8fafc' : '#0b0f19',
-          }}
-        >
-          <Container maxWidth="lg" disableGutters>
+        <main className="flex-1 overflow-y-auto bg-slate-50 px-4 py-6 dark:bg-slate-950 sm:px-6 sm:py-8">
+          <div className="mx-auto max-w-7xl">
             <Outlet />
-          </Container>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </main>
+      </div>
+    </div>
   );
 };
+
 export default MainLayout;

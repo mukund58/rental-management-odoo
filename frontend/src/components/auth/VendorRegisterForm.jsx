@@ -146,7 +146,7 @@ export const VendorRegisterForm = ({ onSuccess, onError }) => {
           <Controller
             name="gstNumber"
             control={control}
-            rules={{ 
+            rules={{
               required: 'GST number is required',
               pattern: {
                 value: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
@@ -278,7 +278,7 @@ export const VendorRegisterForm = ({ onSuccess, onError }) => {
         {loading ? <CircularProgress size={24} color="inherit" /> : 'Register as Vendor'}
       </Button>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, mt: 1 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignitems: 'center', gap: 1, mt: 1 }}>
         <Typography variant="body2" color="text.secondary">
           Already have an account?{' '}
           <MuiLink component={Link} to={PATHS.LOGIN} sx={{ fontWeight: 600, color: 'indigo.600', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>

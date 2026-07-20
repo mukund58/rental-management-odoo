@@ -8,7 +8,7 @@ export const AdminSchedule = () => {
   const [selectedDates, setSelectedDates] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(0); // 0 = Jan, 11 = Dec
   const [currentYear, setCurrentYear] = useState(2026);
-  
+
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,18 +62,18 @@ export const AdminSchedule = () => {
     rentals.forEach(rental => {
       const pickup = new Date(rental.pickupDate);
       const returnDate = new Date(rental.returnDate);
-      
+
       // We check if the rental overlaps with the current viewed month
       for (let day = 1; day <= daysInMonth; day++) {
         const currentDate = new Date(currentYear, currentMonth, day);
-        
+
         let added = false;
         if (!data[day]) data[day] = { dots: [], orders: [] };
 
         // Normalize dates for comparison (ignoring time)
-        const curTime = currentDate.setHours(0,0,0,0);
-        const pTime = new Date(pickup).setHours(0,0,0,0);
-        const rTime = new Date(returnDate).setHours(0,0,0,0);
+        const curTime = currentDate.setHours(0, 0, 0, 0);
+        const pTime = new Date(pickup).setHours(0, 0, 0, 0);
+        const rTime = new Date(returnDate).setHours(0, 0, 0, 0);
 
         if (curTime === pTime) {
           data[day].dots.push('pickup');
@@ -103,7 +103,7 @@ export const AdminSchedule = () => {
   const renderDots = (day) => {
     const dots = calendarData[day]?.dots || [];
     // remove duplicates for visual cleanliness if a day has multiple of same type
-    const uniqueDots = [...new Set(dots)]; 
+    const uniqueDots = [...new Set(dots)];
     return (
       <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, height: 6 }}>
         {uniqueDots.map((dot, i) => {
@@ -116,7 +116,7 @@ export const AdminSchedule = () => {
             // Just matching the schema, though we might not have a distinct late pickup status
             dotStyle = { ...dotStyle, border: '1px solid #ef4444', bgcolor: 'transparent' };
           } else if (dot === 'lateDelivery') {
-            dotStyle = { ...dotStyle, bgcolor: '#991b1b', border: '1px solid #991b1b', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+            dotStyle = { ...dotStyle, bgcolor: '#991b1b', border: '1px solid #991b1b', display: 'flex', alignitems: 'center', justifyContent: 'center' };
           }
           return (
             <Box key={i} sx={dotStyle}>
@@ -130,17 +130,17 @@ export const AdminSchedule = () => {
 
   const getOrderColor = (rental, date) => {
     // Determine color based on rental status and date
-    const rTime = new Date(rental.returnDate).setHours(0,0,0,0);
-    const cTime = new Date(currentYear, currentMonth, date).setHours(0,0,0,0);
-    
+    const rTime = new Date(rental.returnDate).setHours(0, 0, 0, 0);
+    const cTime = new Date(currentYear, currentMonth, date).setHours(0, 0, 0, 0);
+
     if (rental.status === 4 && cTime === rTime) return '#ef4444'; // Late
     if (rental.status === 1 || rental.status === 0) return '#c084fc'; // Reserved/Pending
-    if (cTime === new Date(rental.pickupDate).setHours(0,0,0,0)) return '#f97316'; // Pickup
+    if (cTime === new Date(rental.pickupDate).setHours(0, 0, 0, 0)) return '#f97316'; // Pickup
     return '#22c55e'; // Booked/Available
   };
 
   const getOrderStatusText = (rental) => {
-    switch(rental.status) {
+    switch (rental.status) {
       case 0: return 'Pending';
       case 1: return 'Reserved';
       case 2: return 'Picked Up';
@@ -153,11 +153,11 @@ export const AdminSchedule = () => {
 
   return (
     <Box sx={{ width: '100%', p: 3, maxWidth: 1400, mx: 'auto', minHeight: '100vh' }}>
-      
+
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-        <Button 
-          variant="contained" 
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 4 }}>
+        <Button
+          variant="contained"
           sx={{ display: 'none', bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
           onClick={() => toast.success('New Schedule Created')}
         >
@@ -168,9 +168,9 @@ export const AdminSchedule = () => {
 
       {/* Month Dropdown */}
       <Box sx={{ mb: 3 }}>
-        <Select 
-          size="small" 
-          value={`${currentMonth}-${currentYear}`} 
+        <Select
+          size="small"
+          value={`${currentMonth}-${currentYear}`}
           onChange={(e) => {
             const [m, y] = e.target.value.split('-');
             setCurrentMonth(parseInt(m));
@@ -186,25 +186,25 @@ export const AdminSchedule = () => {
       </Box>
 
       <Grid container spacing={4}>
-        
+
         {/* Legend (Left) */}
         <Grid size={{ xs: 12, md: 2 }}>
           <Paper elevation={0} sx={{ p: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignitems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography sx={{ fontWeight: 600 }}>Booked</Typography>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid #22c55e', bgcolor: 'transparent' }} />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignitems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography sx={{ fontWeight: 600 }}>Pick up</Typography>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#f97316' }} />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignitems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography sx={{ fontWeight: 600 }}>Late Pick up</Typography>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid #ef4444', bgcolor: 'transparent' }} />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignitems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ fontWeight: 600 }}>Late Delivery</Typography>
-              <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#991b1b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#991b1b', display: 'flex', alignitems: 'center', justifyContent: 'center' }}>
                 <Box sx={{ width: 4, height: 4, bgcolor: 'white', borderRadius: '50%' }} />
               </Box>
             </Box>
@@ -222,38 +222,38 @@ export const AdminSchedule = () => {
               ))}
             </Box>
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
-              
+
               {/* Padding days */}
               {Array.from({ length: firstDayOfWeek }).map((_, i) => (
                 <Box key={`pad-${i}`} sx={{ height: 60, p: 1, borderBottom: '1px solid', borderRight: '1px solid', borderColor: 'divider' }}></Box>
               ))}
-              
+
               {/* Actual days */}
               {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                 const isSelected = selectedDates.includes(day);
                 return (
-                  <Box 
-                    key={day} 
+                  <Box
+                    key={day}
                     onClick={() => toggleDate(day)}
-                    sx={{ 
-                      height: 60, 
-                      p: 1, 
-                      borderBottom: '1px solid', 
-                      borderRight: '1px solid', 
+                    sx={{
+                      height: 60,
+                      p: 1,
+                      borderBottom: '1px solid',
+                      borderRight: '1px solid',
                       borderColor: 'divider',
                       cursor: 'pointer',
                       bgcolor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
                       position: 'relative',
                       display: 'flex',
                       flexDirection: 'column',
-                      alignItems: 'center'
+                      alignitems: 'center'
                     }}
                   >
-                    <Box sx={{ 
-                      width: 24, 
-                      height: 24, 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                    <Box sx={{
+                      width: 24,
+                      height: 24,
+                      display: 'flex',
+                      alignitems: 'center',
                       justifyContent: 'center',
                       borderRadius: '50%',
                       border: isSelected ? '2px solid #ef4444' : 'none'
@@ -274,7 +274,7 @@ export const AdminSchedule = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', height: '100%', minHeight: 400 }}>
             {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignitems: 'center', height: '100%' }}>
                 <CircularProgress />
               </Box>
             ) : selectedDates.length === 0 ? (
@@ -288,7 +288,7 @@ export const AdminSchedule = () => {
                       <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                         {months[currentMonth]} {date}{date === 1 || date === 21 || date === 31 ? 'st' : date === 2 || date === 22 ? 'nd' : date === 3 || date === 23 ? 'rd' : 'th'}, {currentYear}
                       </Typography>
-                      
+
                       {dayOrders.length === 0 ? (
                         <Typography variant="body2" color="text.secondary">No orders for this date.</Typography>
                       ) : (
@@ -298,11 +298,11 @@ export const AdminSchedule = () => {
                             const pName = order.items && order.items.length > 0 ? order.items[0].productName : 'Product';
                             const pQty = order.items && order.items.length > 0 ? order.items[0].quantity : 1;
                             const defaultText = `${idx + 1}. ${order.orderNumber}: ${pName}, ${pQty} Unit (${getOrderStatusText(order)})`;
-                            
+
                             return (
-                              <Box key={order.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <Box key={order.id} sx={{ display: 'flex', alignitems: 'center', justifyContent: 'space-between' }}>
                                 {editingId === itemId ? (
-                                  <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, gap: 1 }}>
+                                  <Box sx={{ display: 'flex', alignitems: 'center', flexGrow: 1, gap: 1 }}>
                                     <TextField size="small" fullWidth value={editValue} onChange={(e) => setEditValue(e.target.value)} autoFocus />
                                     <IconButton size="small" color="success" onClick={handleSaveEdit}><Check size={16} /></IconButton>
                                   </Box>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Box, Typography, Button, TextField, Table, TableBody, TableCell, 
-  TableContainer, TableHead, TableRow, IconButton, Dialog, DialogTitle, 
-  DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio, 
+import {
+  Box, Typography, Button, TextField, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, IconButton, Dialog, DialogTitle,
+  DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio,
   Checkbox, InputAdornment
 } from '@mui/material';
 import { Check, X, Calendar } from 'lucide-react';
@@ -16,7 +16,7 @@ export const AdminPricelistCreate = () => {
     { id: 1, applyOn: 'All Products', minQty: '0.00', validity: '2026-01-01 to 2026-12-31', selectable: false, unitPrice: '10% Discount' }
   ]);
   const [modalOpen, setModalOpen] = useState(false);
-  
+
   // Modal State
   const [ruleProducts, setRuleProducts] = useState('');
   const [priceType, setPriceType] = useState('discount');
@@ -47,11 +47,11 @@ export const AdminPricelistCreate = () => {
 
   return (
     <Box sx={{ width: '100%', p: 3, maxWidth: 1400, mx: 'auto', minHeight: '100vh', color: 'white' }}>
-      
+
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-        <Button 
-          variant="contained" 
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 4 }}>
+        <Button
+          variant="contained"
           sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
         >
           New
@@ -67,13 +67,13 @@ export const AdminPricelistCreate = () => {
 
       {/* Form */}
       <Box sx={{ mb: 6 }}>
-        <TextField 
+        <TextField
           fullWidth
           variant="standard"
           placeholder="e.g. My Price list"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          sx={{ 
+          sx={{
             input: { fontSize: '2rem', fontWeight: 600, color: 'white' },
             '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.2)' },
             '& .MuiInput-underline:hover:before': { borderBottomColor: '#22c55e' },
@@ -114,7 +114,7 @@ export const AdminPricelistCreate = () => {
             ))}
             <TableRow>
               <TableCell colSpan={5} sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                <Button 
+                <Button
                   onClick={() => setModalOpen(true)}
                   sx={{ textTransform: 'none', color: '#c084fc', justifyContent: 'flex-start', p: 0, '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' } }}
                 >
@@ -127,8 +127,8 @@ export const AdminPricelistCreate = () => {
       </TableContainer>
 
       {/* Create Pricelist Rule Modal */}
-      <Dialog 
-        open={modalOpen} 
+      <Dialog
+        open={modalOpen}
         onClose={() => setModalOpen(false)}
         PaperProps={{
           sx: {
@@ -143,19 +143,19 @@ export const AdminPricelistCreate = () => {
           Create Pricelist Rules
         </DialogTitle>
         <DialogContent sx={{ py: 3, display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>Products</Typography>
-            <TextField 
-              size="small" 
-              variant="standard" 
+            <TextField
+              size="small"
+              variant="standard"
               value={ruleProducts}
               onChange={(e) => setRuleProducts(e.target.value)}
-              sx={{ flexGrow: 1, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }} 
+              sx={{ flexGrow: 1, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }}
             />
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>Price Type</Typography>
             <RadioGroup row value={priceType} onChange={(e) => setPriceType(e.target.value)}>
               <FormControlLabel value="discount" control={<Radio sx={{ color: '#c084fc', '&.Mui-checked': { color: '#c084fc' } }} />} label="Discount" />
@@ -163,49 +163,49 @@ export const AdminPricelistCreate = () => {
             </RadioGroup>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>
               {priceType === 'discount' ? 'Discount' : 'Fixed Price'}
             </Typography>
-            <TextField 
-              size="small" 
-              variant="standard" 
+            <TextField
+              size="small"
+              variant="standard"
               value={priceValue}
               onChange={(e) => setPriceValue(e.target.value)}
-              sx={{ width: 100, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }} 
+              sx={{ width: 100, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }}
             />
             {priceType === 'discount' && <Typography sx={{ ml: 2, color: 'text.secondary', fontSize: '0.9rem' }}>% on sales price</Typography>}
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>Min Qty</Typography>
-            <TextField 
-              size="small" 
-              variant="standard" 
+            <TextField
+              size="small"
+              variant="standard"
               value={minQty}
               onChange={(e) => setMinQty(e.target.value)}
-              sx={{ width: 100, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }} 
+              sx={{ width: 100, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }}
             />
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>Validity</Typography>
-            <TextField 
-              size="small" 
+            <TextField
+              size="small"
               variant="standard"
               value={validity}
               onChange={(e) => setValidity(e.target.value)}
-              sx={{ flexGrow: 1, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }} 
+              sx={{ flexGrow: 1, input: { color: 'white' }, '& .MuiInput-underline:before': { borderBottomColor: 'rgba(255,255,255,0.3)' } }}
             />
             <Typography sx={{ ml: 2, color: 'text.secondary', fontSize: '0.8rem' }}>Opens calendar to select the date or date range</Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignitems: 'center' }}>
             <Typography sx={{ width: 120 }}>Selectable</Typography>
-            <Checkbox 
-              checked={selectable} 
+            <Checkbox
+              checked={selectable}
               onChange={(e) => setSelectable(e.target.checked)}
-              sx={{ color: 'rgba(255,255,255,0.3)', '&.Mui-checked': { color: '#c084fc' } }} 
+              sx={{ color: 'rgba(255,255,255,0.3)', '&.Mui-checked': { color: '#c084fc' } }}
             />
           </Box>
         </DialogContent>

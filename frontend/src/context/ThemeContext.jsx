@@ -1,8 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { StyledEngineProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createAppTheme } from '../theme/theme';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeModeContext = createContext(null);
 
@@ -27,16 +23,9 @@ export const ThemeModeProvider = ({ children }) => {
     }
   }, [mode]);
 
-  const theme = useMemo(() => createAppTheme(mode), [mode]);
-
   return (
     <ThemeModeContext.Provider value={{ mode, toggleTheme }}>
-      <StyledEngineProvider injectFirst>
-        <MuiThemeProvider theme={theme}>
-          <CssBaseline />
-          {children}
-        </MuiThemeProvider>
-      </StyledEngineProvider>
+      {children}
     </ThemeModeContext.Provider>
   );
 };

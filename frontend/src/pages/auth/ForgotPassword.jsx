@@ -40,7 +40,7 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignitems: 'center', width: '100%' }}>
       <Typography component="h1" variant="h5" sx={{ fontWeight: 700, mb: 3, textAlign: 'center' }}>
         Reset Password
       </Typography>

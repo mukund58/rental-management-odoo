@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Alert, CircularProgress, Link as MuiLink, Typography } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 import { register as apiRegister } from '../../api/authApi';
 import { PATHS } from '../../routes/paths';
 import Button from '../ui/Button';
@@ -35,8 +35,6 @@ export const RegisterForm = ({ onSuccess, onError }) => {
     setErrorMsg('');
     setLoading(true);
     try {
-      const fullName = `${data.firstName.trim()} ${data.lastName.trim()}`;
-
       const response = await apiRegister({
         firstName: data.firstName.trim(),
         lastName: data.lastName.trim(),
@@ -63,15 +61,15 @@ export const RegisterForm = ({ onSuccess, onError }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-2 w-full space-y-4">
       {errorMsg && (
-        <Alert severity="error" sx={{ mb: 2, borderRadius: '8px' }}>
+        <div className="rounded-lg bg-destructive/15 p-4 text-sm text-destructive border border-destructive/20">
           {errorMsg}
-        </Alert>
+        </div>
       )}
 
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
-        <Box sx={{ flex: 1 }}>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
           <Controller
             name="firstName"
             control={control}
@@ -85,8 +83,8 @@ export const RegisterForm = ({ onSuccess, onError }) => {
               />
             )}
           />
-        </Box>
-        <Box sx={{ flex: 1 }}>
+        </div>
+        <div className="flex-1">
           <Controller
             name="lastName"
             control={control}
@@ -100,10 +98,10 @@ export const RegisterForm = ({ onSuccess, onError }) => {
               />
             )}
           />
-        </Box>
-      </Box>
+        </div>
+      </div>
 
-      <Box sx={{ mb: 2 }}>
+      <div>
         <Controller
           name="email"
           control={control}
@@ -123,9 +121,9 @@ export const RegisterForm = ({ onSuccess, onError }) => {
             />
           )}
         />
-      </Box>
+      </div>
 
-      <Box sx={{ mb: 2 }}>
+      <div>
         <Controller
           name="password"
           control={control}
@@ -145,9 +143,9 @@ export const RegisterForm = ({ onSuccess, onError }) => {
             />
           )}
         />
-      </Box>
+      </div>
 
-      <Box sx={{ mb: 3 }}>
+      <div>
         <Controller
           name="confirmPassword"
           control={control}
@@ -164,43 +162,37 @@ export const RegisterForm = ({ onSuccess, onError }) => {
             />
           )}
         />
-      </Box>
+      </div>
 
       <Button
         type="submit"
         fullWidth
-        variant="contained"
-        color="primary"
         disabled={loading}
-        sx={{ mt: 1, mb: 2, py: 1.2 }}
+        className="mt-2 py-5"
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
+        {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+        Register
       </Button>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, mt: 1 }}>
-        <Typography variant="body2" color="text.secondary">
+      <div className="mt-4 flex flex-col items-center gap-2">
+        <p className="text-sm text-muted-foreground">
           Already have an account?{' '}
-          <MuiLink component={Link} to={PATHS.LOGIN} sx={{ fontWeight: 600, color: 'indigo.600', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+          <Link
+            to={PATHS.LOGIN}
+            className="font-semibold text-primary underline-offset-4 hover:underline"
+          >
             Login
-          </MuiLink>
-        </Typography>
+          </Link>
+        </p>
 
-        <MuiLink
-          component={Link}
+        <Link
           to={PATHS.REGISTER_VENDOR}
-          sx={{
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            color: 'indigo.600',
-            textDecoration: 'none',
-            '&:hover': { textDecoration: 'underline' },
-            mt: 0.5
-          }}
+          className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
         >
           Become a Vendor
-        </MuiLink>
-      </Box>
-    </Box>
+        </Link>
+      </div>
+    </form>
   );
 };
 

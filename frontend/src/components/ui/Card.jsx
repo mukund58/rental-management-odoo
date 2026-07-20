@@ -1,21 +1,28 @@
-import React from 'react';
-import { Card as MuiCard, CardContent, CardHeader } from '@mui/material';
+import * as React from "react"
+import { cn } from "../../lib/utils"
 
-export const Card = ({ children, title, subtitle, action, sx, ...props }) => {
-  return (
-    <MuiCard sx={{ overflow: 'visible', ...sx }} {...props}>
-      {(title || subtitle || action) && (
-        <CardHeader 
-          title={title} 
-          subheader={subtitle} 
-          action={action} 
-          titleTypographyProps={{ variant: 'h6', fontWeight: 600 }}
-          subheaderTypographyProps={{ variant: 'body2' }}
-        />
-      )}
-      <CardContent>{children}</CardContent>
-    </MuiCard>
-  );
-};
+export const Card = React.forwardRef(({ className, children, title, subtitle, action, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("rounded-xl border bg-card text-card-foreground shadow", className)}
+    {...props}
+  >
+    {(title || subtitle || action) && (
+      <div className="flex flex-col space-y-1.5 p-6 pb-3">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            {title && <h3 className="text-lg font-semibold leading-none tracking-tight">{title}</h3>}
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          </div>
+          {action && <div>{action}</div>}
+        </div>
+      </div>
+    )}
+    <div className={cn("p-6", (title || subtitle || action) && "pt-3")}>
+      {children}
+    </div>
+  </div>
+))
+Card.displayName = "Card"
 
-export default Card;
+export default Card

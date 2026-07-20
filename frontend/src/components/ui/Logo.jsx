@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 
 export const Logo = ({ size = 32, showText = true, ...props }) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }} {...props}>
+    <Box sx={{ display: 'flex', alignitems: 'center', gap: 1.5 }} {...props}>
       <Box
         sx={{
           width: size,
@@ -11,7 +11,7 @@ export const Logo = ({ size = 32, showText = true, ...props }) => {
           borderRadius: '8px',
           background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
           display: 'flex',
-          alignItems: 'center',
+          alignitems: 'center',
           justifyContent: 'center',
           color: '#fff',
           fontWeight: 'bold',

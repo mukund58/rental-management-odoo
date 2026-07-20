@@ -1,6 +1,6 @@
-﻿import React from 'react';
-import { Card, CardMedia, CardContent, Typography, Box, Chip, Button } from '@mui/material';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Eye, ShoppingBag } from 'lucide-react';
 
 export const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -10,124 +10,92 @@ export const ProductCard = ({ product }) => {
   };
 
   return (
-    <Card
-      sx={{
-        borderRadius: '16px',
-        overflow: 'hidden',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
-        border: '1px solid',
-        borderColor: 'divider',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        '&:hover': {
-          transform: 'translateY(-6px)',
-          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
-        },
-      }}
-    >
-      {/* Product Image */}
-      <Box sx={{ position: 'relative', pt: '75%', bgcolor: 'background.default' }}>
-        <CardMedia
-          component="img"
-          image={product.image}
-          alt={product.name}
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-        {/* Availability Badge */}
-        <Chip
-          label={product.available ? 'Available' : 'Out of Stock'}
-          size="small"
-          color={product.available ? 'success' : 'error'}
-          sx={{
-            position: 'absolute',
-            top: 12,
-            right: 12,
-            fontWeight: 700,
-            fontSize: '0.725rem',
-            borderRadius: '6px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}
-        />
-      </Box>
+    /* NOTE: `group` must be on the outermost element so group-hover: works */
+    <div className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/15 hover:border-primary/30">
 
-      <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        {/* Color circles below image if multiple exist */}
+      {/* ── Image ── */}
+      <div className="relative overflow-hidden bg-muted" style={{ paddingTop: '72%' }}>
+        <img
+          src={product.image}
+          alt={product.name}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+        />
+
+        {/* Dark overlay on hover */}
+        <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/25" />
+
+        {/* Quick-action buttons (appear on hover) */}
+        <div className="absolute inset-x-0 bottom-0 flex translate-y-full flex-col items-center gap-2 p-3 transition-transform duration-300 group-hover:translate-y-0">
+          <button
+            onClick={handleDetailsClick}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/90 px-4 py-2 text-sm font-semibold text-slate-900 backdrop-blur-sm transition-colors hover:bg-white"
+          >
+            <Eye className="h-4 w-4" />
+            Quick View
+          </button>
+        </div>
+
+        {/* Availability badge */}
+        <span
+          className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold shadow-md backdrop-blur-sm ${
+            product.available
+              ? 'bg-emerald-500 text-white'
+              : 'bg-rose-500 text-white'
+          }`}
+        >
+          {product.available ? 'Available' : 'Out of Stock'}
+        </span>
+      </div>
+
+      {/* ── Body ── */}
+      <div className="flex flex-grow flex-col gap-2 p-4">
+        {/* Color swatches */}
         {product.colors && product.colors.length > 0 && (
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <div className="flex gap-1.5">
             {product.colors.map((colorHex, idx) => (
-              <Box
+              <span
                 key={idx}
-                sx={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: '50%',
-                  backgroundColor: colorHex,
-                  border: colorHex === '#ffffff' ? '1px solid #cbd5e1' : 'none',
-                }}
+                title={colorHex}
+                className="h-3 w-3 rounded-full border border-black/10 shadow-sm"
+                style={{ backgroundColor: colorHex }}
               />
             ))}
-          </Box>
+          </div>
         )}
 
-        {/* Product Title */}
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontWeight: 700,
-            lineHeight: 1.3,
-            height: 44,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
+        {/* Title */}
+        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-card-foreground transition-colors duration-200 group-hover:text-primary">
           {product.name}
-        </Typography>
+        </h3>
 
-        {/* Rental Price */}
-        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mt: 'auto' }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, color: 'primary.main' }}>
+        {/* Price */}
+        <div className="mt-auto flex items-baseline gap-1 pt-2">
+          <span className="text-xl font-extrabold text-primary">
             ₹{product.rentalPrice}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-            / {product.rentalUnit}
-          </Typography>
-        </Box>
+          </span>
+          <span className="text-xs font-medium text-muted-foreground">
+            /{product.rentalUnit}
+          </span>
+        </div>
+      </div>
 
-        {/* View Details Button */}
-        <Button
-          variant="outlined"
-          fullWidth
+      {/* ── CTA Footer ── */}
+      <div className="flex gap-2 border-t border-border p-3">
+        <button
           onClick={handleDetailsClick}
-          sx={{
-            mt: 1,
-            borderRadius: '8px',
-            fontWeight: 600,
-            textTransform: 'none',
-            py: 0.8,
-            borderColor: 'primary.main',
-            color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'primary.contrastText',
-            },
-          }}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-primary/20 bg-transparent py-2 text-sm font-semibold text-primary transition-all duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
         >
-          View Details
-        </Button>
-      </CardContent>
-    </Card>
+          View
+          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+        </button>
+        <button
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-2 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-95"
+        >
+          <ShoppingBag className="h-3.5 w-3.5" />
+          Add To
+        </button>
+      </div>
+    </div>
   );
 };
 

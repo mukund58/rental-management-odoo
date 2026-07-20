@@ -11,18 +11,18 @@ export const QuotationTemplatePage = () => {
 
   return (
     <Box sx={{ width: '100%', p: 3, maxWidth: 1200, mx: 'auto', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
+
       {/* Header */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'center' }}>
-        <Button 
-          variant="contained" 
+      <Box sx={{ display: 'flex', gap: 2, mb: 4, alignitems: 'center' }}>
+        <Button
+          variant="contained"
           sx={{ display: 'none', bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
           onClick={() => { setSelectedTemplate(''); toast.success('Created new template draft.'); }}
         >
           New
         </Button>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>Quotation Template</Typography>
-        
+
         {/* If selected */}
         {selectedTemplate && (
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 4 }}>
@@ -35,7 +35,7 @@ export const QuotationTemplatePage = () => {
             </Box>
           </Box>
         )}
-        
+
         <TextField
           size="small"
           placeholder="Search..."
@@ -56,12 +56,12 @@ export const QuotationTemplatePage = () => {
               <Typography sx={{ fontWeight: 600 }}>Template</Typography>
             </Box>
             {templates.map(tmpl => (
-              <Box 
+              <Box
                 key={tmpl}
                 onClick={() => setSelectedTemplate(tmpl)}
-                sx={{ 
-                  p: 2, 
-                  cursor: 'pointer', 
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
                   bgcolor: selectedTemplate === tmpl ? 'rgba(59, 130, 246, 0.05)' : 'transparent',
                   borderLeft: selectedTemplate === tmpl ? '3px solid #3b82f6' : '3px solid transparent',
                   '&:hover': { bgcolor: 'action.hover' }
@@ -76,25 +76,25 @@ export const QuotationTemplatePage = () => {
         {/* Right Details */}
         <Grid item xs={12} md={9}>
           <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, height: '100%', p: 4 }}>
-            
+
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
                 <Typography sx={{ fontWeight: 600, mb: 1 }}>Template</Typography>
-                <TextField 
-                  size="small" 
-                  fullWidth 
-                  value={selectedTemplate} 
-                  sx={{ mb: 2, '& .MuiOutlinedInput-notchedOutline': { borderBottom: '2px solid #22c55e', borderRadius: 0, borderTop: 0, borderLeft: 0, borderRight: 0 } }} 
+                <TextField
+                  size="small"
+                  fullWidth
+                  value={selectedTemplate}
+                  sx={{ mb: 2, '& .MuiOutlinedInput-notchedOutline': { borderBottom: '2px solid #22c55e', borderRadius: 0, borderTop: 0, borderLeft: 0, borderRight: 0 } }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography sx={{ fontWeight: 600, mb: 2, borderBottom: '1px solid', borderColor: 'divider', pb: 1 }}>Confirmation</Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignitems: 'center', mb: 2 }}>
                   <Typography sx={{ width: 150 }}>Quotation Validity</Typography>
                   <TextField size="small" sx={{ width: 60, mx: 1 }} />
                   <Typography>Days</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignitems: 'center' }}>
                   <Typography sx={{ width: 150 }}>Payment Terms</Typography>
                   <TextField size="small" sx={{ width: 60, mx: 1 }} />
                   <Typography>%</Typography>
@@ -104,10 +104,10 @@ export const QuotationTemplatePage = () => {
 
             {/* Tabs */}
             <Box sx={{ mt: 4, display: 'flex', borderBottom: '1px solid', borderColor: 'divider' }}>
-              <Box 
+              <Box
                 onClick={() => setActiveTab('Lines')}
-                sx={{ 
-                  px: 3, py: 1, 
+                sx={{
+                  px: 3, py: 1,
                   cursor: 'pointer',
                   bgcolor: activeTab === 'Lines' ? '#1e40af' : 'transparent',
                   color: activeTab === 'Lines' ? 'white' : 'text.primary',
@@ -118,10 +118,10 @@ export const QuotationTemplatePage = () => {
               >
                 Lines
               </Box>
-              <Box 
+              <Box
                 onClick={() => setActiveTab('Builder')}
-                sx={{ 
-                  px: 3, py: 1, 
+                sx={{
+                  px: 3, py: 1,
                   cursor: 'pointer',
                   bgcolor: activeTab === 'Builder' ? '#1e40af' : 'transparent',
                   color: activeTab === 'Builder' ? 'white' : 'text.primary',

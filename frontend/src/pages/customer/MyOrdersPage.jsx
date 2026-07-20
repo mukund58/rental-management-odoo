@@ -354,7 +354,7 @@ const MyOrdersPage = () => {
   const renderEmptyState = () => (
     <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mt: 3, textAlign: 'center' }}>
       <CardContent sx={{ py: 8 }}>
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
+        <Box sx={{ display: 'inline-flex', alignitems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
           <PackageOpen size={36} color="#64748b" />
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>No rentals yet</Typography>
@@ -393,7 +393,7 @@ const MyOrdersPage = () => {
         {/* Search, filters, sorting panel */}
         <Card className="no-print" sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 3 }}>
           <CardContent sx={{ p: 2.5 }}>
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={2} alignitems="center">
               <Grid size={{ xs: 12, md: 4 }}>
                 <TextField
                   fullWidth
@@ -491,7 +491,7 @@ const MyOrdersPage = () => {
                   '&:hover': { transform: 'translateY(-2px)' }
                 }}>
                   <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-                    <Grid container spacing={3} alignItems="center">
+                    <Grid container spacing={3} alignitems="center">
                       <Grid size={{ xs: 12, sm: 3, md: 2.5 }}>
                         <Box
                           component="img"
@@ -503,7 +503,7 @@ const MyOrdersPage = () => {
 
                       <Grid size={{ xs: 12, sm: 9, md: 9.5 }}>
                         <Stack spacing={1.5}>
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignitems: { xs: 'flex-start', sm: 'center' }, gap: 1 }}>
                             <Box>
                               <Typography variant="h6" sx={{ fontWeight: 800 }}>{orderItem.productName}</Typography>
                               <Typography variant="caption" color="text.secondary">Category: {orderItem.category} • Partner: {orderItem.vendorName}</Typography>
@@ -521,14 +521,14 @@ const MyOrdersPage = () => {
                             </Grid>
                             <Grid size={{ xs: 6, sm: 3 }}>
                               <Typography variant="caption" color="text.secondary">Duration</Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 0.5 }}>
                                 <Clock size={14} />
                                 {orderItem.rentalDurationDays} day(s)
                               </Typography>
                             </Grid>
                             <Grid size={{ xs: 6, sm: 3 }}>
                               <Typography variant="caption" color="text.secondary">Pickup / Return Dates</Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 0.5 }}>
                                 <Calendar size={14} />
                                 {orderItem.pickupDate} - {orderItem.returnDate}
                               </Typography>
@@ -541,7 +541,7 @@ const MyOrdersPage = () => {
 
                           <Divider />
 
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignitems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>Total Paid: <span style={{ color: '#4f46e5' }}>{money.format(orderItem.totalPaid)}</span></Typography>
                             <Stack direction="row" spacing={1.25} sx={{ flexWrap: 'wrap', gap: 1 }}>
                               <Button
@@ -615,7 +615,7 @@ const MyOrdersPage = () => {
         <DialogContent dividers>
           {selectedOrder && (
             <Stack spacing={2.5}>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', gap: 2, alignitems: 'center' }}>
                 <Box
                   component="img"
                   src={getImageUrl(selectedOrder.productImage)}

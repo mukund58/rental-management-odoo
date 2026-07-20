@@ -99,7 +99,7 @@ const InvoicePage = () => {
   return (
     <Box sx={{ bgcolor: '#f1f5f9', minHeight: '100vh', py: 4, '@media print': { p: 0, bgcolor: '#fff' } }}>
       <Container maxWidth="md">
-        
+
         {/* Print controls floating header */}
         <Stack direction="row" spacing={2} className="no-print" sx={{ mb: 3, justifyContent: 'space-between' }}>
           <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => window.close()} sx={{ borderRadius: 999 }}>
@@ -218,7 +218,7 @@ const InvoicePage = () => {
                 2. Late returns are charged penalty rates of 1.5x daily rentals.
               </Typography>
             </Grid>
-            <Grid size={5} sx={{ textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+            <Grid size={5} sx={{ textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignitems: 'flex-end' }}>
               <Box sx={{ width: 150, borderBottom: '1px solid', borderColor: 'grey.300', mb: 1 }} />
               <Typography variant="caption" sx={{ fontWeight: 700 }}>Authorized Signatory</Typography>
               <Typography variant="caption" color="text.secondary">RentX Fulfillment Hub</Typography>

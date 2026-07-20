@@ -14,9 +14,9 @@ export const PricelistsPage = () => {
   return (
     <Box sx={{ width: '100%', p: 3, maxWidth: 1400, mx: 'auto', minHeight: '100vh' }}>
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-        <Button 
-          variant="contained" 
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 4 }}>
+        <Button
+          variant="contained"
           sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
           onClick={() => navigate(PATHS.ADMIN_PRICELIST_CREATE)}
         >
@@ -35,9 +35,9 @@ export const PricelistsPage = () => {
           </TableHead>
           <TableBody>
             {pricelists.map((row) => (
-              <TableRow 
-                key={row.id} 
-                hover 
+              <TableRow
+                key={row.id}
+                hover
                 onClick={() => navigate(PATHS.ADMIN_PRICELIST_CREATE)}
                 sx={{ cursor: 'pointer' }}
               >

@@ -1,26 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../constants/env';
-import {
-  Alert,
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Chip,
-  Grid,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-  Divider,
-} from '@mui/material';
-import { Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight, AlertCircle, Tag, Package, Sparkles, X } from 'lucide-react';
 import { getCategories } from '../../api/authApi';
 import { getProducts } from '../../api/productApi';
-import Button from '../../components/ui/Button';
-import Loader from '../../components/ui/Loader';
 import { PATHS } from '../../routes/paths';
 
 const money = new Intl.NumberFormat('en-IN', {
@@ -28,6 +11,30 @@ const money = new Intl.NumberFormat('en-IN', {
   currency: 'INR',
   maximumFractionDigits: 0,
 });
+
+function ProductCardSkeleton() {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm animate-pulse">
+      <div className="h-52 w-full bg-muted" />
+      <div className="flex flex-grow flex-col gap-3 p-5">
+        <div className="flex gap-2">
+          <div className="h-5 w-20 rounded-full bg-muted" />
+          <div className="h-5 w-14 rounded-full bg-muted" />
+        </div>
+        <div className="h-6 w-3/4 rounded-lg bg-muted" />
+        <div className="h-4 w-full rounded bg-muted" />
+        <div className="h-4 w-2/3 rounded bg-muted" />
+        <div className="mt-auto flex items-center justify-between">
+          <div className="h-7 w-24 rounded bg-muted" />
+          <div className="h-5 w-16 rounded bg-muted" />
+        </div>
+      </div>
+      <div className="border-t p-4">
+        <div className="h-10 w-full rounded-xl bg-muted" />
+      </div>
+    </div>
+  );
+}
 
 export const ProductCatalog = () => {
   const navigate = useNavigate();
@@ -38,6 +45,7 @@ export const ProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryId, setCategoryId] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
 
   useEffect(() => {
     const loadCatalog = async () => {
@@ -46,7 +54,6 @@ export const ProductCatalog = () => {
           getProducts(),
           getCategories(),
         ]);
-
         setProducts(productData);
         setCategories(categoryData);
       } catch (error) {
@@ -56,7 +63,6 @@ export const ProductCatalog = () => {
         setLoading(false);
       }
     };
-
     loadCatalog();
   }, []);
 
@@ -68,9 +74,7 @@ export const ProductCatalog = () => {
         product.name.toLowerCase().includes(query) ||
         product.description.toLowerCase().includes(query) ||
         product.categoryName.toLowerCase().includes(query);
-
       const matchesCategory = categoryId === 'all' || product.categoryId === categoryId;
-
       return matchesSearch && matchesCategory;
     })
     .sort((left, right) => {
@@ -80,184 +84,235 @@ export const ProductCatalog = () => {
       return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
     });
 
-  if (loading) {
-    return <Loader message="Loading product catalog..." />;
+  const hasActiveFilters = searchTerm || categoryId !== 'all';
+
+  function getProductImage(product) {
+    const src = product.imageUrl;
+    if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+    if (src.startsWith('/')) return `${API_URL.replace('/api', '')}${src}`;
+    return src;
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          mb: 4,
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          background: 'linear-gradient(135deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.96) 100%)',
-          color: '#fff',
-          border: '1px solid rgba(148,163,184,0.2)',
-          boxShadow: '0 24px 80px rgba(15,23,42,0.25)',
-        }}
-      >
-        <Typography variant="overline" sx={{ letterSpacing: 2, opacity: 0.75 }}>
-          Product Module
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 800, mt: 1, mb: 1, letterSpacing: '-0.04em' }}>
-          Browse, search, and filter the catalog
-        </Typography>
-        <Typography sx={{ maxWidth: 720, color: 'rgba(226,232,240,0.82)' }}>
-          A seeded catalog with categories, product cards, and detail views for the rental product phase.
-        </Typography>
-      </Box>
+    <div className="w-full space-y-8">
+      {/* ── Hero Banner ── */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-8 text-white shadow-2xl md:p-12">
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-10 left-10 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
 
+        <div className="relative z-10">
+          <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur-sm">
+            <Sparkles className="h-3 w-3" />
+            Rental Catalog
+          </div>
+          <h1 className="mb-3 text-3xl font-extrabold tracking-tight md:text-5xl">
+            Rent anything, anywhere
+          </h1>
+          <p className="max-w-xl text-base text-indigo-100 md:text-lg">
+            Browse our curated catalog of premium rental products. Filter by category, price, or availability.
+          </p>
+
+          {/* Stats row */}
+          <div className="mt-6 flex flex-wrap gap-6">
+            <div className="flex items-center gap-2">
+              <Package className="h-4 w-4 text-indigo-200" />
+              <span className="text-sm font-semibold">{products.length} Products</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Tag className="h-4 w-4 text-indigo-200" />
+              <span className="text-sm font-semibold">{categories.length} Categories</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Error Banner ── */}
       {errorMsg && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {errorMsg}
-        </Alert>
+        <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          <p className="text-sm font-medium">{errorMsg}</p>
+        </div>
       )}
 
-      <Grid container spacing={2.5} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={5}>
-          <TextField
-            fullWidth
+      {/* ── Filter Bar ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            className="h-11 w-full rounded-xl border border-input bg-background pl-10 pr-10 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-shadow"
+            placeholder="Search products, categories…"
             value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search products, categories, descriptions"
-            label="Search"
-            InputProps={{
-              startAdornment: <Search size={18} style={{ marginRight: 8, color: '#64748b' }} />,
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <TextField
-            fullWidth
-            select
-            label="Category"
-            value={categoryId}
-            onChange={(event) => setCategoryId(event.target.value)}
-          >
-            <MenuItem value="all">All categories</MenuItem>
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <TextField
-            fullWidth
-            select
-            label="Sort"
-            value={sortBy}
-            onChange={(event) => setSortBy(event.target.value)}
-          >
-            <MenuItem value="featured">Featured</MenuItem>
-            <MenuItem value="price-asc">Price: low to high</MenuItem>
-            <MenuItem value="price-desc">Price: high to low</MenuItem>
-            <MenuItem value="stock-desc">Highest stock</MenuItem>
-          </TextField>
-        </Grid>
-      </Grid>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          {filteredProducts.length} products found
-        </Typography>
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
-          <SlidersHorizontal size={16} />
-          <Typography variant="body2">Filters update instantly</Typography>
-        </Stack>
-      </Box>
-
-      <Grid container spacing={3}>
-        {filteredProducts.map((product) => (
-          <Grid item xs={12} sm={6} lg={4} key={product.id}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid',
-                borderColor: 'divider',
-                boxShadow: '0 12px 40px rgba(15, 23, 42, 0.06)',
-              }}
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
-              <CardMedia
-                component="img"
-                height="200"
-                image={(() => {
-                  const src = product.imageUrl;
-                  if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
-                  if (src.startsWith('/')) return `${API_URL.replace('/api', '')}${src}`;
-                  return src;
-                })()}
-                alt={product.name}
-              />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Stack direction="row" spacing={1} sx={{ mb: 1.5, flexWrap: 'wrap' }}>
-                  <Chip label={product.categoryName} size="small" color="primary" variant="outlined" />
-                  <Chip
-                    label={product.isActive ? 'Active' : 'Inactive'}
-                    size="small"
-                    color={product.isActive ? 'success' : 'default'}
-                  />
-                </Stack>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.75, lineHeight: 1.25 }}>
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, minHeight: 48 }}>
-                  {product.description}
-                </Typography>
-                <Stack direction="row" alignItems="baseline" justifyContent="space-between" sx={{ mb: 1 }}>
-                  <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                    {money.format(product.price)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Stock: {product.stockQuantity}
-                  </Typography>
-                </Stack>
-              </CardContent>
-              <Divider />
-              <CardActions sx={{ p: 2 }}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  endIcon={<ArrowRight size={16} />}
-                  onClick={() => navigate(PATHS.PRODUCT_DETAILS.replace(':productId', product.id))}
-                >
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
 
-      {!filteredProducts.length && (
-        <Box
-          sx={{
-            mt: 4,
-            py: 8,
-            px: 3,
-            borderRadius: 4,
-            textAlign: 'center',
-            border: '1px dashed',
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-          }}
+        {/* Category */}
+        <select
+          className="h-11 rounded-xl border border-input bg-background px-4 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 sm:w-52 transition-shadow"
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
         >
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-            No products match your filters
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Try a broader search or clear the category filter.
-          </Typography>
-        </Box>
+          <option value="all">All categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Sort */}
+        <select
+          className="h-11 rounded-xl border border-input bg-background px-4 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 sm:w-48 transition-shadow"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="stock-desc">Best Stocked</option>
+        </select>
+      </div>
+
+      {/* ── Results Toolbar ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-semibold text-foreground">
+            {loading ? '…' : `${filteredProducts.length}`}
+            <span className="font-normal text-muted-foreground"> products found</span>
+          </span>
+          {hasActiveFilters && (
+            <button
+              onClick={() => { setSearchTerm(''); setCategoryId('all'); }}
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+            >
+              <X className="h-3 w-3" />
+              Clear filters
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          Filters update live
+        </div>
+      </div>
+
+      {/* ── Grid ── */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {loading
+          ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          : filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              image={getProductImage(product)}
+              onViewDetails={() => navigate(PATHS.PRODUCT_DETAILS.replace(':productId', product.id))}
+            />
+          ))}
+      </div>
+
+      {/* ── Empty State ── */}
+      {!loading && !filteredProducts.length && (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-card px-8 py-20 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <Package className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="mb-2 text-xl font-bold tracking-tight">No products found</h3>
+          <p className="mb-6 max-w-xs text-sm text-muted-foreground">
+            Try adjusting your search or clearing the category filter to see more results.
+          </p>
+          <button
+            onClick={() => { setSearchTerm(''); setCategoryId('all'); }}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <X className="h-4 w-4" />
+            Clear all filters
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
+
+/* ────────────────────────── Product Card ────────────────────────── */
+function ProductCard({ product, image, onViewDetails }) {
+  return (
+    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
+      {/* Image */}
+      <div className="relative overflow-hidden">
+        <img
+          src={image}
+          alt={product.name}
+          className="h-52 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+        {/* Stock badge */}
+        <span
+          className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-xs font-bold shadow-sm backdrop-blur-sm ${
+            product.isActive
+              ? 'bg-emerald-500/90 text-white'
+              : 'bg-slate-800/80 text-slate-200'
+          }`}
+        >
+          {product.isActive ? '● Active' : '○ Inactive'}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-grow flex-col p-5 gap-3">
+        {/* Category badge */}
+        <span className="inline-flex w-fit items-center rounded-full border border-primary/20 bg-primary/8 px-2.5 py-0.5 text-xs font-semibold text-primary">
+          {product.categoryName}
+        </span>
+
+        {/* Name */}
+        <h3 className="text-base font-bold leading-snug tracking-tight line-clamp-2">
+          {product.name}
+        </h3>
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+          {product.description}
+        </p>
+
+        {/* Price + Stock */}
+        <div className="mt-auto flex items-end justify-between pt-2">
+          <div>
+            <p className="text-xl font-extrabold text-foreground">
+              {money.format(product.price)}
+            </p>
+            <p className="text-xs text-muted-foreground">per day</p>
+          </div>
+          <span className="rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+            {product.stockQuantity} in stock
+          </span>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="border-t p-4">
+        <button
+          onClick={onViewDetails}
+          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          View Details
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default ProductCatalog;

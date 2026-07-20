@@ -47,7 +47,7 @@ const ContactPage = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+      <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
       <Container maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(-1)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
           Go Back
@@ -60,7 +60,7 @@ const ContactPage = () => {
           <Grid size={{ xs: 12, md: 5 }}>
             <Stack spacing={2.5}>
               <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.03)' }}>
-                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.5 }}>
+                <CardContent sx={{ display: 'flex', alignitems: 'center', gap: 2, p: 2.5 }}>
                   <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'primary.50', color: 'primary.main', display: 'flex' }}><Mail size={24} /></Box>
                   <Box>
                     <Typography variant="caption" color="text.secondary">Email Us</Typography>
@@ -70,7 +70,7 @@ const ContactPage = () => {
               </Card>
 
               <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.03)' }}>
-                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.5 }}>
+                <CardContent sx={{ display: 'flex', alignitems: 'center', gap: 2, p: 2.5 }}>
                   <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'success.50', color: 'success.main', display: 'flex' }}><Phone size={24} /></Box>
                   <Box>
                     <Typography variant="caption" color="text.secondary">Call Us</Typography>
@@ -80,7 +80,7 @@ const ContactPage = () => {
               </Card>
 
               <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.03)' }}>
-                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.5 }}>
+                <CardContent sx={{ display: 'flex', alignitems: 'center', gap: 2, p: 2.5 }}>
                   <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'warning.50', color: 'warning.main', display: 'flex' }}><MapPin size={24} /></Box>
                   <Box>
                     <Typography variant="caption" color="text.secondary">HQ Office</Typography>
