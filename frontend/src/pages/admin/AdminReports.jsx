@@ -24,13 +24,13 @@ export const AdminReports = () => {
 
   return (
     <Box sx={{ p: 4, width: '100%', maxWidth: 1200, mx: 'auto', bgcolor: '#0f172a', color: 'white', minHeight: '100vh', borderRadius: { xs: 0, md: 4 } }}>
-      
+
       {/* Header Toolbar */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4, borderBottom: '1px solid #334155', pb: 3, flexWrap: 'wrap' }}>
-        
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 3, mb: 4, borderBottom: '1px solid #334155', pb: 3, flexWrap: 'wrap' }}>
+
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: 1 }}>
           <Typography variant="h4" sx={{ fontWeight: 800 }}>Reports</Typography>
-          <IconButton 
+          <IconButton
             sx={{ bgcolor: 'white', color: 'black', '&:hover': { bgcolor: '#e2e8f0' }, borderRadius: 1 }}
             onClick={(e) => setSettingsAnchor(e.currentTarget)}
           >
@@ -59,9 +59,9 @@ export const AdminReports = () => {
           value={criteria}
           onChange={(e) => setCriteria(e.target.value)}
           size="small"
-          sx={{ 
-            bgcolor: '#a855f7', 
-            color: 'white', 
+          sx={{
+            bgcolor: '#a855f7',
+            color: 'white',
             borderRadius: 8,
             px: 2,
             '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
@@ -77,7 +77,7 @@ export const AdminReports = () => {
         <TextField
           placeholder="Insert a sheet"
           size="small"
-          sx={{ 
+          sx={{
             bgcolor: '#1e293b',
             borderRadius: 8,
             input: { color: 'white', px: 3 },

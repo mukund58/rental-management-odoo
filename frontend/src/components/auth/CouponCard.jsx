@@ -12,7 +12,7 @@ export const CouponCard = ({ couponCode = 'XXXX10', discount = '10%' }) => {
         border: '1.5px solid #fde68a',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignitems: 'center',
         gap: 2,
         boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02)',
         mb: 4,

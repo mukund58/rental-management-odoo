@@ -12,7 +12,7 @@ export const Pagination = ({ page, count, onChange }) => {
   if (count <= 1) return null;
 
   return (
-    <Stack spacing={2} alignItems="center" sx={{ mt: 5, mb: 3 }}>
+    <Stack spacing={2} alignitems="center" sx={{ mt: 5, mb: 3 }}>
       <MuiPagination
         count={count}
         page={page}

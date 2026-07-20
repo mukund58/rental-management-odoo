@@ -191,7 +191,7 @@ export const Home = () => {
           flexDirection: 'column',
         }}
       >
-        <Grid container spacing={{ xs: 2, md: 3 }} sx={{ flexGrow: 1, alignItems: 'flex-start' }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} sx={{ flexGrow: 1, alignitems: 'flex-start' }}>
           {/* Permanent Left Sidebar (Width 260px desktop only) */}
           <Grid
             size={{ xs: 12, md: 4, lg: 3, xl: 3 }}
@@ -233,9 +233,9 @@ export const Home = () => {
           <Grid size={{ xs: 12, md: 8, lg: 9, xl: 9 }} sx={{ minWidth: 0 }}>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minWidth: 0 }}>
-              
+
               {/* Product Listing Header */}
-              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1.5, mb: 3 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignitems: { xs: 'flex-start', sm: 'center' }, gap: 1.5, mb: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: 900, color: 'text.primary', letterSpacing: '-0.02em' }}>
                   Explore Rental Products
                 </Typography>

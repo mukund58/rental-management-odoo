@@ -22,7 +22,7 @@ export const SettingsPage = () => {
       <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>Settings</Typography>
 
       <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden', bgcolor: 'background.paper', mb: 4 }}>
-        
+
         {/* Pickup & Return Section */}
         <Box sx={{ p: 2, bgcolor: 'action.hover', borderBottom: '1px solid', borderColor: 'divider' }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Pickup & Return</Typography>
@@ -36,12 +36,12 @@ export const SettingsPage = () => {
                 <Typography variant="caption" color="text.secondary">Manage your late fee or overdue charges</Typography>
               </Box>
             }
-            sx={{ mb: 2, alignItems: 'flex-start' }}
+            sx={{ mb: 2, alignitems: 'flex-start' }}
           />
           {settings.enableLateFee && (
-            <Box sx={{ display: 'flex', alignItems: 'center', ml: 4, gap: 1 }}>
+            <Box sx={{ display: 'flex', alignitems: 'center', ml: 4, gap: 1 }}>
               <Typography color="error.main" sx={{ fontWeight: 600 }}>Late Fees $</Typography>
-              <TextField 
+              <TextField
                 size="small"
                 type="number"
                 value={settings.lateFeeRate}
@@ -65,8 +65,8 @@ export const SettingsPage = () => {
                 label={<Typography sx={{ fontWeight: 600 }}>Variants</Typography>}
               />
               {settings.enableVariants && (
-                <Typography 
-                  color="success.main" 
+                <Typography
+                  color="success.main"
                   sx={{ ml: 4, cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
                   onClick={() => navigate(PATHS.ADMIN_ATTRIBUTES)}
                 >
@@ -74,15 +74,15 @@ export const SettingsPage = () => {
                 </Typography>
               )}
             </Box>
-            
+
             <Box>
               <FormControlLabel
                 control={<Checkbox checked={settings.enablePriceList} onChange={handleChange('enablePriceList')} />}
                 label={<Typography sx={{ fontWeight: 600 }}>Price List</Typography>}
               />
               {settings.enablePriceList && (
-                <Typography 
-                  color="success.main" 
+                <Typography
+                  color="success.main"
                   sx={{ ml: 4, cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
                   onClick={() => navigate(PATHS.ADMIN_PRICELISTS)}
                 >

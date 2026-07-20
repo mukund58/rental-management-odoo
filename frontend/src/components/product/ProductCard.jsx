@@ -172,7 +172,7 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
           </Typography>
 
           {/* Price Label */}
-          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.25, mt: 1 }}>
+          <Box sx={{ display: 'flex', alignitems: 'baseline', gap: 0.25, mt: 1 }}>
             <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main' }}>
               ₹{product.price.toLocaleString()}
             </Typography>

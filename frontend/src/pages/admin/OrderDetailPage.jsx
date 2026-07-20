@@ -11,7 +11,7 @@ const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR
 export const OrderDetailPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  
+
   const [orderState, setOrderState] = useState('quotation');
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null);
@@ -69,7 +69,7 @@ export const OrderDetailPage = () => {
           fontWeight: 600,
           position: 'relative',
           display: 'flex',
-          alignItems: 'center',
+          alignitems: 'center',
           justifyContent: 'center',
           borderRadius: isFirst ? '20px 0 0 20px' : isLast ? '0 20px 20px 0' : 0,
           borderLeft: isFirst ? '' : 'none',
@@ -83,11 +83,11 @@ export const OrderDetailPage = () => {
 
   return (
     <Box sx={{ width: '100%', pb: 8, maxWidth: 1200, mx: 'auto' }}>
-      
+
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-        <Button 
-          variant="contained" 
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 3 }}>
+        <Button
+          variant="contained"
           sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
           onClick={() => {
             navigate('/dashboard/orders/new');
@@ -102,10 +102,10 @@ export const OrderDetailPage = () => {
       </Box>
 
       <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}>
-        
+
         {/* Action Bar */}
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#1e293b' }}>
-          
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignitems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#1e293b' }}>
+
           <Box sx={{ display: 'flex', gap: 1 }}>
             {orderState === 'quotation' || orderState === 'quotation_sent' ? (
               <>
@@ -134,115 +134,115 @@ export const OrderDetailPage = () => {
           </Box>
 
         </Box>
-        
+
         <Box sx={{ p: 4 }}>
           {loading ? (
-             <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
           ) : !order && orderId !== 'new' ? (
-             <Typography>Order not found</Typography>
+            <Typography>Order not found</Typography>
           ) : (
             <>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>{order?.orderNumber || 'New Order'}</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>{order?.orderNumber || 'New Order'}</Typography>
 
-          <Grid container spacing={4} sx={{ mb: 6 }}>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography sx={{ width: 140, fontWeight: 600 }}>Customer</Typography>
-                  <TextField size="small" fullWidth value={order?.customer || ''} disabled sx={{ bgcolor: 'background.default' }} />
+              <Grid container spacing={4} sx={{ mb: 6 }}>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={3}>
+                    <Box sx={{ display: 'flex', alignitems: 'center' }}>
+                      <Typography sx={{ width: 140, fontWeight: 600 }}>Customer</Typography>
+                      <TextField size="small" fullWidth value={order?.customer || ''} disabled sx={{ bgcolor: 'background.default' }} />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignitems: 'flex-start' }}>
+                      <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Invoice Address</Typography>
+                      <TextField size="small" fullWidth multiline rows={2} value={order?.invoiceAddress || 'N/A'} disabled sx={{ bgcolor: 'background.default' }} />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignitems: 'flex-start' }}>
+                      <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Delivery Address</Typography>
+                      <TextField size="small" fullWidth multiline rows={2} value={order?.deliveryAddress || 'N/A'} disabled sx={{ bgcolor: 'background.default' }} />
+                    </Box>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={3}>
+                    <Box sx={{ display: 'flex', alignitems: 'center' }}>
+                      <Typography sx={{ width: 140, fontWeight: 600 }}>Rental Period</Typography>
+                      <Box sx={{ display: 'flex', gap: 2, flex: 1, alignitems: 'center' }}>
+                        <TextField size="small" fullWidth value={order?.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : ''} disabled sx={{ bgcolor: 'background.default' }} />
+                        <Typography>→</Typography>
+                        <TextField size="small" fullWidth value={order?.returnDate ? new Date(order.returnDate).toLocaleDateString() : ''} disabled sx={{ bgcolor: 'background.default' }} />
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignitems: 'center' }}>
+                      <Typography sx={{ width: 140, fontWeight: 600 }}>Price List</Typography>
+                      <TextField size="small" fullWidth value={'Default'} disabled sx={{ bgcolor: 'background.default' }} />
+                    </Box>
+                  </Stack>
+                </Grid>
+              </Grid>
+
+              {/* Order Lines */}
+              <Box sx={{ mb: 3 }}>
+                <Box sx={{ display: 'inline-block', borderBottom: '2px solid', borderColor: 'primary.main', pb: 1, px: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                    Order Line
+                  </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Invoice Address</Typography>
-                  <TextField size="small" fullWidth multiline rows={2} value={order?.invoiceAddress || 'N/A'} disabled sx={{ bgcolor: 'background.default' }} />
+                <Divider />
+              </Box>
+
+              <TableContainer sx={{ mb: 3 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600 }}>Product</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Quantity</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Unit</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Unit Price</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Taxes</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }} align="right">Amount</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {order?.items?.map((item, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell>
+                          {item.name}
+                          <Typography variant="caption" display="block" color="text.secondary">
+                            [{new Date(order.pickupDate).toLocaleDateString()} -&gt; {new Date(order.returnDate).toLocaleDateString()}]
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>Units</TableCell>
+                        <TableCell>{money.format(item.unitPrice)}</TableCell>
+                        <TableCell>8%</TableCell>
+                        <TableCell align="right">{money.format(item.totalPrice)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <Divider sx={{ mb: 2 }} />
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', gap: 3 }}>
+                  <Typography sx={{ color: '#3b82f6', cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>Add a Product</Typography>
+                  <Typography sx={{ color: '#3b82f6', cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>Add a note</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Delivery Address</Typography>
-                  <TextField size="small" fullWidth multiline rows={2} value={order?.deliveryAddress || 'N/A'} disabled sx={{ bgcolor: 'background.default' }} />
-                </Box>
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography sx={{ width: 140, fontWeight: 600 }}>Rental Period</Typography>
-                  <Box sx={{ display: 'flex', gap: 2, flex: 1, alignItems: 'center' }}>
-                    <TextField size="small" fullWidth value={order?.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : ''} disabled sx={{ bgcolor: 'background.default' }} />
-                    <Typography>→</Typography>
-                    <TextField size="small" fullWidth value={order?.returnDate ? new Date(order.returnDate).toLocaleDateString() : ''} disabled sx={{ bgcolor: 'background.default' }} />
+                <Box sx={{ width: 300 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography sx={{ color: 'text.secondary', fontWeight: 500 }}>Untaxed Amount:</Typography>
+                    <Typography sx={{ fontWeight: 500 }}>{money.format(order?.subTotal || 0)}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography sx={{ color: 'text.secondary', fontWeight: 500 }}>Deposit :</Typography>
+                    <Typography sx={{ fontWeight: 500 }}>{money.format(order?.deposit || 0)}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, mt: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>Total:</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>{money.format(order?.totalAmount || 0)}</Typography>
                   </Box>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography sx={{ width: 140, fontWeight: 600 }}>Price List</Typography>
-                  <TextField size="small" fullWidth value={'Default'} disabled sx={{ bgcolor: 'background.default' }} />
-                </Box>
-              </Stack>
-            </Grid>
-          </Grid>
-
-          {/* Order Lines */}
-          <Box sx={{ mb: 3 }}>
-            <Box sx={{ display: 'inline-block', borderBottom: '2px solid', borderColor: 'primary.main', pb: 1, px: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                Order Line
-              </Typography>
-            </Box>
-            <Divider />
-          </Box>
-
-          <TableContainer sx={{ mb: 3 }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Product</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Quantity</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Unit</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Unit Price</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Taxes</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="right">Amount</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {order?.items?.map((item, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>
-                      {item.name}
-                      <Typography variant="caption" display="block" color="text.secondary">
-                        [{new Date(order.pickupDate).toLocaleDateString()} -&gt; {new Date(order.returnDate).toLocaleDateString()}]
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell>Units</TableCell>
-                    <TableCell>{money.format(item.unitPrice)}</TableCell>
-                    <TableCell>8%</TableCell>
-                    <TableCell align="right">{money.format(item.totalPrice)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Divider sx={{ mb: 2 }} />
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              <Typography sx={{ color: '#3b82f6', cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>Add a Product</Typography>
-              <Typography sx={{ color: '#3b82f6', cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>Add a note</Typography>
-            </Box>
-            <Box sx={{ width: 300 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography sx={{ color: 'text.secondary', fontWeight: 500 }}>Untaxed Amount:</Typography>
-                <Typography sx={{ fontWeight: 500 }}>{money.format(order?.subTotal || 0)}</Typography>
               </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography sx={{ color: 'text.secondary', fontWeight: 500 }}>Deposit :</Typography>
-                <Typography sx={{ fontWeight: 500 }}>{money.format(order?.deposit || 0)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, mt: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>Total:</Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>{money.format(order?.totalAmount || 0)}</Typography>
-              </Box>
-            </Box>
-          </Box>
             </>
           )}
         </Box>

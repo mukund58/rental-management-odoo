@@ -104,7 +104,7 @@ const CartPage = () => {
   const renderEmptyState = () => (
     <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
       <CardContent sx={{ py: 8, textAlign: 'center' }}>
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 88, height: 88, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
+        <Box sx={{ display: 'inline-flex', alignitems: 'center', justifyContent: 'center', width: 88, height: 88, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
           <ShoppingBag size={36} color="#64748b" />
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
@@ -122,7 +122,7 @@ const CartPage = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar onSearchChange={() => {}} cartCount={items.length} onLogout={handleLogout} />
+      <Navbar onSearchChange={() => { }} cartCount={items.length} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(PATHS.ROOT)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>

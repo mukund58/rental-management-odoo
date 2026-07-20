@@ -10,7 +10,7 @@ import ProductCard from './ProductCard';
  */
 export const ProductGrid = ({ products, onAddToCartSuccess }) => {
   return (
-    <Grid container spacing={3} sx={{ display: 'flex', alignItems: 'stretch' }}>
+    <Grid container spacing={3} sx={{ display: 'flex', alignitems: 'stretch' }}>
       {products.map((product) => (
         <Grid
 

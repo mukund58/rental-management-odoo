@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { Box, InputBase, IconButton } from '@mui/material';
 import { Search } from 'lucide-react';
 
-/**
- * Reusable SearchBar component with an input field and a search icon button.
- * @param {Object} props
- * @param {Function} props.onSearch - Callback function called when search value changes or form is submitted
- */
 export const SearchBar = ({ onSearch }) => {
   const [value, setValue] = useState('');
 
@@ -25,55 +19,24 @@ export const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <Box
-      component="form"
+    <form
       onSubmit={handleSubmit}
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: 420,
-        height: 40,
-        bgcolor: '#f1f5f9',
-        border: '1px solid',
-        borderColor: 'transparent',
-        borderRadius: '50px',
-        pl: 2.5,
-        pr: 0.5,
-        transition: 'all 0.3s ease',
-        '&:focus-within': {
-          borderColor: 'primary.main',
-          bgcolor: 'background.paper',
-          boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.15)',
-        },
-      }}
+      className="flex h-10 w-full max-w-[420px] items-center rounded-full border border-transparent bg-slate-100 pl-4 pr-1 transition-all duration-300 focus-within:border-primary focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/20 dark:bg-slate-800 dark:focus-within:bg-slate-900"
     >
-      <InputBase
+      <input
+        type="text"
         placeholder="Search products..."
         value={value}
         onChange={handleChange}
-        fullWidth
-        sx={{
-          fontSize: '0.875rem',
-          fontWeight: 500,
-          color: 'text.primary',
-        }}
+        className="w-full bg-transparent text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
       />
-      <IconButton
+      <button
         type="submit"
-        size="small"
-        sx={{
-          bgcolor: 'primary.main',
-          color: 'primary.contrastText',
-          p: 0.8,
-          '&:hover': {
-            bgcolor: 'primary.dark',
-          },
-        }}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
       >
         <Search size={14} />
-      </IconButton>
-    </Box>
+      </button>
+    </form>
   );
 };
 

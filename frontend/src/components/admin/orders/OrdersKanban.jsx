@@ -34,11 +34,11 @@ const OrdersKanban = ({ orders }) => {
       <Grid container spacing={2}>
         {orders.map((order) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={order.id}>
-            <Card 
-              sx={{ 
-                borderRadius: 2, 
-                border: '1px solid', 
-                borderColor: 'divider', 
+            <Card
+              sx={{
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                 cursor: 'pointer',
                 transition: 'transform 0.2s, box-shadow 0.2s',
@@ -50,7 +50,7 @@ const OrdersKanban = ({ orders }) => {
               onClick={() => navigate(`/dashboard/orders/${order.id}`)}
             >
               <CardContent sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'flex-start', mb: 2 }}>
                   <Box>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>{order.customer}</Typography>
                     <Typography variant="body2" color="text.secondary">{order.orderNumber}</Typography>
@@ -59,22 +59,22 @@ const OrdersKanban = ({ orders }) => {
                     {money.format(order.totalAmount)}
                   </Typography>
                 </Box>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center' }}>
                   <Typography variant="caption" color="text.secondary">
                     {order.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : '-'} to {order.returnDate ? new Date(order.returnDate).toLocaleDateString() : '-'}
                   </Typography>
-                  <Chip 
-                    label={order.status === 1 ? 'Reserved' : order.status === 2 ? 'PickedUp' : order.status === 3 ? 'Returned' : order.status === 4 ? 'Cancelled' : order.status === 5 ? 'Late' : order.status} 
+                  <Chip
+                    label={order.status === 1 ? 'Reserved' : order.status === 2 ? 'PickedUp' : order.status === 3 ? 'Returned' : order.status === 4 ? 'Cancelled' : order.status === 5 ? 'Late' : order.status}
                     size="small"
-                    sx={{ 
-                      bgcolor: getStatusColor(order.status).bg, 
+                    sx={{
+                      bgcolor: getStatusColor(order.status).bg,
                       color: getStatusColor(order.status).color,
                       fontWeight: 600,
                       borderRadius: 1,
                       fontSize: '0.7rem',
                       height: 24
-                    }} 
+                    }}
                   />
                 </Box>
               </CardContent>

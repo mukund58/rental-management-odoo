@@ -32,7 +32,7 @@ export const Coupon = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignitems: 'center', width: '100%' }}>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
           <CircularProgress color="primary" />
@@ -40,7 +40,7 @@ export const Coupon = () => {
       ) : (
         <>
           <CouponCard couponCode={coupon.couponCode} discount={coupon.discount} />
-          
+
           <Button
             onClick={handleContinue}
             fullWidth

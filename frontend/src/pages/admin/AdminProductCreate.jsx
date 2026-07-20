@@ -128,7 +128,7 @@ export const AdminProductCreate = () => {
     <Box sx={{ width: '100%', p: 3, maxWidth: 1200, mx: 'auto', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 3 }}>
         <Button
           variant="contained"
           sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2 }}
@@ -162,10 +162,10 @@ export const AdminProductCreate = () => {
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+          <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', flexDirection: 'column', alignitems: 'flex-end', gap: 1 }}>
             <Box
               onClick={() => fileInputRef.current?.click()}
-              sx={{ width: 120, height: 120, border: '2px dashed', borderColor: 'divider', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' }, overflow: 'hidden' }}
+              sx={{ width: 120, height: 120, border: '2px dashed', borderColor: 'divider', borderRadius: 2, display: 'flex', alignitems: 'center', justifyContent: 'center', bgcolor: 'background.default', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' }, overflow: 'hidden' }}
             >
               {uploading ? (
                 <CircularProgress size={24} />
@@ -213,14 +213,14 @@ export const AdminProductCreate = () => {
         {activeTab === 'General' && (
           <Grid container spacing={6}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Product Type</Typography>
                 <RadioGroup row value={form.productType} onChange={e => setField('productType', e.target.value)}>
                   <FormControlLabel value="Goods" control={<Radio size="small" />} label="Goods" />
                   <FormControlLabel value="Service" control={<Radio size="small" />} label="Service" />
                 </RadioGroup>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Category *</Typography>
                 <FormControl size="small" sx={{ width: 200 }}>
                   <Select
@@ -235,7 +235,7 @@ export const AdminProductCreate = () => {
                   </Select>
                 </FormControl>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Stock Quantity</Typography>
                 <TextField
                   size="small"
@@ -245,7 +245,7 @@ export const AdminProductCreate = () => {
                   onChange={e => setField('stockQuantity', e.target.value)}
                 />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Sales Price *</Typography>
                 <TextField
                   size="small"
@@ -256,7 +256,7 @@ export const AdminProductCreate = () => {
                   slotProps={{ input: { startAdornment: <InputAdornment position="start">₹</InputAdornment> } }}
                 />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Deposit</Typography>
                 <TextField
                   size="small"
@@ -280,7 +280,7 @@ export const AdminProductCreate = () => {
               </Box>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 3 }}>
                 <Typography sx={{ fontWeight: 600 }}>Published</Typography>
                 <Switch color="primary" checked={form.isActive} onChange={e => setField('isActive', e.target.checked)} />
               </Box>
@@ -340,7 +340,7 @@ export const AdminProductCreate = () => {
           <Grid container spacing={6}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 3 }}>Rental</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Periodicity</Typography>
                 <Select size="small" defaultValue="Hours" sx={{ width: 150 }}>
                   <MenuItem value="Hours">Hours</MenuItem>
@@ -349,15 +349,15 @@ export const AdminProductCreate = () => {
                   <MenuItem value="Months">Months</MenuItem>
                 </Select>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Pickups</Typography>
                 <TextField size="small" sx={{ width: 150 }} defaultValue="10:00 H" />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Return</Typography>
                 <TextField size="small" sx={{ width: 150 }} defaultValue="19:00 H" />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Late Fees</Typography>
                 <TextField
                   size="small"
@@ -369,7 +369,7 @@ export const AdminProductCreate = () => {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 3 }}>Rental Deposit</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignitems: 'center', mb: 3 }}>
                 <Typography sx={{ width: 150, fontWeight: 600 }}>Security Deposit</Typography>
                 <TextField
                   size="small"

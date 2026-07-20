@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/auth/LoginForm';
 import { PATHS } from '../../routes/paths';
@@ -46,13 +45,19 @@ export const Login = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <Typography component="h1" variant="h5" sx={{ fontWeight: 700, mb: 3, textAlign: 'center' }}>
-        Sign In to Your Account
-      </Typography>
+    <div className="flex w-full flex-col">
+      <div className="mb-8">
+        <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+          Welcome back
+        </h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Sign in to your account to continue
+        </p>
+      </div>
       <LoginForm onSuccess={handleLoginSuccess} />
-    </Box>
+    </div>
   );
 };
 
 export default Login;
+

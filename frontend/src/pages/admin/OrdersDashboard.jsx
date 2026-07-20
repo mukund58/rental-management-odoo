@@ -35,26 +35,26 @@ export const OrdersDashboard = () => {
     }
   };
 
-  const filteredOrders = orders.filter(order => 
+  const filteredOrders = orders.filter(order =>
     order.orderNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.customer?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>Rental Order</Typography>
           <IconButton size="small" sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}><Settings size={18} /></IconButton>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 3 }}
             onClick={() => navigate('/dashboard/orders/new')}
           >
             New
           </Button>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: 2 }}>
           <TextField
             size="small"
             placeholder="Search orders..."
@@ -69,7 +69,7 @@ export const OrdersDashboard = () => {
               sx: { borderRadius: 999, bgcolor: 'background.paper', width: 250 }
             }}
           />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignitems: 'center', gap: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}>View Switcher</Typography>
             <ToggleButtonGroup
               value={viewMode}
@@ -90,8 +90,8 @@ export const OrdersDashboard = () => {
       </Box>
 
       {/* Stats and Filters Row */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center', mb: 3 }}>
+
         {/* Left Pills */}
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" sx={{ borderRadius: 2, borderColor: '#d97706', color: '#d97706', flexDirection: 'column', py: 0.5, px: 2, minWidth: 80, '&:hover': { bgcolor: 'rgba(217, 119, 6, 0.1)' } }}>
@@ -113,11 +113,11 @@ export const OrdersDashboard = () => {
         </Box>
 
         {/* Right Stats */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Select 
-              size="small" 
-              defaultValue="7days" 
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: 3 }}>
+          <Box sx={{ display: 'flex', alignitems: 'center', gap: 1 }}>
+            <Select
+              size="small"
+              defaultValue="7days"
               sx={{ borderRadius: 2, '& .MuiOutlinedInput-notchedOutline': { border: '1px solid', borderColor: 'divider' } }}
             >
               <MenuItem value="7days">Last 7 Days</MenuItem>

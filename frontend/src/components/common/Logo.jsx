@@ -10,7 +10,7 @@ export const Logo = () => {
       onClick={() => navigate('/')}
       sx={{
         display: 'flex',
-        alignItems: 'center',
+        alignitems: 'center',
         gap: 1.2,
         cursor: 'pointer',
         userSelect: 'none',

@@ -287,7 +287,7 @@ const TrackingPage = () => {
   if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="lg" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Typography variant="body1">Loading tracking details...</Typography>
         </Container>
@@ -298,7 +298,7 @@ const TrackingPage = () => {
   if (!order) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="md" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
             <CardContent sx={{ p: { xs: 4, md: 6 } }}>
@@ -367,12 +367,12 @@ const TrackingPage = () => {
       }
     }}>
       <Box className="no-print">
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
       </Box>
 
       <Container className="print-container" maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Box sx={{ animation: `${fadeInUp} 0.6s ease-out` }}>
-          
+
           <Button className="no-print" variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/orders')} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
             Back to Orders
           </Button>
@@ -380,7 +380,7 @@ const TrackingPage = () => {
           {/* Tracking Header */}
           <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
             <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-              <Grid container spacing={3} alignItems="center">
+              <Grid container spacing={3} alignitems="center">
                 <Grid size={{ xs: 12, md: 7 }}>
                   <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>Track Rental Booking</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -388,7 +388,7 @@ const TrackingPage = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 5 }}>
-                  <Stack direction={{ xs: 'row', md: 'column' }} spacing={1} sx={{ alignItems: { xs: 'center', md: 'flex-end' }, justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+                  <Stack direction={{ xs: 'row', md: 'column' }} spacing={1} sx={{ alignitems: { xs: 'center', md: 'flex-end' }, justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
                     <Chip label={order.status} color="primary" sx={{ fontWeight: 700 }} />
                     <Typography variant="caption" color="text.secondary">
                       Est. Returns: {order.returnDate}
@@ -417,18 +417,18 @@ const TrackingPage = () => {
           </Card>
 
           <Grid container spacing={4}>
-            
+
             {/* Left Column: Live status cards & Notification updates */}
             <Grid size={{ xs: 12, md: 8 }}>
-              
+
               {/* Live Status Card */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4, bgcolor: '#eef2ff' }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 2, display: 'flex', alignItems: 'center', gap: 1.5, color: '#3730a3' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 2, display: 'flex', alignitems: 'center', gap: 1.5, color: '#3730a3' }}>
                     <Compass size={22} />
                     Live Activity Status
                   </Typography>
-                  
+
                   <Grid container spacing={3}>
                     <Grid size={{ xs: 6, sm: 3 }}>
                       <Typography variant="caption" color="text.secondary">Current status</Typography>
@@ -453,7 +453,7 @@ const TrackingPage = () => {
                   <Stack spacing={3}>
                     {notificationLogs.slice().reverse().map((log, index) => (
                       <Box key={index} sx={{ display: 'flex', gap: 2.5 }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignitems: 'center' }}>
                           <Box sx={{ p: 0.5, borderRadius: '50%', bgcolor: 'success.50', color: 'success.main', display: 'flex' }}>
                             <CheckCircle2 size={18} />
                           </Box>
@@ -488,7 +488,7 @@ const TrackingPage = () => {
                     <Grid size={{ xs: 12, sm: 8 }}>
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>{order.productName}</Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>Vendor: {order.vendorName}</Typography>
-                      
+
                       <Grid container spacing={2}>
                         <Grid size={6}>
                           <Typography variant="caption" color="text.secondary">Start Handoff Date</Typography>

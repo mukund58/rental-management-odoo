@@ -1,27 +1,76 @@
-import React from 'react';
-import { Button as BaseButton } from '@mui/material';
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cva } from 'class-variance-authority';
+import { cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
 
-export const Button = React.forwardRef(({ children, animateOnClick = true, animateOnHover = true, sx, ...props }, ref) => {
-  return (
-    <motion.div
-      style={{ display: props.fullWidth ? 'block' : 'inline-block', width: props.fullWidth ? '100%' : 'auto' }}
-      whileHover={animateOnHover && !props.disabled ? { scale: 1.015 } : undefined}
-      whileTap={animateOnClick && !props.disabled ? { scale: 0.985 } : undefined}
-    >
-      <BaseButton
+const buttonVariants = cva(
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+        // MUI backward compatibility
+        contained: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        outlined: 'border border-primary text-primary bg-background hover:bg-primary/10',
+        text: 'hover:bg-primary/10 text-primary',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
+        // MUI backward compatibility
+        small: 'h-9 rounded-md px-3 text-xs',
+        medium: 'h-10 px-4 py-2 text-sm',
+        large: 'h-11 rounded-md px-8 text-base',
+      },
+      fullWidth: {
+        true: 'w-full',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
+export const Button = React.forwardRef(
+  ({ className, variant, size, fullWidth, asChild = false, animateOnClick = true, animateOnHover = true, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    
+    // MUI mapped props
+    const mappedVariant = variant === 'contained' ? 'default' : variant;
+    
+    const ButtonComponent = (
+      <Comp
+        className={cn(buttonVariants({ variant: mappedVariant, size, fullWidth, className }))}
         ref={ref}
-        sx={{
-          width: props.fullWidth ? '100%' : 'auto',
-          ...sx,
-        }}
         {...props}
+      />
+    );
+
+    if (asChild) {
+      return ButtonComponent;
+    }
+
+    return (
+      <motion.div
+        style={{ display: fullWidth ? 'block' : 'inline-block', width: fullWidth ? '100%' : 'auto' }}
+        whileHover={animateOnHover && !props.disabled ? { scale: 1.015 } : undefined}
+        whileTap={animateOnClick && !props.disabled ? { scale: 0.985 } : undefined}
       >
-        {children}
-      </BaseButton>
-    </motion.div>
-  );
-});
+        {ButtonComponent}
+      </motion.div>
+    );
+  }
+);
 
 Button.displayName = 'Button';
 export default Button;

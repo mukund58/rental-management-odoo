@@ -1,29 +1,22 @@
 import React from 'react';
-import { Grid, Box, Typography } from '@mui/material';
 import ProductCard from './ProductCard';
 
 export const ProductGrid = ({ products = [] }) => {
   if (products.length === 0) {
     return (
-      <Box sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 600 }}>
-          No products match your filters.
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Try adjusting your search query or sidebar filters.
-        </Typography>
-      </Box>
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-20 text-center">
+        <p className="text-lg font-semibold text-muted-foreground">No products match your filters.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or sidebar filters.</p>
+      </div>
     );
   }
 
   return (
-    <Grid container spacing={3}>
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product) => (
-        <Grid item key={product.id} xs={12} sm={6} md={3}>
-          <ProductCard product={product} />
-        </Grid>
+        <ProductCard key={product.id} product={product} />
       ))}
-    </Grid>
+    </div>
   );
 };
 

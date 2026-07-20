@@ -4,7 +4,7 @@ import { Box, Button, Typography, Stack, Divider } from '@mui/material';
 const OrderStatusBar = ({ status, onUpdateStatus }) => {
   // Mapping status enum to visual states
   // Assuming 1 = Draft (Quotation), 2 = QuotationSent, 3+ = Sale Order
-  
+
   const steps = [
     { label: 'Quotation', key: 'Draft', value: 1 },
     { label: 'Quotation Sent', key: 'QuotationSent', value: 2 },
@@ -16,11 +16,11 @@ const OrderStatusBar = ({ status, onUpdateStatus }) => {
   else if (status >= 3) currentStepIndex = 2;
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      alignItems: 'center', 
-      borderBottom: '1px solid', 
+    <Box sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignitems: 'center',
+      borderBottom: '1px solid',
       borderColor: 'divider',
       pb: 2,
       mb: 3
@@ -46,15 +46,15 @@ const OrderStatusBar = ({ status, onUpdateStatus }) => {
         {steps.map((step, index) => {
           const isActive = index === currentStepIndex;
           const isPassed = index < currentStepIndex;
-          
+
           return (
-            <Box 
+            <Box
               key={step.key}
               sx={{
                 px: 3,
                 py: 1,
                 display: 'flex',
-                alignItems: 'center',
+                alignitems: 'center',
                 position: 'relative',
                 bgcolor: isActive ? 'primary.main' : 'transparent',
                 color: isActive ? 'primary.contrastText' : (isPassed ? 'text.primary' : 'text.disabled'),

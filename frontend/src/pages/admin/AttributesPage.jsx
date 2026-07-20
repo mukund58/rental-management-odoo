@@ -45,12 +45,12 @@ export const AttributesPage = () => {
   return (
     <Box sx={{ p: 4, maxWidth: 1000, mx: 'auto', width: '100%' }}>
       <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>Attributes</Typography>
-      
-      <Box sx={{ display: 'flex', gap: 4, mb: 4, alignItems: 'center' }}>
-        <Button 
-          variant="contained" 
+
+      <Box sx={{ display: 'flex', gap: 4, mb: 4, alignitems: 'center' }}>
+        <Button
+          variant="contained"
           onClick={() => navigate(PATHS.ADMIN_ATTRIBUTE_CREATE)}
-          sx={{ 
+          sx={{
             bgcolor: '#c084fc', // pinkish-purple from wireframe
             '&:hover': { bgcolor: '#a855f7' },
             color: 'white',
@@ -95,9 +95,9 @@ export const AttributesPage = () => {
             {filteredAttributes.map((row) => {
               const isSelected = selected.indexOf(row.id) !== -1;
               return (
-                <TableRow 
-                  key={row.id} 
-                  hover 
+                <TableRow
+                  key={row.id}
+                  hover
                   selected={isSelected}
                   onClick={() => navigate(PATHS.ADMIN_ATTRIBUTE_CREATE)}
                   sx={{ cursor: 'pointer' }}

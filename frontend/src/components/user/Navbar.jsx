@@ -28,7 +28,7 @@ export const Navbar = ({ onSearchChange, user, onLogout }) => {
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'background.paper', color: 'text.primary', borderBottom: '1px solid', borderColor: 'divider' }}>
       <Toolbar sx={{ justifyContent: 'space-between', gap: 2, px: { xs: 2, sm: 3 } }}>
         {/* Left Side: Logo & Navigation Links */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, md: 4 } }}>
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: { xs: 2, md: 4 } }}>
           <Typography
             variant="h6"
             sx={{
@@ -37,7 +37,7 @@ export const Navbar = ({ onSearchChange, user, onLogout }) => {
               letterSpacing: '-0.025em',
               cursor: 'pointer',
               display: 'flex',
-              alignItems: 'center',
+              alignitems: 'center',
               gap: 1
             }}
             onClick={() => navigate('/')}
@@ -45,7 +45,7 @@ export const Navbar = ({ onSearchChange, user, onLogout }) => {
             Your Logo
           </Typography>
 
-          <Box sx={{ display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 3 }}>
+          <Box sx={{ display: { xs: 'none', lg: 'flex' }, alignitems: 'center', gap: 3 }}>
             <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>
               Products
             </Typography>
@@ -67,7 +67,7 @@ export const Navbar = ({ onSearchChange, user, onLogout }) => {
             flexGrow: 1,
             maxWidth: 500,
             display: 'flex',
-            alignItems: 'center',
+            alignitems: 'center',
             bgcolor: (theme) => theme.palette.mode === 'light' ? '#f1f5f9' : '#1e293b',
             px: 2,
             py: 0.75,
@@ -86,7 +86,7 @@ export const Navbar = ({ onSearchChange, user, onLogout }) => {
         </Box>
 
         {/* Right Side: Wishlist, Cart, Avatar / Login */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+        <Box sx={{ display: 'flex', alignitems: 'center', gap: { xs: 1, sm: 2 } }}>
           <IconButton color="inherit" size="small" sx={{ p: 1 }}>
             <Heart size={22} />
           </IconButton>

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Box, Typography, IconButton, Badge, Avatar, Drawer, List, ListItem, ListItemText, ListItemAvatar, Button, Divider } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
 import { Heart, ShoppingCart, Trash2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -11,21 +10,15 @@ import { getProductById } from '../../api/productApi';
 import { getCart } from '../../api/cartApi';
 import useAuth from '../../hooks/useAuth';
 
-
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
-/**
- * RentX 70px fixed Navbar layout component
- * @param {Object} props
- * @param {Function} props.onSearchChange - Event handler when search query changes
- * @param {number} props.cartCount - Dynamic cart item count to display on the badge
- * @param {Function} props.onLogout - Callback to handle user logout
- */
 export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'Admin' || user?.role === 'Vendor';
 
-  const [profileAnchor, setProfileAnchor] = useState(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [wishlistItems, setWishlistItems] = useState([]);
 
@@ -33,16 +26,18 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
 
   const navigate = useNavigate();
 
-  const handleProfileClick = (event) => {
-    setProfileAnchor(event.currentTarget);
-  };
-
-  const handleProfileClose = () => {
-    setProfileAnchor(null);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogoutClick = () => {
-    handleProfileClose();
+    setProfileOpen(false);
     if (onLogout) {
       onLogout();
     }
@@ -61,7 +56,6 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
     }
     setWishlistItems(items);
   };
-
 
   const loadCartCount = async () => {
     try {
@@ -90,16 +84,9 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
     }
   }, [cartCount]);
 
-  useEffect(() => {
-    loadWishlist();
-    window.addEventListener('wishlist-updated', loadWishlist);
-    return () => window.removeEventListener('wishlist-updated', loadWishlist);
-  }, []);
-
-
   const handleRemoveFromWishlist = (id) => {
     const wishlisted = JSON.parse(localStorage.getItem('wishlist_items') || '[]');
-    const updated = wishlisted.filter(itemId => String(itemId) !== String(id));
+    const updated = wishlisted.filter((itemId) => String(itemId) !== String(id));
     localStorage.setItem('wishlist_items', JSON.stringify(updated));
     toast.error('Removed from wishlist');
     window.dispatchEvent(new Event('wishlist-updated'));
@@ -118,218 +105,155 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
   };
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        height: 70,
-        bgcolor: 'background.paper',
-        color: 'text.primary',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-      }}
-    >
-      <Toolbar
-        sx={{
-          height: 70,
-          minHeight: '70px !important',
-          justifyContent: 'space-between',
-          px: { xs: 2, sm: 4 },
-          gap: 2,
-        }}
-      >
-        {/* Left Section: Logo & Center Left Links */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, lg: 4 } }}>
-          <Logo />
+    <>
+      <header className="fixed top-0 z-40 w-full border-b bg-background">
+        <div className="flex h-[70px] items-center justify-between px-4 sm:px-8 gap-4">
+          {/* Left Section: Logo & Center Left Links */}
+          <div className="flex items-center gap-4 lg:gap-8">
+            <Logo />
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3 }}>
-            {!isAdmin && ['Products', 'Terms & Conditions', 'About Us', 'Contact Us'].map((item) => (
-              <Typography
-                key={item}
-                variant="body2"
-                onClick={() => handleNavigation(item)}
-                sx={{
-                  fontWeight: 600,
-                  color: 'text.secondary',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'color 0.2s',
-                  '&:hover': { color: 'primary.main' },
-                }}
+            <nav className="hidden md:flex items-center gap-6">
+              {!isAdmin &&
+                ['Products', 'Terms & Conditions', 'About Us', 'Contact Us'].map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => handleNavigation(item)}
+                    className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary whitespace-nowrap"
+                  >
+                    {item}
+                  </button>
+                ))}
+            </nav>
+          </div>
+
+          {/* Center Section: Rounded Search Bar */}
+          <div className="flex-1 flex justify-center">
+            {!isAdmin && <SearchBar onSearch={onSearchChange} />}
+          </div>
+
+          {/* Right Section: Actions & Avatar */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {!isAdmin && (
+              <>
+                <button
+                  onClick={() => setWishlistOpen(true)}
+                  className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
+                >
+                  <Heart size={20} />
+                  {wishlistItems.length > 0 && (
+                    <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                      {wishlistItems.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => navigate(PATHS.CART)}
+                  className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
+                >
+                  <ShoppingCart size={20} />
+                  {localCartCount > 0 && (
+                    <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                      {localCartCount}
+                    </span>
+                  )}
+                </button>
+              </>
+            )}
+
+            {/* User Profile Avatar */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-primary text-sm font-bold text-primary-foreground transition-transform hover:scale-105"
               >
-                {item}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
+                A
+              </button>
 
-        {/* Center Section: Rounded Search Bar */}
-        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          {!isAdmin && <SearchBar onSearch={onSearchChange} />}
-        </Box>
-
-        {/* Right Section: Actions & Avatar */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-          {!isAdmin && (
-            <>
-              <IconButton
-                color="inherit"
-            onClick={() => setWishlistOpen(true)}
-            sx={{
-              p: 1,
-              borderRadius: '10px',
-              transition: 'all 0.2s',
-              '&:hover': { bgcolor: 'action.hover', color: 'primary.main' },
-            }}
-          >
-            <Badge badgeContent={wishlistItems.length} color="error">
-              <Heart size={20} />
-            </Badge>
-          </IconButton>
-
-          <IconButton
-            color="inherit"
-
-            onClick={() => navigate(PATHS.CART)}
-
-            sx={{
-              p: 1,
-              borderRadius: '10px',
-              transition: 'all 0.2s',
-              '&:hover': { bgcolor: 'action.hover', color: 'primary.main' },
-            }}
-          >
-            <Badge
-              badgeContent={localCartCount}
-              color="primary"
-              sx={{
-                '& .MuiBadge-badge': {
-                  fontWeight: 700,
-                  fontSize: '0.7rem',
-                  height: 18,
-                  minWidth: 18,
-                },
-              }}
-            >
-              <ShoppingCart size={20} />
-              </Badge>
-            </IconButton>
-            </>
-          )}
-
-          {/* User Profile Avatar */}
-          <IconButton
-            onClick={handleProfileClick}
-            size="small"
-            sx={{
-              p: 0.25,
-              border: '2px solid',
-              borderColor: 'primary.main',
-              transition: 'transform 0.2s',
-              '&:hover': { transform: 'scale(1.05)' },
-            }}
-          >
-            <Avatar
-              sx={{
-                width: 32,
-                height: 32,
-                fontSize: '0.875rem',
-                fontWeight: 700,
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-              }}
-            >
-              A
-            </Avatar>
-          </IconButton>
-          
-          <ProfileDropdown
-            anchorEl={profileAnchor}
-            open={Boolean(profileAnchor)}
-            onClose={handleProfileClose}
-            onLogout={handleLogoutClick}
-          />
-        </Box>
-      </Toolbar>
+              <ProfileDropdown
+                open={profileOpen}
+                onClose={() => setProfileOpen(false)}
+                onLogout={handleLogoutClick}
+              />
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Wishlist Drawer */}
-      <Drawer
-        anchor="right"
-        open={wishlistOpen}
-        onClose={() => setWishlistOpen(false)}
-        PaperProps={{
-          sx: { width: { xs: 290, sm: 380 }, p: 3, boxSizing: 'border-box' }
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800 }}>Wishlist ({wishlistItems.length})</Typography>
-          <IconButton onClick={() => setWishlistOpen(false)}><X size={20} /></IconButton>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
+      {wishlistOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50"
+          onClick={() => setWishlistOpen(false)}
+        />
+      )}
 
-        {wishlistItems.length === 0 ? (
-          <Box sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>Your wishlist is empty</Typography>
-            <Typography variant="body2">Add items while exploring products.</Typography>
-          </Box>
-        ) : (
-          <List sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {wishlistItems.map((item) => (
-              <ListItem
-                key={item.id}
-                disablePadding
-                sx={{
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 3,
-                  p: 1.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1.5,
-                  bgcolor: 'background.paper',
-                }}
-              >
-                <ListItemAvatar sx={{ minWidth: 'auto' }}>
-                  <Box
-                    component="img"
-                    src={item.image || item.imageUrl}
-                    alt={item.name}
-                    sx={{ width: 64, height: 64, borderRadius: 2, objectFit: 'cover' }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={<Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{item.name}</Typography>}
-                  secondary={<Typography variant="body2" sx={{ fontWeight: 700, color: 'primary.main', mt: 0.5 }}>{money.format(item.price)}/day</Typography>}
-                  sx={{ m: 0 }}
-                />
-                <Stack spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ borderRadius: 999, textTransform: 'none', fontSize: '0.75rem', fontWeight: 700 }}
-                    onClick={() => {
-                      setWishlistOpen(false);
-                      navigate(`/product/${item.id}`);
-                    }}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-[380px] sm:w-[380px] transform bg-background shadow-2xl transition-transform duration-300 ease-in-out ${
+          wishlistOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between p-6">
+            <h2 className="text-lg font-bold">Wishlist ({wishlistItems.length})</h2>
+            <button
+              onClick={() => setWishlistOpen(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <hr className="border-border" />
+
+          <div className="flex-1 overflow-y-auto p-6">
+            {wishlistItems.length === 0 ? (
+              <div className="py-12 text-center text-muted-foreground">
+                <p className="font-semibold text-foreground">Your wishlist is empty</p>
+                <p className="text-sm">Add items while exploring products.</p>
+              </div>
+            ) : (
+              <ul className="flex flex-col gap-4">
+                {wishlistItems.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-center gap-4 rounded-xl border bg-card p-3"
                   >
-                    View
-                  </Button>
-                  <IconButton
-                    color="error"
-                    size="small"
-                    onClick={() => handleRemoveFromWishlist(item.id)}
-                    sx={{ alignSelf: 'center' }}
-                  >
-                    <Trash2 size={16} />
-                  </IconButton>
-                </Stack>
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Drawer>
-    </AppBar>
+                    <img
+                      src={item.image || item.imageUrl}
+                      alt={item.name}
+                      className="h-16 w-16 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-foreground">{item.name}</h3>
+                      <p className="mt-1 text-xs font-bold text-primary">
+                        {money.format(item.price)}/day
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => {
+                          setWishlistOpen(false);
+                          navigate(`/product/${item.id}`);
+                        }}
+                        className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground hover:bg-primary/90"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        className="flex items-center justify-center text-destructive hover:text-destructive/80"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

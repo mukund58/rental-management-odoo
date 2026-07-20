@@ -132,22 +132,22 @@ const ProfilePage = () => {
           let completed = 0;
           let cancelled = 0;
           let moneySpent = 0;
-          
+
           backendOrders.forEach(o => {
             moneySpent += (o.totalAmount || 0);
-            
+
             let statusString = o.status;
             if (typeof o.status === 'number') {
-               const statuses = ['Reserved', 'Active', 'Overdue', 'Returned', 'Cancelled'];
-               statusString = statuses[o.status] || 'Unknown';
+              const statuses = ['Reserved', 'Active', 'Overdue', 'Returned', 'Cancelled'];
+              statusString = statuses[o.status] || 'Unknown';
             }
             const statusKey = String(statusString).toLowerCase();
-            
+
             if (statusKey === 'active' || statusKey === 'reserved') active++;
             else if (statusKey === 'returned' || statusKey === 'completed') completed++;
             else if (statusKey === 'cancelled') cancelled++;
           });
-          
+
           setOrdersStats({ total, active, completed, cancelled, moneySpent });
         }
       } catch (err) {
@@ -213,7 +213,7 @@ const ProfilePage = () => {
     }
 
     setUserProfile({ ...tempProfile });
-    
+
     // Save to user storage
     const existingUser = JSON.parse(localStorage.getItem('user') || '{}');
     localStorage.setItem('user', JSON.stringify({ ...existingUser, fullName: tempProfile.fullName, email: tempProfile.email, phone: tempProfile.phone }));
@@ -340,7 +340,7 @@ const ProfilePage = () => {
     }
     toast.success('Account successfully deleted. We are sorry to see you go!');
     setDeleteDialogOpen(false);
-    
+
     // Clear storage & Logout
     localStorage.clear();
     navigate('/login', { replace: true });
@@ -348,17 +348,17 @@ const ProfilePage = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
-      
+      <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
+
       <Container maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, mb: 4, letterSpacing: '-0.02em' }}>Account Settings</Typography>
 
         <Grid container spacing={4}>
-          
+
           {/* Left Column: Profile Card & Tabs List */}
           <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={3}>
-              
+
               {/* Profile Card */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: 3.5, textAlign: 'center' }}>
@@ -396,7 +396,7 @@ const ProfilePage = () => {
                   onChange={(_, value) => setActiveTab(value)}
                   sx={{
                     '& .MuiTab-root': {
-                      alignItems: 'flex-start',
+                      alignitems: 'flex-start',
                       fontWeight: 700,
                       textTransform: 'none',
                       py: 2,
@@ -424,12 +424,12 @@ const ProfilePage = () => {
 
           {/* Right Column: Tab detail panels */}
           <Grid size={{ xs: 12, md: 8 }}>
-            
+
             {/* Panel 0: Personal Details */}
             {activeTab === 0 && (
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Personal Details</Typography>
                     {!editProfileMode && (
                       <Button startIcon={<Edit2 size={16} />} size="small" onClick={() => setEditProfileMode(true)} sx={{ display: 'none' }}>
@@ -540,7 +540,7 @@ const ProfilePage = () => {
             {activeTab === 1 && (
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Saved Addresses</Typography>
                     <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddAddress} sx={{ display: 'none', borderRadius: 999 }}>
                       Add Address
@@ -556,7 +556,7 @@ const ProfilePage = () => {
                       {addresses.map((addr) => (
                         <Grid size={{ xs: 12, sm: 6 }} key={addr.id}>
                           <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3.5, border: addr.isDefault ? '2px solid #4f46e5' : '1px solid #e2e8f0', position: 'relative' }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'flex-start', mb: 1 }}>
                               <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{addr.fullName}</Typography>
                               <Stack direction="row" spacing={0.5}>
                                 <IconButton size="small" onClick={() => handleOpenEditAddress(addr)}><Edit2 size={14} /></IconButton>
@@ -565,8 +565,8 @@ const ProfilePage = () => {
                             </Box>
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{addr.street}</Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{addr.city}, {addr.state} - {addr.postalCode}</Typography>
-                            
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center' }}>
                               <Typography variant="caption" color="text.secondary">Phone: {addr.phone}</Typography>
                               {addr.isDefault ? (
                                 <Chip label="Default" color="primary" size="small" sx={{ fontWeight: 700, fontSize: '0.65rem' }} />
@@ -589,7 +589,7 @@ const ProfilePage = () => {
             {activeTab === 2 && (
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Payment Methods</Typography>
                     <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddPayment} sx={{ display: 'none', borderRadius: 999 }}>
                       Add Method
@@ -603,8 +603,8 @@ const ProfilePage = () => {
                   ) : (
                     <Stack spacing={2}>
                       {payments.map((pay) => (
-                        <Paper key={pay.id} variant="outlined" sx={{ p: 2, borderRadius: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper key={pay.id} variant="outlined" sx={{ p: 2, borderRadius: 3, display: 'flex', justifyContent: 'space-between', alignitems: 'center' }}>
+                          <Box sx={{ display: 'flex', alignitems: 'center', gap: 2 }}>
                             <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'action.selected', color: 'grey.600', display: 'flex' }}>
                               <CreditCard size={22} />
                             </Box>
@@ -613,8 +613,8 @@ const ProfilePage = () => {
                               <Typography variant="caption" color="text.secondary">{pay.type.toUpperCase()} • Name: {pay.name} {pay.expiry && `• Exp: ${pay.expiry}`}</Typography>
                             </Box>
                           </Box>
-                          
-                          <Stack direction="row" spacing={1} alignItems="center">
+
+                          <Stack direction="row" spacing={1} alignitems="center">
                             {pay.isDefault ? (
                               <Chip label="Default" size="small" color="primary" sx={{ fontWeight: 700 }} />
                             ) : (
@@ -637,7 +637,7 @@ const ProfilePage = () => {
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: 4 }}>
                   <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>Account Security</Typography>
-                  
+
                   <form onSubmit={handleChangePassword}>
                     <Stack spacing={2.5}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Change Password</Typography>
@@ -727,7 +727,7 @@ const ProfilePage = () => {
                       { key: 'returnReminders', title: 'Return Deadline warnings', desc: 'Alert warnings 24 hours before return schedule ends.' },
                       { key: 'promotions', title: 'Discount Alerts & Promotions', desc: 'Special coupon code deals and campaign releases.' }
                     ].map((pref) => (
-                      <Box key={pref.key} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box key={pref.key} sx={{ display: 'flex', justifyContent: 'space-between', alignitems: 'center' }}>
                         <Box>
                           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{pref.title}</Typography>
                           <Typography variant="caption" color="text.secondary">{pref.desc}</Typography>

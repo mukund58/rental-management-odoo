@@ -151,14 +151,14 @@ const OrderSuccessPage = () => {
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignitems: 'center',
             p: { xs: 4, md: 5 }
           }}>
             <Box sx={{
               animation: `${scaleUp} 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both`,
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
+              alignitems: 'center',
               width: 90,
               height: 90,
               borderRadius: '50%',
@@ -200,7 +200,7 @@ const OrderSuccessPage = () => {
               {/* Transaction Details */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignitems: 'center', gap: 1.5 }}>
                     <Receipt size={22} color="#4f46e5" />
                     Transaction Details
                   </Typography>
@@ -222,7 +222,7 @@ const OrderSuccessPage = () => {
                         </Box>
                         <Box>
                           <Typography variant="caption" color="text.secondary">Payment Method</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                             <CreditCard size={16} />
                             {paymentMethod}
                           </Typography>
@@ -234,21 +234,21 @@ const OrderSuccessPage = () => {
                       <Stack spacing={2}>
                         <Box>
                           <Typography variant="caption" color="text.secondary">Rental Duration</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                             <Clock size={16} />
                             {rentalDuration}
                           </Typography>
                         </Box>
                         <Box>
                           <Typography variant="caption" color="text.secondary">Rental Window</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                             <Calendar size={16} />
                             {pickupDate} to {returnDate}
                           </Typography>
                         </Box>
                         <Box>
                           <Typography variant="caption" color="text.secondary">Pickup Location</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                             <MapPin size={16} />
                             {pickupLocation}
                           </Typography>
@@ -266,7 +266,7 @@ const OrderSuccessPage = () => {
               {/* Booking Summary */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignitems: 'center', gap: 1.5 }}>
                     <ShoppingBag size={22} color="#4f46e5" />
                     Booking Summary
                   </Typography>

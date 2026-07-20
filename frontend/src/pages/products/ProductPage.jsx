@@ -180,15 +180,15 @@ const ProductPage = () => {
   const listingSpecs = product?.specifications?.length
     ? product.specifications
     : [
-        { label: 'Category', value: product?.categoryName || product?.category || 'General' },
-        { label: 'Availability', value: product?.available ? 'In stock for rental' : 'Currently unavailable' },
-        { label: 'Stock', value: `${product?.stockQuantity ?? 1} available` }
-      ];
+      { label: 'Category', value: product?.categoryName || product?.category || 'General' },
+      { label: 'Availability', value: product?.available ? 'In stock for rental' : 'Currently unavailable' },
+      { label: 'Stock', value: `${product?.stockQuantity ?? 1} available` }
+    ];
 
   if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
           <Loader message="Loading product details..." />
         </Container>
@@ -199,7 +199,7 @@ const ProductPage = () => {
   if (errorMsg || !product) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
           <Alert severity="warning" sx={{ borderRadius: 3 }}>{errorMsg || 'Product not found.'}</Alert>
         </Container>
@@ -209,7 +209,7 @@ const ProductPage = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+      <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
         {offlineWarning && (
@@ -280,7 +280,7 @@ const ProductPage = () => {
                 <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.2, mb: 1 }}>
                   {product.name}
                 </Typography>
-                
+
                 <Box sx={{ mb: 4 }}>
                   <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main', display: 'inline' }}>
                     {money.format(product.price)}
@@ -290,8 +290,8 @@ const ProductPage = () => {
                   </Typography>
                 </Box>
 
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 999, px: 1, py: 0.5 }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignitems="center">
+                  <Stack direction="row" spacing={1} alignitems="center" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 999, px: 1, py: 0.5 }}>
                     <IconButton onClick={() => handleQuantityChange(-1)} size="small">
                       <Minus size={16} />
                     </IconButton>
@@ -312,7 +312,7 @@ const ProductPage = () => {
                   >
                     {adding ? 'Adding...' : 'Add to cart'}
                   </Button>
-                  
+
                   <IconButton
                     onClick={handleToggleWishlist}
                     sx={{ display: 'none', border: '1px solid', borderColor: 'divider' }}
@@ -353,19 +353,19 @@ const ProductPage = () => {
                 <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>Rental Information</Typography>
                 <Stack spacing={1.5}>
                   <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
-                    <Stack direction="row" spacing={1.25} alignItems="center">
+                    <Stack direction="row" spacing={1.25} alignitems="center">
                       <Clock3 size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Flexible rental windows</Typography>
                     </Stack>
                   </Box>
                   <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
-                    <Stack direction="row" spacing={1.25} alignItems="center">
+                    <Stack direction="row" spacing={1.25} alignitems="center">
                       <Truck size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Fast delivery and pickup support</Typography>
                     </Stack>
                   </Box>
                   <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
-                    <Stack direction="row" spacing={1.25} alignItems="center">
+                    <Stack direction="row" spacing={1.25} alignitems="center">
                       <ShieldCheck size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Secure rental handling</Typography>
                     </Stack>
@@ -375,15 +375,15 @@ const ProductPage = () => {
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>Terms & Conditions</Typography>
                 <Stack spacing={1.25}>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1} alignitems="center">
                     <CheckCircle2 size={16} color="#16a34a" />
                     <Typography variant="body2" color="text.secondary">A valid ID is required at collection.</Typography>
                   </Stack>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1} alignitems="center">
                     <CheckCircle2 size={16} color="#16a34a" />
                     <Typography variant="body2" color="text.secondary">Rental charges are calculated per selected duration.</Typography>
                   </Stack>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1} alignitems="center">
                     <CheckCircle2 size={16} color="#16a34a" />
                     <Typography variant="body2" color="text.secondary">Damage or late return fees may apply.</Typography>
                   </Stack>
@@ -407,7 +407,7 @@ const ProductPage = () => {
 
       {/* Configure Modal for Variants */}
       <Dialog open={configureModalOpen} onClose={() => setConfigureModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 800, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle sx={{ fontWeight: 800, display: 'flex', justifyContent: 'space-between', alignitems: 'center' }}>
           Configure
           <IconButton onClick={() => setConfigureModalOpen(false)} size="small">
             <Minus style={{ transform: 'rotate(45deg)' }} size={20} />

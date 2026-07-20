@@ -10,7 +10,7 @@ const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR
 export const AdminInvoicePage = () => {
   const { invoiceId } = useParams();
   const navigate = useNavigate();
-  
+
   const [invoiceState, setInvoiceState] = useState('draft');
   const [loading, setLoading] = useState(true);
   const [invoiceData, setInvoiceData] = useState(null);
@@ -92,7 +92,7 @@ export const AdminInvoicePage = () => {
           fontWeight: 600,
           position: 'relative',
           display: 'flex',
-          alignItems: 'center',
+          alignitems: 'center',
           justifyContent: 'center',
           borderRadius: isFirst ? '20px 0 0 20px' : isLast ? '0 20px 20px 0' : 0,
           borderLeft: isFirst ? '' : 'none',
@@ -125,11 +125,11 @@ export const AdminInvoicePage = () => {
 
   return (
     <Box sx={{ width: '100%', pb: 8, maxWidth: 1200, mx: 'auto', '@media print': { p: 0 } }}>
-      
+
       {/* Top Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, '@media print': { display: 'none' } }}>
-        <Button 
-          variant="outlined" 
+      <Box sx={{ display: 'flex', alignitems: 'center', gap: 2, mb: 3, '@media print': { display: 'none' } }}>
+        <Button
+          variant="outlined"
           startIcon={<ArrowLeft size={16} />}
           onClick={() => navigate(-1)}
           sx={{ borderRadius: 2 }}
@@ -140,10 +140,10 @@ export const AdminInvoicePage = () => {
       </Box>
 
       <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', overflow: 'hidden' }}>
-        
+
         {/* Action Bar */}
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#1e293b', '@media print': { display: 'none' } }}>
-          
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignitems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#1e293b', '@media print': { display: 'none' } }}>
+
           <Box sx={{ display: 'flex', gap: 1 }}>
             {invoiceState === 'draft' ? (
               <>
@@ -166,22 +166,22 @@ export const AdminInvoicePage = () => {
           </Box>
 
         </Box>
-        
+
         <Box sx={{ p: 4 }}>
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>{invoiceData.invoiceNumber}</Typography>
 
           <Grid container spacing={4} sx={{ mb: 6 }}>
             <Grid item xs={12} md={6}>
               <Stack spacing={3}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignitems: 'center' }}>
                   <Typography sx={{ width: 140, fontWeight: 600 }}>Customer</Typography>
                   <TextField size="small" fullWidth value={invoiceData.customer} disabled sx={{ bgcolor: 'background.default' }} />
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                <Box sx={{ display: 'flex', alignitems: 'flex-start' }}>
                   <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Invoice Address</Typography>
                   <TextField size="small" fullWidth multiline rows={2} value={invoiceData.invoiceAddress} disabled sx={{ bgcolor: 'background.default' }} />
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                <Box sx={{ display: 'flex', alignitems: 'flex-start' }}>
                   <Typography sx={{ width: 140, fontWeight: 600, mt: 1 }}>Delivery Address</Typography>
                   <TextField size="small" fullWidth multiline rows={2} value={invoiceData.deliveryAddress} disabled sx={{ bgcolor: 'background.default' }} />
                 </Box>
@@ -189,12 +189,12 @@ export const AdminInvoicePage = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Stack spacing={3}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignitems: 'center' }}>
                   <Typography sx={{ width: 140, fontWeight: 600 }}>Invoice Date</Typography>
                   <TextField size="small" fullWidth value={invoiceData.invoiceDate} disabled sx={{ bgcolor: 'background.default' }} />
                 </Box>
                 {invoiceData.orderNumber && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignitems: 'center' }}>
                     <Typography sx={{ width: 140, fontWeight: 600 }}>Order Ref</Typography>
                     <TextField size="small" fullWidth value={invoiceData.orderNumber} disabled sx={{ bgcolor: 'background.default' }} />
                   </Box>

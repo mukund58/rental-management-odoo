@@ -385,7 +385,7 @@ const OrderDetailsPage = () => {
 
           {order.status === 'Cancelled' && (
             <Card className="no-print" sx={{ borderRadius: 4, border: '1px solid', borderColor: 'error.main', bgcolor: 'rgba(239, 68, 68, 0.1)', mb: 4 }}>
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 3 }}>
+              <CardContent sx={{ display: 'flex', alignitems: 'center', gap: 2, p: 3 }}>
                 <ShieldAlert color="#ef4444" size={28} />
                 <Box>
                   <Typography variant="subtitle2" sx={{ color: '#ef4444', fontWeight: 800 }}>Booking Cancelled</Typography>
@@ -467,7 +467,7 @@ const OrderDetailsPage = () => {
               {/* Booking Details */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 3, display: 'flex', alignitems: 'center', gap: 1.5 }}>
                     <Receipt size={22} color="#4f46e5" />
                     Booking Details
                   </Typography>
@@ -518,7 +518,7 @@ const OrderDetailsPage = () => {
                           <Typography variant="caption" color="text.secondary">Pickup Instructions</Typography>
                           <Typography variant="body2" color="text.secondary">Please present the handoff QR Code scanner at the counter to verify identity.</Typography>
                         </Box>
-                        <Box sx={{ border: '1px dashed', borderColor: 'divider', borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', gap: 2, bgcolor: 'action.hover' }}>
+                        <Box sx={{ border: '1px dashed', borderColor: 'divider', borderRadius: 3, p: 2, display: 'flex', alignitems: 'center', gap: 2, bgcolor: 'action.hover' }}>
                           <QrCode size={40} />
                           <Box>
                             <Typography variant="caption" sx={{ fontWeight: 700, display: 'block' }}>Handoff QR Code</Typography>
@@ -572,21 +572,21 @@ const OrderDetailsPage = () => {
                     </Box>
                     <Box>
                       <Typography variant="caption" color="text.secondary">Contact Hotline</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                         <Phone size={15} />
                         +91 91234 56789
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant="caption" color="text.secondary">Support Email</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                         <Mail size={15} />
                         vendor.support@rentx.com
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant="caption" color="text.secondary">Store Address</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, display: 'flex', alignitems: 'center', gap: 1 }}>
                         <MapPin size={15} />
                         BKC Business Hub, Mumbai, IN
                       </Typography>
@@ -598,7 +598,7 @@ const OrderDetailsPage = () => {
               {/* Payment Info */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 2.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 2.5, display: 'flex', alignitems: 'center', gap: 1 }}>
                     <Receipt size={20} color="#4f46e5" />
                     Invoice Summary
                   </Typography>

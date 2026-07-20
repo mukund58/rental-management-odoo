@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Box, Grid, Container, Paper, Typography, Pagination, Stack } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
 import Navbar from '../../components/user/Navbar';
 import SidebarFilters from '../../components/user/SidebarFilters';
@@ -8,60 +7,31 @@ import { products } from '../../data/products';
 
 export const Home = () => {
   const { user, logout } = useAuth();
-  
-  // Filtering States
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('All Durations');
   const [priceRange, setPriceRange] = useState([0, 250000]);
 
-  // Local Filtering Logic
   const filteredProducts = products.filter((prod) => {
-    // Search match
-    if (searchQuery && !prod.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    // Brand match
-    if (selectedBrands.length > 0 && !selectedBrands.includes(prod.brand)) {
-      return false;
-    }
-    // Color match
-    if (selectedColor && (!prod.colors || !prod.colors.includes(selectedColor))) {
-      return false;
-    }
-    // Duration match
-    if (selectedDuration !== 'All Durations' && prod.duration !== selectedDuration) {
-      return false;
-    }
-    // Price match
-    if (prod.price < priceRange[0] || prod.price > priceRange[1]) {
-      return false;
-    }
+    if (searchQuery && !prod.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (selectedBrands.length > 0 && !selectedBrands.includes(prod.brand)) return false;
+    if (selectedColor && (!prod.colors || !prod.colors.includes(selectedColor))) return false;
+    if (selectedDuration !== 'All Durations' && prod.duration !== selectedDuration) return false;
+    if (prod.price < priceRange[0] || prod.price > priceRange[1]) return false;
     return true;
   });
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
-      {/* Top Navbar */}
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar onSearchChange={setSearchQuery} user={user} onLogout={logout} />
 
-      {/* Main Content Layout */}
-      <Container maxWidth="xl" sx={{ py: { xs: 3, md: 5 }, flexGrow: 1 }}>
-        <Grid container spacing={4}>
-          {/* Left Sidebar Filter Section */}
-          <Grid item xs={12} md={3} lg={2.5}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
-                borderRadius: '16px',
-                border: '1px solid',
-                borderColor: 'divider',
-                position: { md: 'sticky' },
-                top: '90px',
-              }}
-            >
+      <div className="mx-auto w-full max-w-screen-2xl flex-1 px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+        <div className="flex gap-6">
+          {/* ── Sidebar ── */}
+          <aside className="hidden w-56 shrink-0 md:block lg:w-64">
+            <div className="sticky top-24 rounded-2xl border border-border bg-card p-4 shadow-sm">
               <SidebarFilters
                 selectedBrands={selectedBrands}
                 onBrandChange={setSelectedBrands}
@@ -72,62 +42,27 @@ export const Home = () => {
                 priceRange={priceRange}
                 onPriceChange={setPriceRange}
               />
-            </Paper>
-          </Grid>
+            </div>
+          </aside>
 
-          {/* Right Product Grid Section */}
-          <Grid item xs={12} md={9} lg={9.5}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {/* Product Listing Header */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                  Explore Rental Products
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
-                  Showing {filteredProducts.length} items
-                </Typography>
-              </Box>
+          {/* ── Main ── */}
+          <main className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
+                Explore Rental Products
+              </h1>
+              <span className="text-sm font-medium text-muted-foreground">
+                Showing {filteredProducts.length} of {products.length} items
+              </span>
+            </div>
 
-              {/* Responsive Product Grid */}
-              <ProductGrid products={filteredProducts} />
-
-              {/* Bottom Pagination matching the Wireframe */}
-              {filteredProducts.length > 0 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Stack spacing={2}>
-                    <Pagination
-                      count={2}
-                      variant="outlined"
-                      shape="rounded"
-                      color="primary"
-                      size="large"
-                      sx={{
-                        '& .MuiPaginationItem-root': {
-                          borderRadius: '8px',
-                          border: '1px solid',
-                          borderColor: 'divider',
-                          fontWeight: 600,
-                          backgroundColor: 'background.paper',
-                          transition: 'all 0.2s',
-                          '&:hover': {
-                            backgroundColor: 'action.hover',
-                          },
-                          '&.Mui-selected': {
-                            backgroundColor: 'primary.main',
-                            color: 'primary.contrastText',
-                            border: 'none',
-                          }
-                        }
-                      }}
-                    />
-                  </Stack>
-                </Box>
-              )}
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
-  </Box>  
+            {/* Grid */}
+            <ProductGrid products={filteredProducts} />
+          </main>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,16 +1,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box } from '@mui/material';
 import AdminNavbar from '../components/admin/layout/AdminNavbar';
 
 export const AdminLayout = () => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <AdminNavbar />
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <main className="flex flex-1 flex-col">
         <Outlet />
-      </Box>
-    </Box>
+      </main>
+    </div>
   );
 };
 

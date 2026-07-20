@@ -1,28 +1,27 @@
-import React from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import * as React from "react"
+import { Loader2 } from "lucide-react"
+import { cn } from "../../lib/utils"
 
-export const Loader = ({ message = 'Loading...', size = 40, ...props }) => {
+export const Loader = ({ message = 'Loading...', size = 40, className, ...props }) => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 3,
-        gap: 2,
-        minHeight: '200px',
-      }}
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center p-6 gap-4 min-h-[200px]",
+        className
+      )}
       {...props}
     >
-      <CircularProgress size={size} thickness={4} />
+      <Loader2 
+        size={size} 
+        className="animate-spin text-primary" 
+      />
       {message && (
-        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+        <p className="text-sm font-medium text-muted-foreground">
           {message}
-        </Typography>
+        </p>
       )}
-    </Box>
-  );
-};
+    </div>
+  )
+}
 
-export default Loader;
+export default Loader
