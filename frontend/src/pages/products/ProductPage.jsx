@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { API_URL } from '../../constants/env';
 import {
   Alert,
   Box,
@@ -186,7 +187,7 @@ const ProductPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
           <Loader message="Loading product details..." />
@@ -197,7 +198,7 @@ const ProductPage = () => {
 
   if (errorMsg || !product) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
           <Alert severity="warning" sx={{ borderRadius: 3 }}>{errorMsg || 'Product not found.'}</Alert>
@@ -207,7 +208,7 @@ const ProductPage = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
@@ -228,10 +229,15 @@ const ProductPage = () => {
         <Grid container spacing={{ xs: 3, md: 4 }}>
           <Grid size={{ xs: 12, lg: 7 }}>
             <Card sx={{ borderRadius: 4, overflow: 'hidden', border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
-              <Box sx={{ bgcolor: '#f8fafc', p: { xs: 2, sm: 3 } }}>
+              <Box sx={{ bgcolor: 'background.default', p: { xs: 2, sm: 3 } }}>
                 <Box
                   component="img"
-                  src={selectedImage || product.imageUrl}
+                  src={(() => {
+                    const src = selectedImage || product.imageUrl;
+                    if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+                    if (src.startsWith('/')) return `${API_URL.replace('/api', '')}${src}`;
+                    return src;
+                  })()}
                   alt={product.name}
                   sx={{ width: '100%', height: { xs: 280, sm: 420 }, objectFit: 'cover', borderRadius: 3 }}
                 />
@@ -309,7 +315,7 @@ const ProductPage = () => {
                   
                   <IconButton
                     onClick={handleToggleWishlist}
-                    sx={{ border: '1px solid', borderColor: 'divider' }}
+                    sx={{ display: 'none', border: '1px solid', borderColor: 'divider' }}
                   >
                     <Heart size={20} fill={wishlist ? 'currentColor' : 'none'} color={wishlist ? '#ef4444' : 'currentColor'} />
                   </IconButton>
@@ -332,7 +338,7 @@ const ProductPage = () => {
                 <Grid container spacing={1.5}>
                   {listingSpecs.map((spec) => (
                     <Grid size={{ xs: 12, sm: 6 }} key={spec.label}>
-                      <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'grey.50' }}>
+                      <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
                         <Typography variant="caption" color="text.secondary">{spec.label}</Typography>
                         <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.25 }}>
                           {spec.value}
@@ -346,19 +352,19 @@ const ProductPage = () => {
               <Grid size={{ xs: 12, md: 5 }}>
                 <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>Rental Information</Typography>
                 <Stack spacing={1.5}>
-                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'grey.50' }}>
+                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
                     <Stack direction="row" spacing={1.25} alignItems="center">
                       <Clock3 size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Flexible rental windows</Typography>
                     </Stack>
                   </Box>
-                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'grey.50' }}>
+                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
                     <Stack direction="row" spacing={1.25} alignItems="center">
                       <Truck size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Fast delivery and pickup support</Typography>
                     </Stack>
                   </Box>
-                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'grey.50' }}>
+                  <Box sx={{ p: 1.75, borderRadius: 2, bgcolor: 'action.hover' }}>
                     <Stack direction="row" spacing={1.25} alignItems="center">
                       <ShieldCheck size={16} color="#3b82f6" />
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>Secure rental handling</Typography>

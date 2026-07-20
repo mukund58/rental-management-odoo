@@ -16,9 +16,15 @@ export const AdminRoute = () => {
     );
   }
 
-  const isAdmin = user && (String(user.role).toLowerCase() === 'admin');
+  const roleStr = user ? String(user.role).toLowerCase() : '';
+  const hasAccess = isAuthenticated && (
+    roleStr === 'admin' || 
+    roleStr === 'vendor' || 
+    user?.role === 0 || 
+    user?.role === 1
+  );
 
-  return isAuthenticated && isAdmin ? <Outlet /> : <Navigate to={PATHS.LOGIN} replace />;
+  return hasAccess ? <Outlet /> : <Navigate to={PATHS.LOGIN} replace />;
 };
 
 export default AdminRoute;

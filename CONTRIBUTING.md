@@ -178,10 +178,10 @@ Rental Booking
 
 Backend
 
-* [ ] Rental Entity
-* [ ] Rental Item
-* [ ] Booking API
-* [ ] Price Calculation
+* [x] Rental Entity
+* [x] Rental Item
+* [x] Booking API
+* [x] Price Calculation
 
 Frontend
 

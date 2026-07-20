@@ -43,11 +43,17 @@ import { keyframes } from '@mui/system';
 import Navbar from '../../components/layout/Navbar';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
-import { customerMockOrders } from '../../data/customerMocks';
-import { products as localMockProducts } from '../../data/products';
 import { getCart } from '../../api/cartApi';
+import { getOrder, cancelOrder } from '../../api/checkoutApi';
+import { API_URL } from '../../constants/env';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+const getImageUrl = (src) => {
+  if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+  if (src.startsWith('http')) return src;
+  return `${API_URL.replace('/api', '')}${src}`;
+};
 
 const fadeInUp = keyframes`
   0% { opacity: 0; transform: translateY(20px); }
@@ -83,48 +89,6 @@ const getActiveStep = (status) => {
   }
 };
 
-const normalizeOrder = (o) => {
-  const pickup = o.rentalStart ? new Date(o.rentalStart) : new Date();
-  const retDate = o.rentalEnd ? new Date(o.rentalEnd) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const diffTime = Math.abs(retDate - pickup);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-
-  // Deriving values
-  const status = o.status || 'Confirmed';
-  let statusKey = o.statusKey || 'upcoming';
-  if (status === 'Active' || status === 'Currently Renting' || status === 'Picked Up') statusKey = 'active';
-  else if (status === 'Completed') statusKey = 'completed';
-  else if (status === 'Cancelled') statusKey = 'cancelled';
-  else if (status === 'Upcoming' || status === 'Confirmed' || status === 'Vendor Approved') statusKey = 'upcoming';
-
-  const total = o.totalAmount || o.total || 5400;
-  const subtotal = o.subtotal || Math.round(total * 0.8);
-  const deposit = o.securityDeposit || Math.round(total * 0.1);
-
-  return {
-    id: o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-    productId: o.productId || (o.id === 'ORD-1001' ? 'p4' : o.id === 'ORD-1002' ? 'p2' : o.id === 'ORD-1003' ? 'p3' : 'p5'),
-    orderNumber: o.orderNumber || o.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-    transactionId: o.transactionId || `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-    productName: o.productName || o.itemName || 'Rental Item',
-    productImage: o.productImage || o.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80',
-    category: o.category || 'General',
-    vendorName: o.vendorName || 'RentX Partner Vendor',
-    pickupDate: pickup.toLocaleDateString(),
-    returnDate: retDate.toLocaleDateString(),
-    rentalStart: o.rentalStart || pickup.toISOString().split('T')[0],
-    rentalEnd: o.rentalEnd || retDate.toISOString().split('T')[0],
-    rentalDurationDays: diffDays,
-    rentalCharges: subtotal,
-    securityDeposit: deposit,
-    totalPaid: total,
-    status: status,
-    statusKey: statusKey,
-    paymentStatus: o.paymentStatus || (status === 'Cancelled' ? 'Refunded' : 'Paid'),
-    createdAt: o.createdAt || new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    items: o.items || []
-  };
-};
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
@@ -153,15 +117,61 @@ const OrderDetailsPage = () => {
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-    const allNormalized = [...saved, ...customerMockOrders].map(normalizeOrder);
-    const matched = allNormalized.find((o) => String(o.id) === String(orderId));
-    if (matched) {
-      setOrder(matched);
-      setActiveImage(matched.productImage);
-    }
-    setLoading(false);
+    let isMounted = true;
+    const fetchOrder = async () => {
+      setLoading(true);
+      try {
+        const backendOrder = await getOrder(orderId);
+        if (isMounted && backendOrder) {
+          const pickup = backendOrder.pickupDate ? new Date(backendOrder.pickupDate) : new Date();
+          const retDate = backendOrder.returnDate ? new Date(backendOrder.returnDate) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+          const diffTime = Math.abs(retDate - pickup);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+
+          let statusString = backendOrder.status;
+          if (typeof backendOrder.status === 'number') {
+            const statuses = ['', 'Reserved', 'Picked Up', 'Returned', 'Cancelled', 'Late'];
+            statusString = statuses[backendOrder.status] || 'Unknown';
+          }
+          const statusKey = String(statusString).toLowerCase();
+
+          const total = backendOrder.totalAmount || 0;
+
+          const formatted = {
+            id: backendOrder.id,
+            orderNumber: backendOrder.orderNumber || backendOrder.id,
+            status: statusString,
+            statusKey: statusKey,
+            paymentStatus: backendOrder.paymentStatus || (statusKey === 'cancelled' ? 'Refunded' : 'Paid'),
+            totalAmount: total,
+            totalPaid: total,
+            subtotal: total * 0.8,
+            securityDeposit: total * 0.1,
+            rentalCharges: total * 0.8,
+            rentalStart: backendOrder.pickupDate || pickup.toISOString().split('T')[0],
+            rentalEnd: backendOrder.returnDate || retDate.toISOString().split('T')[0],
+            pickupDate: pickup.toLocaleDateString(),
+            returnDate: retDate.toLocaleDateString(),
+            rentalDurationDays: diffDays,
+            createdAt: backendOrder.createdAt || new Date().toISOString(),
+            items: backendOrder.items || [],
+            productName: backendOrder.items?.map(i => i.name).join(', ') || 'Rental Item',
+            productImage: backendOrder.items?.[0]?.imageUrl || '',
+            category: backendOrder.items?.[0]?.category || 'General',
+            vendorName: 'RentX Partner Vendor',
+            transactionId: backendOrder.paymentId || `TXN-${Math.floor(1000000000 + Math.random() * 9000000000)}`
+          };
+          setOrder(formatted);
+          setActiveImage(getImageUrl(formatted.productImage));
+        }
+      } catch (err) {
+        console.error('Failed to load order', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchOrder();
+    return () => { isMounted = false; };
   }, [orderId]);
 
   useEffect(() => {
@@ -182,23 +192,6 @@ const OrderDetailsPage = () => {
 
   // Helper: mutate order status in storage and state
   const mutateOrderStatus = (newStatus, newStatusKey) => {
-    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-    let exists = false;
-    const updatedSaved = saved.map((o) => {
-      if (String(o.id) === String(order.id)) {
-        exists = true;
-        return { ...o, status: newStatus, statusKey: newStatusKey };
-      }
-      return o;
-    });
-
-    if (exists) {
-      localStorage.setItem('rental_orders', JSON.stringify(updatedSaved));
-    } else {
-      const updatedMock = { ...order, status: newStatus, statusKey: newStatusKey };
-      localStorage.setItem('rental_orders', JSON.stringify([updatedMock, ...saved]));
-    }
-
     setOrder((prev) => ({ ...prev, status: newStatus, statusKey: newStatusKey }));
   };
 
@@ -262,10 +255,17 @@ const OrderDetailsPage = () => {
     toast.success('Return request submitted. Vendor will approve inspection schedule.');
   };
 
-  const handleConfirmCancel = () => {
-    mutateOrderStatus('Cancelled', 'cancelled');
-    toast.success('Booking cancelled successfully.');
-    setCancelConfirmOpen(false);
+  const handleConfirmCancel = async () => {
+    try {
+      await cancelOrder(order.id);
+      setOrder(prev => ({ ...prev, status: 'Cancelled', statusKey: 'cancelled' }));
+      toast.success('Booking cancelled successfully.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Could not cancel order.');
+    } finally {
+      setCancelConfirmOpen(false);
+    }
   };
 
   const handleSendContact = () => {
@@ -296,8 +296,8 @@ const OrderDetailsPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="lg" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Typography variant="body1">Loading booking details...</Typography>
         </Container>
@@ -307,8 +307,8 @@ const OrderDetailsPage = () => {
 
   if (!order) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="md" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
             <CardContent sx={{ p: { xs: 4, md: 6 } }}>
@@ -331,22 +331,17 @@ const OrderDetailsPage = () => {
     );
   }
 
-  const detailedProduct = localMockProducts.find((p) => String(p.id) === String(order.productId)) || {};
-  const brand = detailedProduct.brand || 'RentX Premium';
-  const description = detailedProduct.description || 'This premium equipment is maintained to highest standards, thoroughly sanitized, and double-checked for quality performance before handoff.';
-  const rating = detailedProduct.rating || 4.8;
-
-  const specs = detailedProduct.specifications?.length
-    ? detailedProduct.specifications
-    : [
-        { label: 'Category', value: order.category },
-        { label: 'Brand Partner', value: brand },
-        { label: 'Quality Rating', value: 'Excellent' },
-        { label: 'Standard Condition', value: 'Sanitized / Inspected' }
-      ];
+  const brand = 'RentX Verified';
+  const description = 'Premium quality rental equipment thoroughly inspected and sanitized before every dispatch. Comes with all standard accessories and protective casing.';
+  const specs = [
+    { label: 'Condition', value: 'Excellent - Like New' },
+    { label: 'Quality Check', value: 'Passed 15-point inspection' },
+    { label: 'Accessories', value: 'Standard kit included' },
+    { label: 'Insurance', value: 'Basic damage protection' },
+  ];
 
   const galleryImages = [
-    order.productImage,
+    activeImage,
     'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=500&q=60',
     'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=60',
   ];
@@ -354,7 +349,7 @@ const OrderDetailsPage = () => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      bgcolor: '#f8fafc',
+      bgcolor: 'background.default',
       '@media print': {
         bgcolor: '#fff',
         '.no-print': { display: 'none' },
@@ -362,12 +357,12 @@ const OrderDetailsPage = () => {
       }
     }}>
       <Box className="no-print">
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
       </Box>
 
       <Container className="print-container" maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Box sx={{ animation: `${fadeInUp} 0.6s ease-out` }}>
-          
+
           <Button className="no-print" variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/orders')} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
             Back to Orders
           </Button>
@@ -389,22 +384,22 @@ const OrderDetailsPage = () => {
           )}
 
           {order.status === 'Cancelled' && (
-            <Card className="no-print" sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', bgcolor: '#fef2f2', mb: 4 }}>
+            <Card className="no-print" sx={{ borderRadius: 4, border: '1px solid', borderColor: 'error.main', bgcolor: 'rgba(239, 68, 68, 0.1)', mb: 4 }}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 3 }}>
                 <ShieldAlert color="#ef4444" size={28} />
                 <Box>
-                  <Typography variant="subtitle2" color="error.main" sx={{ fontWeight: 800 }}>Booking Cancelled</Typography>
-                  <Typography variant="body2" color="error.main">This reservation was cancelled. Security deposits have been refunded to the payment method.</Typography>
+                  <Typography variant="subtitle2" sx={{ color: '#ef4444', fontWeight: 800 }}>Booking Cancelled</Typography>
+                  <Typography variant="body2" sx={{ color: '#ef4444' }}>This reservation was cancelled. Security deposits have been refunded to the payment method.</Typography>
                 </Box>
               </CardContent>
             </Card>
           )}
 
           <Grid container spacing={4}>
-            
+
             {/* Left Column */}
             <Grid size={{ xs: 12, md: 8 }}>
-              
+
               {/* Product Card */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
@@ -450,10 +445,10 @@ const OrderDetailsPage = () => {
                     <Grid size={{ xs: 12, sm: 7 }}>
                       <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>{order.productName}</Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>Brand: {brand} • Category: {order.category}</Typography>
-                      
+
                       <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6, mb: 3 }}>{description}</Typography>
-                      
-                      <Stack spacing={1} sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+
+                      <Stack spacing={1} sx={{ bgcolor: 'action.hover', p: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Specifications</Typography>
                         <Grid container spacing={1}>
                           {specs.map((spec, i) => (
@@ -511,7 +506,7 @@ const OrderDetailsPage = () => {
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>Pickup & Return Schedules</Typography>
                   <Grid container spacing={4}>
-                    
+
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 2, color: 'primary.main' }}>Pickup Information</Typography>
                       <Stack spacing={1.5}>
@@ -523,7 +518,7 @@ const OrderDetailsPage = () => {
                           <Typography variant="caption" color="text.secondary">Pickup Instructions</Typography>
                           <Typography variant="body2" color="text.secondary">Please present the handoff QR Code scanner at the counter to verify identity.</Typography>
                         </Box>
-                        <Box sx={{ border: '1px dashed', borderColor: 'divider', borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', gap: 2, bgcolor: 'grey.50' }}>
+                        <Box sx={{ border: '1px dashed', borderColor: 'divider', borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', gap: 2, bgcolor: 'action.hover' }}>
                           <QrCode size={40} />
                           <Box>
                             <Typography variant="caption" sx={{ fontWeight: 700, display: 'block' }}>Handoff QR Code</Typography>
@@ -565,7 +560,7 @@ const OrderDetailsPage = () => {
 
             {/* Right Column */}
             <Grid size={{ xs: 12, md: 4 }}>
-              
+
               {/* Vendor Info */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
@@ -629,7 +624,7 @@ const OrderDetailsPage = () => {
                   </Stack>
 
                   <Divider sx={{ my: 2 }} />
-                  
+
                   <Grid container spacing={1.5}>
                     <Grid size={6}>
                       <Typography variant="caption" color="text.secondary">Payment Status</Typography>
@@ -675,7 +670,7 @@ const OrderDetailsPage = () => {
                         setContactMessage('');
                         setContactOpen(true);
                       }}
-                      sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                      sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                     >
                       Contact Vendor
                     </Button>
@@ -686,7 +681,7 @@ const OrderDetailsPage = () => {
                         color="success"
                         startIcon={<RefreshCw size={18} />}
                         onClick={handleRequestReturn}
-                        sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                        sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                       >
                         Request Return
                       </Button>
@@ -700,7 +695,7 @@ const OrderDetailsPage = () => {
                           setExtendDays(1);
                           setExtendOpen(true);
                         }}
-                        sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                        sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                       >
                         Extend Rental
                       </Button>
@@ -714,7 +709,7 @@ const OrderDetailsPage = () => {
                         setIssueMessage('');
                         setIssueOpen(true);
                       }}
-                      sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                      sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                     >
                       Report Issue
                     </Button>
@@ -729,14 +724,14 @@ const OrderDetailsPage = () => {
                         Cancel Booking
                       </Button>
                     )}
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       fullWidth
                       onClick={() => navigate(`/product/${order.productId}`)}
                       sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                     >
                       Rebook Product
-                    </Button>
+                    </Button> */}
                   </Stack>
                 </CardContent>
               </Card>
@@ -764,7 +759,7 @@ const OrderDetailsPage = () => {
                 <MenuItem value={7}>Extend by 1 Week (7 Days)</MenuItem>
               </Select>
             </FormControl>
-            <Box sx={{ border: '1px solid', borderColor: 'divider', p: 1.5, borderRadius: 3, bgcolor: 'grey.50' }}>
+            <Box sx={{ border: '1px solid', borderColor: 'divider', p: 1.5, borderRadius: 3, bgcolor: 'action.hover' }}>
               <Typography variant="caption" color="text.secondary">Extension charges breakdown</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>Extension Subtotal ({extendDays} days)</Typography>

@@ -8,8 +8,8 @@ import SearchBar from './SearchBar';
 import ProfileDropdown from './ProfileDropdown';
 import { PATHS } from '../../routes/paths';
 import { getProductById } from '../../api/productApi';
-
 import { getCart } from '../../api/cartApi';
+import useAuth from '../../hooks/useAuth';
 
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
@@ -22,6 +22,9 @@ const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR
  * @param {Function} props.onLogout - Callback to handle user logout
  */
 export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin' || user?.role === 'Vendor';
+
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -141,7 +144,7 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
           <Logo />
 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3 }}>
-            {['Products', 'Terms & Conditions', 'About Us', 'Contact Us'].map((item) => (
+            {!isAdmin && ['Products', 'Terms & Conditions', 'About Us', 'Contact Us'].map((item) => (
               <Typography
                 key={item}
                 variant="body2"
@@ -163,13 +166,15 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
 
         {/* Center Section: Rounded Search Bar */}
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          <SearchBar onSearch={onSearchChange} />
+          {!isAdmin && <SearchBar onSearch={onSearchChange} />}
         </Box>
 
         {/* Right Section: Actions & Avatar */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-          <IconButton
-            color="inherit"
+          {!isAdmin && (
+            <>
+              <IconButton
+                color="inherit"
             onClick={() => setWishlistOpen(true)}
             sx={{
               p: 1,
@@ -208,8 +213,10 @@ export const Navbar = ({ onSearchChange, cartCount, onLogout }) => {
               }}
             >
               <ShoppingCart size={20} />
-            </Badge>
-          </IconButton>
+              </Badge>
+            </IconButton>
+            </>
+          )}
 
           {/* User Profile Avatar */}
           <IconButton

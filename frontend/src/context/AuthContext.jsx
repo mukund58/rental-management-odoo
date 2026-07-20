@@ -48,22 +48,7 @@ export const AuthProvider = ({ children }) => {
       }
       return response;
     } catch (error) {
-      console.warn('Backend authentication API offline. Attempting offline fallback logic.');
-      if (email && password) {
-        const isEmailAdmin = String(email).toLowerCase().includes('admin');
-        const fallbackUser = {
-          id: 'user-101',
-          fullName: isEmailAdmin ? 'System Admin' : 'Sujal Shah',
-          name: isEmailAdmin ? 'System Admin' : 'Sujal Shah',
-          email: email,
-          phone: '9876543210',
-          role: isEmailAdmin ? 'Admin' : 'Customer'
-        };
-        localStorage.setItem('token', 'offline-session-token');
-        localStorage.setItem('user', JSON.stringify(fallbackUser));
-        setUser(fallbackUser);
-        return { success: true, data: { token: 'offline-session-token', user: fallbackUser } };
-      }
+      console.error('Login failed:', error);
       throw error;
     } finally {
       setLoading(false);

@@ -208,81 +208,6 @@ const PaymentPage = () => {
     return true;
   };
 
-
-  };
-
-  // Form formatting helpers
-  const handleCardNumberChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
-    const formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
-    setCardNumber(formattedValue.substring(0, 19));
-  };
-
-  const handleExpiryDateChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 2) {
-      setExpiryDate(value);
-    } else {
-      setExpiryDate(`${value.substring(0, 2)}/${value.substring(2, 4)}`);
-    }
-  };
-
-  const handleCvvChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
-    setCvv(value.substring(0, 3));
-  };
-
-  // Validations
-  const validateForm = () => {
-    if (selectedMethod === 'card' || selectedMethod === 'debit') {
-      const rawCard = cardNumber.replace(/\s/g, '');
-      if (!/^\d{16}$/.test(rawCard)) {
-        toast.error('Card number must be exactly 16 digits.');
-        return false;
-      }
-      if (!cardName.trim()) {
-        toast.error('Card holder name is required.');
-        return false;
-      }
-      if (!/^[a-zA-Z\s]+$/.test(cardName)) {
-        toast.error('Card holder name must contain only letters and spaces.');
-        return false;
-      }
-      if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
-        toast.error('Expiry date must be MM/YY.');
-        return false;
-      }
-      const [month, year] = expiryDate.split('/').map(Number);
-      if (month < 1 || month > 12) {
-        toast.error('Expiry month must be between 01 and 12.');
-        return false;
-      }
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1;
-      const currentYear = currentDate.getFullYear() % 100;
-      if (year < currentYear || (year === currentYear && month < currentMonth)) {
-        toast.error('Card is expired.');
-        return false;
-      }
-      if (!/^\d{3}$/.test(cvv)) {
-        toast.error('CVV must be 3 digits.');
-        return false;
-      }
-    } else if (selectedMethod === 'upi') {
-      const upiPattern = /^[\w.\-_]{2,256}@[\w]{2,64}$/;
-      if (!upiPattern.test(upiId.trim())) {
-        toast.error('Please enter a valid UPI ID (e.g. user@bank).');
-        return false;
-      }
-    } else if (selectedMethod === 'netbanking') {
-      if (!selectedBank) {
-        toast.error('Please select a bank.');
-        return false;
-      }
-    }
-    return true;
-  };
-
   const handlePay = async () => {
     if (!validateForm()) return;
 
@@ -312,7 +237,18 @@ const PaymentPage = () => {
         }))
       };
 
-      await checkout(payload);
+      const response = await checkout(payload);
+
+      const newOrder = {
+        ...response,
+        id: response.orderId || response.id,
+        orderNumber: response.orderNumber,
+        items: items,
+        totalAmount: response.totalAmount || grandTotal,
+        rentalStart: items[0]?.rentalStart || new Date().toISOString(),
+        rentalEnd: items[0]?.rentalEnd || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        paymentMethod: paymentEnum === 3 ? 'UPI' : 'Credit Card',
+      };
 
       // Clear the cart on the frontend (if API call to clear fails, we still consider checkout successful)
       try {
@@ -323,9 +259,11 @@ const PaymentPage = () => {
 
       toast.success('Payment successful!');
 
-      navigate('/order-success', { state: { order: newOrder } });
+      // Save to localStorage for fallback if user refreshes the success page
+      const existingOrders = JSON.parse(localStorage.getItem('rental_orders') || '[]');
+      localStorage.setItem('rental_orders', JSON.stringify([newOrder, ...existingOrders]));
 
-      navigate('/order-success');
+      navigate('/order-success', { state: { order: newOrder } });
 
     } catch (err) {
       console.error(err);
@@ -336,7 +274,7 @@ const PaymentPage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={items.length} onLogout={handleLogout} />
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(PATHS.CHECKOUT)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
@@ -460,12 +398,12 @@ const PaymentPage = () => {
 
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
                 <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 800, mb: 2 }}>Coupon / Offers</Typography>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                  <Typography variant="h6" sx={{ display: 'none', fontWeight: 800, mb: 2 }}>Coupon / Offers</Typography>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ display: 'none' }}>
                     <TextField label="Coupon code" fullWidth size="small" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
-                    <Button variant="outlined" onClick={applyCoupon} sx={{ borderRadius: 999, textTransform: 'none', fontWeight: 700 }}>Apply</Button>
+                    <Button variant="outlined" onClick={applyCoupon} sx={{ display: 'none', borderRadius: 999, textTransform: 'none', fontWeight: 700 }}>Apply</Button>
                   </Stack>
-                  <Stack direction="row" spacing={1} sx={{ mt: 1.5, flexWrap: 'wrap' }}>
+                  <Stack direction="row" spacing={1} sx={{ display: 'none', mt: 1.5, flexWrap: 'wrap' }}>
                     {customerMockCoupons.map((coupon) => <Chip key={coupon.code} label={coupon.code} onClick={() => setCouponCode(coupon.code)} variant="outlined" />)}
                   </Stack>
                 </CardContent>

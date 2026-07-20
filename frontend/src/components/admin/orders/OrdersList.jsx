@@ -7,25 +7,19 @@ const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 1: // Draft
-    case 'Draft':
-      return { bg: '#e0e7ff', color: '#4f46e5' };
-    case 2: // QuotationSent
-    case 'QuotationSent':
-      return { bg: '#dbeafe', color: '#2563eb' };
-    case 3: // Reserved
+    case 1:
     case 'Reserved':
       return { bg: '#dcfce7', color: '#16a34a' };
-    case 4: // PickedUp
+    case 2:
     case 'PickedUp':
       return { bg: '#fef3c7', color: '#d97706' };
-    case 5: // Returned
+    case 3:
     case 'Returned':
       return { bg: '#f3f4f6', color: '#4b5563' };
-    case 6: // Cancelled
+    case 4:
     case 'Cancelled':
       return { bg: '#fee2e2', color: '#dc2626' };
-    case 7: // Late
+    case 5:
     case 'Late':
       return { bg: '#ffedd5', color: '#ea580c' };
     default:
@@ -69,7 +63,7 @@ const OrdersList = ({ orders }) => {
               <TableCell>{row.customer}</TableCell>
               <TableCell>
                 <Chip 
-                  label={row.status === 1 ? 'Quotation' : row.status === 2 ? 'Quotation Sent' : row.status} 
+                  label={row.status === 1 ? 'Reserved' : row.status === 2 ? 'PickedUp' : row.status === 3 ? 'Returned' : row.status === 4 ? 'Cancelled' : row.status === 5 ? 'Late' : row.status} 
                   size="small"
                   sx={{ 
                     bgcolor: getStatusColor(row.status).bg, 

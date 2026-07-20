@@ -286,7 +286,7 @@ const TrackingPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="lg" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Typography variant="body1">Loading tracking details...</Typography>
@@ -297,7 +297,7 @@ const TrackingPage = () => {
 
   if (!order) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="md" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
@@ -359,7 +359,7 @@ const TrackingPage = () => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      bgcolor: '#f8fafc',
+      bgcolor: 'background.default',
       '@media print': {
         bgcolor: '#fff',
         '.no-print': { display: 'none' },
@@ -480,7 +480,7 @@ const TrackingPage = () => {
                     <Grid size={{ xs: 12, sm: 4 }}>
                       <Box
                         component="img"
-                        src={order.productImage}
+                        src={getImageUrl(order.productImage)}
                         alt={order.productName}
                         sx={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}
                       />
@@ -537,7 +537,7 @@ const TrackingPage = () => {
                         setContactMessage('');
                         setContactOpen(true);
                       }}
-                      sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                      sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                     >
                       Contact Vendor
                     </Button>
@@ -550,7 +550,7 @@ const TrackingPage = () => {
                           setExtendDays(1);
                           setExtendOpen(true);
                         }}
-                        sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                        sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                       >
                         Extend Rental
                       </Button>
@@ -562,7 +562,7 @@ const TrackingPage = () => {
                         color="success"
                         startIcon={<RefreshCw size={18} />}
                         onClick={handleRequestReturn}
-                        sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
+                        sx={{ display: 'none', borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                       >
                         Request Return
                       </Button>

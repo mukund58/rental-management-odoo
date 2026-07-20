@@ -26,6 +26,7 @@ import {
   FormControlLabel,
   IconButton,
   Paper,
+  Chip,
 } from '@mui/material';
 import {
   User,
@@ -45,6 +46,7 @@ import toast from 'react-hot-toast';
 import Navbar from '../../components/layout/Navbar';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
+import { getOrders } from '../../api/checkoutApi';
 import { getCart } from '../../api/cartApi';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
@@ -61,16 +63,16 @@ const defaultPaymentCards = [
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [cartCount, setCartCount] = useState(0);
 
   // Tab State
   const [activeTab, setActiveTab] = useState(0);
 
-  // User Profile State (from localStorage or defaults)
+  // User Profile State
   const [userProfile, setUserProfile] = useState({
-    fullName: 'Sujal Shah',
-    email: 'sujal@example.com',
+    fullName: user ? `${user.firstName} ${user.lastName}` : 'Guest User',
+    email: user ? user.email : '',
     phone: '9876543210',
     dob: '1998-05-15',
     gender: 'Male',
@@ -117,31 +119,55 @@ const ProfilePage = () => {
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
 
   // Orders statistics computation
-  const ordersStats = useMemo(() => {
-    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-    const total = saved.length + 4; // Add mock orders count
-    const active = saved.filter(o => o.statusKey === 'active').length + 1; // plus 1 mock active
-    const completed = saved.filter(o => o.statusKey === 'completed').length + 1; // plus 1 mock completed
-    const cancelled = saved.filter(o => o.statusKey === 'cancelled').length + 1; // plus 1 mock cancelled
+  const [ordersStats, setOrdersStats] = useState({ total: 0, active: 0, completed: 0, cancelled: 0, moneySpent: 0 });
 
-    const savedTotalCost = saved.reduce((acc, cur) => acc + (cur.totalAmount || 0), 0);
-    const moneySpent = savedTotalCost + 18600; // Mock money spent fallback
-
-    return { total, active, completed, cancelled, moneySpent };
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStats = async () => {
+      try {
+        const backendOrders = await getOrders();
+        if (isMounted && backendOrders) {
+          const total = backendOrders.length;
+          let active = 0;
+          let completed = 0;
+          let cancelled = 0;
+          let moneySpent = 0;
+          
+          backendOrders.forEach(o => {
+            moneySpent += (o.totalAmount || 0);
+            
+            let statusString = o.status;
+            if (typeof o.status === 'number') {
+               const statuses = ['Reserved', 'Active', 'Overdue', 'Returned', 'Cancelled'];
+               statusString = statuses[o.status] || 'Unknown';
+            }
+            const statusKey = String(statusString).toLowerCase();
+            
+            if (statusKey === 'active' || statusKey === 'reserved') active++;
+            else if (statusKey === 'returned' || statusKey === 'completed') completed++;
+            else if (statusKey === 'cancelled') cancelled++;
+          });
+          
+          setOrdersStats({ total, active, completed, cancelled, moneySpent });
+        }
+      } catch (err) {
+        console.error('Failed to load order stats', err);
+      }
+    };
+    fetchStats();
+    return () => { isMounted = false; };
   }, []);
 
   useEffect(() => {
-    // Sync localStorage
-    const savedUser = JSON.parse(localStorage.getItem('user'));
-    if (savedUser) {
+    if (user) {
       setUserProfile((prev) => ({
         ...prev,
-        fullName: savedUser.fullName || prev.fullName,
-        email: savedUser.email || prev.email,
-        phone: savedUser.phone || prev.phone,
+        fullName: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        phone: user.phone || prev.phone,
       }));
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem('user_addresses', JSON.stringify(addresses));
@@ -321,7 +347,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
       
       <Container maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
@@ -406,7 +432,7 @@ const ProfilePage = () => {
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Personal Details</Typography>
                     {!editProfileMode && (
-                      <Button startIcon={<Edit2 size={16} />} size="small" onClick={() => setEditProfileMode(true)}>
+                      <Button startIcon={<Edit2 size={16} />} size="small" onClick={() => setEditProfileMode(true)} sx={{ display: 'none' }}>
                         Edit
                       </Button>
                     )}
@@ -516,7 +542,7 @@ const ProfilePage = () => {
                 <CardContent sx={{ p: 4 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Saved Addresses</Typography>
-                    <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddAddress} sx={{ borderRadius: 999 }}>
+                    <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddAddress} sx={{ display: 'none', borderRadius: 999 }}>
                       Add Address
                     </Button>
                   </Box>
@@ -565,7 +591,7 @@ const ProfilePage = () => {
                 <CardContent sx={{ p: 4 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>Payment Methods</Typography>
-                    <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddPayment} sx={{ borderRadius: 999 }}>
+                    <Button startIcon={<Plus size={16} />} size="small" onClick={handleOpenAddPayment} sx={{ display: 'none', borderRadius: 999 }}>
                       Add Method
                     </Button>
                   </Box>
@@ -579,7 +605,7 @@ const ProfilePage = () => {
                       {payments.map((pay) => (
                         <Paper key={pay.id} variant="outlined" sx={{ p: 2, borderRadius: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'grey.100', color: 'grey.600', display: 'flex' }}>
+                            <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'action.selected', color: 'grey.600', display: 'flex' }}>
                               <CreditCard size={22} />
                             </Box>
                             <Box>
@@ -645,7 +671,7 @@ const ProfilePage = () => {
                           />
                         </Grid>
                       </Grid>
-                      <Button type="submit" variant="contained" size="small" sx={{ alignSelf: 'flex-start', borderRadius: 999, px: 3 }}>
+                      <Button type="submit" variant="contained" size="small" sx={{ display: 'none', alignSelf: 'flex-start', borderRadius: 999, px: 3 }}>
                         Update Password
                       </Button>
                     </Stack>
@@ -656,18 +682,19 @@ const ProfilePage = () => {
                   <Stack spacing={2.5}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Security Preferences</Typography>
                     <FormControlLabel
+                      sx={{ display: 'none' }}
                       control={<Switch checked={twoFactorEnabled} onChange={(e) => {
                         setTwoFactorEnabled(e.target.checked);
                         toast.success(`Two-Factor Authentication ${e.target.checked ? 'enabled' : 'disabled'}.`);
                       }} />}
                       label="Enable Two-Factor Authentication (2FA)"
                     />
-                    <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ bgcolor: 'action.hover', p: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>Last Account Access Activity</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.5 }}>Logged in via Chrome (Windows) • Mumbai, IN</Typography>
                       <Typography variant="caption" color="text.secondary">Timestamp: Today at 11:42 PM</Typography>
                     </Box>
-                    <Button variant="outlined" color="error" size="small" sx={{ alignSelf: 'flex-start', borderRadius: 999 }} onClick={() => toast.success('Logged out from all other active sessions.')}>
+                    <Button variant="outlined" color="error" size="small" sx={{ display: 'none', alignSelf: 'flex-start', borderRadius: 999 }} onClick={() => toast.success('Logged out from all other active sessions.')}>
                       Logout From All Other Devices
                     </Button>
                   </Stack>
@@ -677,7 +704,7 @@ const ProfilePage = () => {
                   <Stack spacing={2}>
                     <Typography variant="subtitle2" color="error.main" sx={{ fontWeight: 700 }}>Danger Zone</Typography>
                     <Typography variant="body2" color="text.secondary">Terminating your account is permanent. All historical rental records, invoices, and address credentials will be deleted.</Typography>
-                    <Button variant="contained" color="error" size="small" sx={{ alignSelf: 'flex-start', borderRadius: 999 }} onClick={() => setDeleteDialogOpen(true)}>
+                    <Button variant="contained" color="error" size="small" sx={{ display: 'none', alignSelf: 'flex-start', borderRadius: 999 }} onClick={() => setDeleteDialogOpen(true)}>
                       Delete Account
                     </Button>
                   </Stack>

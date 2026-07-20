@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Box, Container, Card, CardContent, Typography, Button, Stack, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +37,7 @@ const TermsPage = () => {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
       <Container maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(-1)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
@@ -56,7 +56,7 @@ const TermsPage = () => {
                   <AccordionSummary expandIcon={<ChevronDown size={18} />}>
                     <Typography sx={{ fontWeight: 700 }}>{term.title}</Typography>
                   </AccordionSummary>
-                  <AccordionDetails sx={{ borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
+                  <AccordionDetails sx={{ borderTop: '1px solid', borderColor: 'divider', bgcolor: 'action.hover' }}>
                     <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>{term.detail}</Typography>
                   </AccordionDetails>
                 </Accordion>

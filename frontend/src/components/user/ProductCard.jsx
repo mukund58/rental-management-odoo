@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Card, CardMedia, CardContent, Typography, Box, Chip, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +28,7 @@ export const ProductCard = ({ product }) => {
       }}
     >
       {/* Product Image */}
-      <Box sx={{ position: 'relative', pt: '75%', bgcolor: '#f8fafc' }}>
+      <Box sx={{ position: 'relative', pt: '75%', bgcolor: 'background.default' }}>
         <CardMedia
           component="img"
           image={product.image}

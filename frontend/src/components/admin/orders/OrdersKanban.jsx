@@ -7,24 +7,18 @@ const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR
 const getStatusColor = (status) => {
   switch (status) {
     case 1:
-    case 'Draft':
-      return { bg: '#e0e7ff', color: '#4f46e5' };
-    case 2:
-    case 'QuotationSent':
-      return { bg: '#dbeafe', color: '#2563eb' };
-    case 3:
     case 'Reserved':
       return { bg: '#dcfce7', color: '#16a34a' };
-    case 4:
+    case 2:
     case 'PickedUp':
       return { bg: '#fef3c7', color: '#d97706' };
-    case 5:
+    case 3:
     case 'Returned':
       return { bg: '#f3f4f6', color: '#4b5563' };
-    case 6:
+    case 4:
     case 'Cancelled':
       return { bg: '#fee2e2', color: '#dc2626' };
-    case 7:
+    case 5:
     case 'Late':
       return { bg: '#ffedd5', color: '#ea580c' };
     default:
@@ -36,7 +30,7 @@ const OrdersKanban = ({ orders }) => {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ p: 2, bgcolor: '#f8fafc', minHeight: '600px' }}>
+    <Box sx={{ p: 2, bgcolor: 'background.default', minHeight: '600px' }}>
       <Grid container spacing={2}>
         {orders.map((order) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={order.id}>
@@ -71,7 +65,7 @@ const OrdersKanban = ({ orders }) => {
                     {order.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : '-'} to {order.returnDate ? new Date(order.returnDate).toLocaleDateString() : '-'}
                   </Typography>
                   <Chip 
-                    label={order.status === 1 ? 'Quotation' : order.status === 2 ? 'Quotation Sent' : order.status} 
+                    label={order.status === 1 ? 'Reserved' : order.status === 2 ? 'PickedUp' : order.status === 3 ? 'Returned' : order.status === 4 ? 'Cancelled' : order.status === 5 ? 'Late' : order.status} 
                     size="small"
                     sx={{ 
                       bgcolor: getStatusColor(order.status).bg, 
