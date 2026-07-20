@@ -22,6 +22,13 @@ using backend.Features.Invoice;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(webRootPath))
+{
+    Directory.CreateDirectory(webRootPath);
+}
+builder.Environment.WebRootPath = webRootPath;
+
 // Add services to the container.
 builder.Services.AddSwaggerDocumentation();
 
@@ -34,7 +41,8 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(
-    builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Configuration.GetConnectionString("DefaultConnection"))
+    .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
 });
 
 builder.Services.AddAuthentication(
@@ -65,7 +73,10 @@ builder.Services.AddAuthentication(
     {
         OnMessageReceived = context =>
         {
-            context.Token = context.Request.Cookies["accessToken"];
+            if (context.Request.Cookies.TryGetValue("accessToken", out var cookieToken))
+            {
+                context.Token = cookieToken;
+            }
             return Task.CompletedTask;
         }
     };
@@ -128,7 +139,7 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<AppDbContext>();
 
     await db.Database.MigrateAsync();
-    await CatalogSeeder.SeedAsync(db);
+    await SeedData.SeedAsync(db);
 }
 
 app.Run();

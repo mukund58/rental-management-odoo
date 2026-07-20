@@ -19,6 +19,7 @@ public static class CheckoutEndpoints
             {
                 return await service.Checkout(request,user);
             });
+        
         group.MapGet("/orders",
             async (
                 ClaimsPrincipal user,
@@ -27,13 +28,13 @@ public static class CheckoutEndpoints
                 return await service.GetOrders(user);
             });
 
-        group.MapGet("/orders/{id:guid}",
+        group.MapGet("/orders/{idOrNumber}",
             async (
-                Guid id,
+                string idOrNumber,
                 ClaimsPrincipal user,
                 CheckoutService service) =>
             {
-                return await service.GetOrder(id, user);
+                return await service.GetOrder(idOrNumber, user);
             });
 
         group.MapPatch("/orders/{id:guid}/cancel",

@@ -241,13 +241,14 @@ public class CheckoutService
             .Include(x => x.Vendor)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Product)
+                    .ThenInclude(p => p.Category)
             .AsQueryable();
 
-        if (role == "Vendor" && Guid.TryParse(userIdStr, out var vendorId))
+        if (string.Equals(role, "Vendor", StringComparison.OrdinalIgnoreCase) && Guid.TryParse(userIdStr, out var vendorId))
         {
             query = query.Where(x => x.VendorId == vendorId);
         }
-        else if (role == "Customer" && Guid.TryParse(userIdStr, out var customerId))
+        else if (string.Equals(role, "Customer", StringComparison.OrdinalIgnoreCase) && Guid.TryParse(userIdStr, out var customerId))
         {
             query = query.Where(x => x.CustomerId == customerId);
         }
@@ -271,12 +272,18 @@ public class CheckoutService
             x.LateFee,
             x.TotalAmount,
             x.CreatedAt,
-            Items = x.Items.Select(i => new { i.Product.Name, i.Quantity })
+            Items = x.Items.Select(i => new { 
+                i.ProductId,
+                i.Product.Name, 
+                i.Product.ImageUrl,
+                Category = i.Product.Category != null ? i.Product.Category.Name : "General",
+                i.Quantity 
+            })
         });
 
         return Results.Ok(result);
     }
-    public async Task<IResult> GetOrder(Guid id, ClaimsPrincipal user)
+    public async Task<IResult> GetOrder(string idOrNumber, ClaimsPrincipal user)
     {
         var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
         var role = user.FindFirstValue(ClaimTypes.Role);
@@ -286,19 +293,29 @@ public class CheckoutService
             .Include(x => x.Vendor)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Product)
+                    .ThenInclude(p => p.Category)
             .Include(x => x.Payment)
             .AsQueryable();
 
-        if (role == "Vendor" && Guid.TryParse(userIdStr, out var vendorId))
+        if (string.Equals(role, "Vendor", StringComparison.OrdinalIgnoreCase) && Guid.TryParse(userIdStr, out var vendorId))
         {
             query = query.Where(x => x.VendorId == vendorId);
         }
-        else if (role == "Customer" && Guid.TryParse(userIdStr, out var customerId))
+        else if (string.Equals(role, "Customer", StringComparison.OrdinalIgnoreCase) && Guid.TryParse(userIdStr, out var customerId))
         {
             query = query.Where(x => x.CustomerId == customerId);
         }
 
-        var order = await query.FirstOrDefaultAsync(x => x.Id == id);
+        RentalOrder? order = null;
+        if (Guid.TryParse(idOrNumber, out var guidId))
+        {
+            order = await query.FirstOrDefaultAsync(x => x.Id == guidId);
+        }
+
+        if (order == null)
+        {
+            order = await query.FirstOrDefaultAsync(x => x.OrderNumber == idOrNumber || x.InvoiceNumber == idOrNumber);
+        }
 
         if (order == null)
             return Results.NotFound();
@@ -311,11 +328,13 @@ public class CheckoutService
 
             order.InvoiceNumber,
 
-            Customer =
-                $"{order.Customer.FirstName} {order.Customer.LastName}",
+            Customer = order.Customer != null 
+                ? $"{order.Customer.FirstName} {order.Customer.LastName}"
+                : "Unknown Customer",
 
-            Vendor =
-                $"{order.Vendor.FirstName} {order.Vendor.LastName}",
+            Vendor = order.Vendor != null
+                ? $"{order.Vendor.FirstName} {order.Vendor.LastName}"
+                : "RentX Partner Vendor",
 
             order.Status,
 
@@ -331,18 +350,25 @@ public class CheckoutService
 
             order.TotalAmount,
 
-            Payment = order.Payment,
+            Payment = order.Payment != null ? new
+            {
+                order.Payment.Id,
+                order.Payment.Amount,
+                PaymentMethod = order.Payment.PaymentMethod.ToString(),
+                Status = order.Payment.Status.ToString(),
+                order.Payment.TransactionId,
+                order.Payment.PaidAt
+            } : null,
 
             Items = order.Items.Select(x => new
             {
-                x.Product.Name,
-
+                x.ProductId,
+                Name = x.Product.Name,
+                ImageUrl = x.Product.ImageUrl,
+                Category = x.Product.Category != null ? x.Product.Category.Name : "General",
                 x.Quantity,
-
                 x.UnitPrice,
-
                 x.Deposit,
-
                 x.TotalPrice
             })
         });
