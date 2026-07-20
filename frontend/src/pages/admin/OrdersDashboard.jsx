@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, IconButton, TextField, InputAdornment, Paper, ToggleButtonGroup, ToggleButton, CircularProgress } from '@mui/material';
-import { Search, List as ListIcon, LayoutGrid, Plus } from 'lucide-react';
+import { Box, Typography, Button, IconButton, TextField, InputAdornment, Paper, ToggleButtonGroup, ToggleButton, CircularProgress, Select, MenuItem } from '@mui/material';
+import { Search, List as ListIcon, LayoutGrid, Plus, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getOrders } from '../../api/checkoutApi';
 import OrdersList from '../../components/admin/orders/OrdersList';
@@ -45,7 +45,12 @@ export const OrdersDashboard = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>Rental Order</Typography>
-          <Button variant="contained" color="secondary" startIcon={<Plus size={16} />} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>
+          <IconButton size="small" sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}><Settings size={18} /></IconButton>
+          <Button 
+            variant="contained" 
+            sx={{ bgcolor: '#c084fc', '&:hover': { bgcolor: '#a855f7' }, borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 3 }}
+            onClick={() => navigate('/dashboard/orders/new')}
+          >
             New
           </Button>
         </Box>
@@ -84,12 +89,54 @@ export const OrdersDashboard = () => {
         </Box>
       </Box>
 
-      {/* Date Filters - Placeholder as per wireframe */}
-      <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-        <Button variant="outlined" size="small" sx={{ borderRadius: 999, borderColor: '#f59e0b', color: '#f59e0b' }}>Today</Button>
-        <Button variant="outlined" size="small" sx={{ borderRadius: 999, borderColor: '#8b5cf6', color: '#8b5cf6' }}>Pickup</Button>
-        <Button variant="outlined" size="small" sx={{ borderRadius: 999, borderColor: '#ec4899', color: '#ec4899' }}>Return</Button>
-        <Button variant="outlined" size="small" sx={{ borderRadius: 999, borderColor: '#10b981', color: '#10b981' }}>Late</Button>
+      {/* Stats and Filters Row */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        
+        {/* Left Pills */}
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" sx={{ borderRadius: 2, borderColor: '#d97706', color: '#d97706', flexDirection: 'column', py: 0.5, px: 2, minWidth: 80, '&:hover': { bgcolor: 'rgba(217, 119, 6, 0.1)' } }}>
+            <Typography variant="caption" sx={{ fontWeight: 800, lineHeight: 1 }}>2</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'none' }}>Today</Typography>
+          </Button>
+          <Button variant="contained" sx={{ borderRadius: 2, bgcolor: '#8b5cf6', color: 'white', flexDirection: 'column', py: 0.5, px: 2, minWidth: 80, '&:hover': { bgcolor: '#7c3aed' } }}>
+            <Typography variant="caption" sx={{ fontWeight: 800, lineHeight: 1 }}>3</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'none' }}>Pickup</Typography>
+          </Button>
+          <Button variant="contained" sx={{ borderRadius: 2, bgcolor: '#a855f7', color: 'white', flexDirection: 'column', py: 0.5, px: 2, minWidth: 80, '&:hover': { bgcolor: '#9333ea' } }}>
+            <Typography variant="caption" sx={{ fontWeight: 800, lineHeight: 1 }}>3</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'none' }}>Return</Typography>
+          </Button>
+          <Button variant="contained" sx={{ borderRadius: 2, bgcolor: '#be185d', color: 'white', flexDirection: 'column', py: 0.5, px: 2, minWidth: 80, '&:hover': { bgcolor: '#9f1239' } }}>
+            <Typography variant="caption" sx={{ fontWeight: 800, lineHeight: 1 }}>1</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'none' }}>Late</Typography>
+          </Button>
+        </Box>
+
+        {/* Right Stats */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Select 
+              size="small" 
+              defaultValue="7days" 
+              sx={{ borderRadius: 2, '& .MuiOutlinedInput-notchedOutline': { border: '1px solid', borderColor: 'divider' } }}
+            >
+              <MenuItem value="7days">Last 7 Days</MenuItem>
+              <MenuItem value="30days">Last 30 Days</MenuItem>
+            </Select>
+          </Box>
+          <Box>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', lineHeight: 1 }}>Sales</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>$1945</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', lineHeight: 1 }}>Late Fees</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>$235</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', lineHeight: 1 }}>Deposit</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>$710</Typography>
+          </Box>
+        </Box>
       </Box>
 
       {loading ? (

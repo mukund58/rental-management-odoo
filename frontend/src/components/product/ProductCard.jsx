@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
+import { API_URL } from '../../constants/env';
 import {
   Card,
   CardMedia,
@@ -108,13 +109,17 @@ export const ProductCard = ({ product, onAddToCartSuccess }) => {
         }}
       >
         {/* Large Product Image */}
-        <Box sx={{ position: 'relative', pt: '75%', bgcolor: '#f8fafc', overflow: 'hidden' }}>
+        <Box sx={{ position: 'relative', pt: '75%', bgcolor: 'background.default', overflow: 'hidden' }}>
           <CardMedia
             component="img"
 
-            image={product.imageUrl || product.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'}
-
-            image={product.image}
+            image={(() => {
+              const src = product.imageUrl || product.image;
+              if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+              // Relative path from our backend — prepend base URL
+              if (src.startsWith('/')) return `${API_URL.replace('/api', '')}${src}`;
+              return src;
+            })()}
 
             alt={product.name}
             sx={{

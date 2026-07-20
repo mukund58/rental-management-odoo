@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../constants/env';
 import {
   Alert,
   Box,
@@ -186,7 +187,12 @@ export const ProductCatalog = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image={product.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'}
+                image={(() => {
+                  const src = product.imageUrl;
+                  if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+                  if (src.startsWith('/')) return `${API_URL.replace('/api', '')}${src}`;
+                  return src;
+                })()}
                 alt={product.name}
               />
               <CardContent sx={{ flexGrow: 1 }}>

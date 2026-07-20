@@ -83,7 +83,7 @@ api.interceptors.response.use(
         isRefreshing = false;
         processQueue(refreshError);
         localStorage.removeItem('token');
-        window.location.hash = '#/login';
+        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }

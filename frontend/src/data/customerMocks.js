@@ -72,7 +72,7 @@ export const customerMockPaymentMethods = [
   { id: 'card', label: 'Credit Card', description: 'Visa, Mastercard and Amex' },
   { id: 'debit', label: 'Debit Card', description: 'Instant debit card payment' },
   { id: 'upi', label: 'UPI', description: 'Pay via UPI apps' },
-  { id: 'netbanking', label: 'Net Banking', description: 'Secure bank transfer' },
+  { id: 'cash', label: 'Cash', description: 'Pay with cash on pickup or delivery' },
 ];
 
 export const customerMockCoupons = [

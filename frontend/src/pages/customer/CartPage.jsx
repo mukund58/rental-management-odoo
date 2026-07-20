@@ -13,12 +13,20 @@ import {
   Typography,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { ArrowLeft, ShoppingBag, Trash2 } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Loader from '../../components/ui/Loader';
 import { getCart, removeCartItem } from '../../api/cartApi';
 import { PATHS } from '../../routes/paths';
 import useAuth from '../../hooks/useAuth';
+import { API_URL } from '../../constants/env';
+
+const getImageUrl = (src) => {
+  if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+  if (src.startsWith('http')) return src;
+  return `${API_URL.replace('/api', '')}${src}`;
+};
 
 const money = new Intl.NumberFormat('en-IN', {
   style: 'currency',
@@ -26,32 +34,7 @@ const money = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 0,
 });
 
-const fallbackCartItems = [
-  {
-    id: 'fallback-1',
-    productId: 'p1',
-    name: 'MacBook Pro 16" (M3 Max)',
-    pricePerUnit: 450,
-    quantity: 2,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 7,
-    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
-    variant: 'Gray',
-  },
-  {
-    id: 'fallback-2',
-    productId: 'p3',
-    name: 'PlayStation 5 Console',
-    pricePerUnit: 200,
-    quantity: 1,
-    rentalStart: new Date().toISOString(),
-    rentalEnd: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-    rentalDurationDays: 5,
-    imageUrl: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=900&q=80',
-    variant: 'Standard',
-  }
-];
+
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -66,14 +49,10 @@ const CartPage = () => {
       setLoading(true);
       setErrorMsg('');
       const cartItems = await getCart();
-      if (cartItems && cartItems.length > 0) {
-        setItems(cartItems);
-      } else {
-        setItems(fallbackCartItems);
-      }
+      setItems(cartItems || []);
     } catch (err) {
       console.error('Unable to load cart', err);
-      setItems(fallbackCartItems);
+      setItems([]);
       setErrorMsg('Backend API offline. Using offline fallback cart data.');
     } finally {
       setLoading(false);
@@ -100,10 +79,10 @@ const CartPage = () => {
     try {
       setRemovingId(id);
       await removeCartItem(id);
-      await loadCart();
+      setItems(prev => prev.filter(item => item.id !== id));
     } catch (err) {
       console.error('Unable to remove cart item', err);
-      setErrorMsg('We could not remove that item from your cart.');
+      toast.error('Could not remove that item from your cart.');
     } finally {
       setRemovingId(null);
     }
@@ -125,7 +104,7 @@ const CartPage = () => {
   const renderEmptyState = () => (
     <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
       <CardContent sx={{ py: 8, textAlign: 'center' }}>
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 88, height: 88, borderRadius: '50%', bgcolor: 'grey.100', mb: 3 }}>
+        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 88, height: 88, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
           <ShoppingBag size={36} color="#64748b" />
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
@@ -142,7 +121,7 @@ const CartPage = () => {
   );
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={items.length} onLogout={handleLogout} />
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
@@ -176,7 +155,7 @@ const CartPage = () => {
                       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
                         <Box
                           component="img"
-                          src={item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'}
+                          src={getImageUrl(item.imageUrl)}
                           alt={item.name || 'Cart item'}
                           sx={{ width: { xs: '100%', sm: 140 }, height: 120, objectFit: 'cover', borderRadius: 3 }}
                         />

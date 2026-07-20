@@ -34,7 +34,11 @@ export const LoginForm = ({ onSuccess, onError }) => {
       }
     } catch (err) {
       // Show backend error message
-      const backendError = err.response?.data?.message || err.response?.data || 'Login failed. Please check your credentials.';
+      const responseData = err.response?.data;
+      const backendError = typeof responseData === 'string' 
+        ? responseData 
+        : responseData?.message || 'Login failed. Please check your credentials.';
+      
       setErrorMsg(backendError);
       if (onError) {
         onError(backendError);

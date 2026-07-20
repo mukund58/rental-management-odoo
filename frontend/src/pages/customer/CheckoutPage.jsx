@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+﻿import React, { useMemo, useState, useEffect } from 'react';
 import { Alert, Box, Button, Card, CardContent, Container, Divider, Grid, Stack, TextField, Typography, Radio, FormControlLabel, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -78,7 +78,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={items.length} onLogout={handleLogout} />
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(PATHS.CART)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
@@ -99,7 +99,7 @@ const CheckoutPage = () => {
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 3 }}>
                 <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 800, mb: 2 }}>Delivery Address</Typography>
-                  <Box sx={{ mt: 2.5, p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
+                  <Box sx={{ mt: 2.5, p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'action.hover' }}>
                     <Stack spacing={1.5}>
                       <TextField label="Full name" fullWidth size="small" value={deliveryAddress.fullName} onChange={(e) => setDeliveryAddress((current) => ({ ...current, fullName: e.target.value }))} />
                       <TextField label="Phone" fullWidth size="small" value={deliveryAddress.phone} onChange={(e) => setDeliveryAddress((current) => ({ ...current, phone: e.target.value }))} />

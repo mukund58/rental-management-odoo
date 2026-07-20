@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Checkbox, FormControlLabel, TextField, InputAdornment, Button, Divider, Stack } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '../../routes/paths';
 
 export const SettingsPage = () => {
+  const navigate = useNavigate();
   const [settings, setSettings] = useState({
     enableLateFee: true,
     lateFeeRate: 20,
@@ -62,7 +65,11 @@ export const SettingsPage = () => {
                 label={<Typography sx={{ fontWeight: 600 }}>Variants</Typography>}
               />
               {settings.enableVariants && (
-                <Typography color="success.main" sx={{ ml: 4, cursor: 'pointer', fontWeight: 600 }}>
+                <Typography 
+                  color="success.main" 
+                  sx={{ ml: 4, cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
+                  onClick={() => navigate(PATHS.ADMIN_ATTRIBUTES)}
+                >
                   ➔ Attributes
                 </Typography>
               )}
@@ -74,7 +81,11 @@ export const SettingsPage = () => {
                 label={<Typography sx={{ fontWeight: 600 }}>Price List</Typography>}
               />
               {settings.enablePriceList && (
-                <Typography color="success.main" sx={{ ml: 4, cursor: 'pointer', fontWeight: 600 }}>
+                <Typography 
+                  color="success.main" 
+                  sx={{ ml: 4, cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
+                  onClick={() => navigate(PATHS.ADMIN_PRICELISTS)}
+                >
                   ➔ Pricelists
                 </Typography>
               )}

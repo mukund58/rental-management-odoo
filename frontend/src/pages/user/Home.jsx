@@ -127,7 +127,7 @@ export const Home = () => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+  </Box>  
   );
 };
 

@@ -1,10 +1,11 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { MainLayout } from '../layouts/MainLayout';
 import { PrivateRoute } from './PrivateRoute';
 import { PublicRoute } from './PublicRoute';
 import { AdminRoute } from './AdminRoute';
+import { AdminLayout } from '../layouts/AdminLayout';
 import { PATHS } from './paths';
 
 // Lazy loading page views for enhanced load performance
@@ -20,7 +21,7 @@ const Dashboard = lazy(() => import('../pages/Dashboard'));
 const ProductCatalog = lazy(() => import('../pages/products/ProductCatalog'));
 const ProductDetails = lazy(() => import('../pages/products/ProductDetails'));
 const ProductPage = lazy(() => import('../pages/products/ProductPage'));
-const CartPage = lazy(() => import('../pages/cart/CartPage'));
+const CartPage = lazy(() => import('../pages/customer/CartPage'));
 const CheckoutPage = lazy(() => import('../pages/customer/CheckoutPage'));
 const PaymentPage = lazy(() => import('../pages/customer/PaymentPage'));
 const OrderSuccessPage = lazy(() => import('../pages/customer/OrderSuccessPage'));
@@ -32,6 +33,15 @@ const OrdersDashboard = lazy(() => import('../pages/admin/OrdersDashboard'));
 const OrderDetailPage = lazy(() => import('../pages/admin/OrderDetailPage'));
 const SettingsPage = lazy(() => import('../pages/admin/SettingsPage'));
 const UserSettingsPage = lazy(() => import('../pages/admin/UserSettingsPage'));
+const AttributesPage = lazy(() => import('../pages/admin/AttributesPage'));
+const PricelistsPage = lazy(() => import('../pages/admin/PricelistsPage'));
+const AdminReports = lazy(() => import('../pages/admin/AdminReports'));
+const QuotationTemplatePage = lazy(() => import('../pages/admin/QuotationTemplatePage'));
+const AdminInvoicePage = lazy(() => import('../pages/admin/AdminInvoicePage'));
+const AdminProductCreate = lazy(() => import('../pages/admin/AdminProductCreate'));
+const AdminSchedule = lazy(() => import('../pages/admin/AdminSchedule'));
+const AdminAttributeCreate = lazy(() => import('../pages/admin/AdminAttributeCreate'));
+const AdminPricelistCreate = lazy(() => import('../pages/admin/AdminPricelistCreate'));
 
 const OrderDetailsPage = lazy(() => import('../pages/customer/OrderDetailsPage'));
 const TrackingPage = lazy(() => import('../pages/customer/TrackingPage'));
@@ -84,20 +94,29 @@ export const AppRoutes = () => {
         {/* Protected Application Routes */}
         <Route element={<PrivateRoute />}>
           <Route element={<MainLayout />}>
-            <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
-            <Route path={PATHS.ADMIN_ORDERS} element={<OrdersDashboard />} />
-            <Route path={PATHS.ADMIN_ORDER_DETAILS} element={<OrderDetailPage />} />
-            <Route path={PATHS.ADMIN_SETTINGS} element={<SettingsPage />} />
-            <Route path={PATHS.ADMIN_USERS} element={<UserSettingsPage />} />
+            <Route path={PATHS.DASHBOARD} element={<Navigate to={PATHS.ADMIN_DASHBOARD} replace />} />
             <Route path={PATHS.PRODUCTS} element={<ProductCatalog />} />
             <Route path={PATHS.PRODUCT_DETAILS} element={<ProductDetails />} />
           </Route>
         </Route>
 
-        {/* Protected Admin Routes */}
+        {/* Protected Admin/Vendor Routes */}
         <Route element={<AdminRoute />}>
-          <Route element={<MainLayout />}>
+          <Route element={<AdminLayout />}>
             <Route path={PATHS.ADMIN_DASHBOARD} element={<AdminDashboard />} />
+            <Route path={PATHS.ADMIN_ORDERS} element={<OrdersDashboard />} />
+            <Route path={PATHS.ADMIN_ORDER_DETAILS} element={<OrderDetailPage />} />
+            <Route path={PATHS.ADMIN_QUOTATIONS} element={<QuotationTemplatePage />} />
+            <Route path={PATHS.ADMIN_INVOICE} element={<AdminInvoicePage />} />
+            <Route path={PATHS.ADMIN_ATTRIBUTES} element={<AttributesPage />} />
+            <Route path={PATHS.ADMIN_ATTRIBUTE_CREATE} element={<AdminAttributeCreate />} />
+            <Route path={PATHS.ADMIN_PRICELISTS} element={<PricelistsPage />} />
+            <Route path={PATHS.ADMIN_PRICELIST_CREATE} element={<AdminPricelistCreate />} />
+            <Route path={PATHS.ADMIN_REPORTS} element={<AdminReports />} />
+            <Route path={PATHS.ADMIN_PRODUCT_CREATE} element={<AdminProductCreate />} />
+            <Route path={PATHS.ADMIN_SCHEDULE} element={<AdminSchedule />} />
+            <Route path={PATHS.ADMIN_SETTINGS} element={<SettingsPage />} />
+            <Route path={PATHS.ADMIN_USERS} element={<UserSettingsPage />} />
           </Route>
         </Route>
 

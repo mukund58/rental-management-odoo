@@ -2,23 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
 import { authService } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
+import { isTokenExpired } from '../utils/jwt';
+import { PATHS } from '../routes/paths';
 
 export const Dashboard = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token || isTokenExpired(token)) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+      return;
+    }
+
     authService.getMe()
       .then(data => {
         setUser(data);
-        if (data && (String(data.role).toLowerCase() === 'admin')) {
-          navigate('/admin/dashboard', { replace: true });
+        const roleStr = data ? String(data.role).toLowerCase() : '';
+        if (roleStr === 'admin' || roleStr === 'vendor' || data?.role === 0 || data?.role === 1) {
+          navigate(PATHS.ADMIN_DASHBOARD, { replace: true });
         }
       })
       .catch((err) => {
         console.error('Failed to fetch user profiles:', err);
         authService.logout().finally(() => {
-          window.location.hash = '#/login';
+          window.location.href = '/login';
         });
       });
   }, [navigate]);

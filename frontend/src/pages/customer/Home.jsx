@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -8,7 +8,7 @@ import {
   Drawer,
   Alert,
 } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import SidebarFilters from '../../components/product/SidebarFilters';
 import ProductGrid from '../../components/product/ProductGrid';
@@ -21,13 +21,14 @@ import { products as localMockProducts } from '../../data/products';
 import { getCart } from '../../api/cartApi';
 
 
-import { getCart } from '../../api/cartApi';
-
-
 export const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  if (user?.role === 'Admin' || user?.role === 'Vendor') {
+    return <Navigate to={PATHS.ADMIN_DASHBOARD} replace />;
+  }
 
 
   const [products, setProducts] = useState([]);
@@ -260,7 +261,7 @@ export const Home = () => {
                   sx={{
                     py: 12,
                     textAlign: 'center',
-                    bgcolor: '#f8fafc',
+                    bgcolor: 'background.default',
                     borderRadius: '16px',
                     border: '1px dashed',
                     borderColor: 'divider',

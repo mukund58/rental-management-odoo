@@ -33,10 +33,10 @@ const OrderSuccessPage = () => {
   const [cartCount, setCartCount] = useState(0);
 
   const passedOrder = location.state?.order;
-  const [order, setOrder] = useState(passedOrder || null);
+  const [order, setOrder] = useState(passedOrder && Object.keys(passedOrder).length > 0 ? passedOrder : null);
 
   useEffect(() => {
-    if (!passedOrder) {
+    if (!passedOrder || Object.keys(passedOrder).length === 0) {
       const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
       if (saved.length > 0) {
         setOrder(saved[0]);
@@ -77,8 +77,8 @@ const OrderSuccessPage = () => {
 
   if (!order) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
         <Container maxWidth="md" sx={{ pt: '120px', pb: 8, textAlign: 'center' }}>
           <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)' }}>
             <CardContent sx={{ p: { xs: 4, md: 6 } }}>
@@ -127,7 +127,7 @@ const OrderSuccessPage = () => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      bgcolor: '#f8fafc',
+      bgcolor: 'background.default',
       '@media print': {
         bgcolor: '#fff',
         '.no-print': { display: 'none' },
@@ -135,12 +135,12 @@ const OrderSuccessPage = () => {
       }
     }}>
       <Box className="no-print">
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
       </Box>
 
       <Container className="print-container" maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Box sx={{ animation: `${fadeInUp} 0.6s ease-out` }}>
-          
+
           {/* Header Card */}
           <Card sx={{
             borderRadius: 4,
@@ -193,10 +193,10 @@ const OrderSuccessPage = () => {
           </Card>
 
           <Grid container spacing={4}>
-            
+
             {/* Left Column: Transaction Details & Booking Summary */}
             <Grid size={{ xs: 12, md: 8 }}>
-              
+
               {/* Transaction Details */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
@@ -316,7 +316,7 @@ const OrderSuccessPage = () => {
 
             {/* Right Column: Pricing & Quick Actions */}
             <Grid size={{ xs: 12, md: 4 }}>
-              
+
               {/* Payment Summary */}
               <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mb: 4 }}>
                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
@@ -372,7 +372,7 @@ const OrderSuccessPage = () => {
                     >
                       Download Invoice
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       fullWidth
                       startIcon={<Share2 size={18} />}
@@ -380,7 +380,7 @@ const OrderSuccessPage = () => {
                       sx={{ borderRadius: 999, py: 1.1, textTransform: 'none', fontWeight: 700 }}
                     >
                       Share Booking
-                    </Button>
+                    </Button> */}
                   </Stack>
                 </CardContent>
               </Card>

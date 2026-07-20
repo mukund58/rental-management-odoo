@@ -25,9 +25,6 @@ import {
   Divider,
 } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Card, CardContent, Chip, Container, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
-
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -45,16 +42,23 @@ import {
   RefreshCw,
   Search,
 } from 'lucide-react';
+import { API_URL } from '../../constants/env';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/layout/Navbar';
 import useAuth from '../../hooks/useAuth';
 import { PATHS } from '../../routes/paths';
-import { customerMockOrders } from '../../data/customerMocks';
+
 import { getCart } from '../../api/cartApi';
 
 import { getOrders } from '../../api/checkoutApi';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+const getImageUrl = (src) => {
+  if (!src) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80';
+  if (src.startsWith('http')) return src;
+  return `${API_URL.replace('/api', '')}${src}`;
+};
 
 const filterByTab = (orders, tab) => {
   if (tab === 'upcoming') return orders.filter((order) => order.status === 'Upcoming' || order.status === 0 || order.status === 'Reserved');
@@ -90,19 +94,7 @@ const MyOrdersPage = () => {
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
 
-  const loadData = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-      const allNormalized = [...saved, ...customerMockOrders].map(normalizeOrder);
-      setOrders(allNormalized);
-      setLoading(false);
-    }, 1200); // 1.2s delay to show skeletons
-  };
 
-  useEffect(() => {
-    loadData();
-  }, []);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -114,24 +106,30 @@ const MyOrdersPage = () => {
       }
     };
     fetchCart();
-
-  const [orders, setOrders] = useState([]);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
     const fetchOrders = async () => {
+      setLoading(true);
       try {
         const backendOrders = await getOrders();
         if (isMounted && backendOrders) {
           const formattedOrders = backendOrders.map((order) => {
             const rentalStart = order.pickupDate ? new Date(order.pickupDate).toLocaleDateString() : '';
             const rentalEnd = order.returnDate ? new Date(order.returnDate).toLocaleDateString() : '';
-            
+
+            const pickup = order.pickupDate ? new Date(order.pickupDate) : new Date();
+            const retDate = order.returnDate ? new Date(order.returnDate) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            const diffTime = Math.abs(retDate - pickup);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+
             // Map numeric status back to string if needed, depending on enum serialization
             let statusString = order.status;
             if (typeof order.status === 'number') {
-               const statuses = ['Reserved', 'Active', 'Overdue', 'Returned', 'Cancelled'];
-               statusString = statuses[order.status] || 'Unknown';
+              // Backend enum: 1=Reserved, 2=PickedUp, 3=Returned, 4=Cancelled, 5=Late
+              const statuses = ['', 'Reserved', 'Picked Up', 'Returned', 'Cancelled', 'Late'];
+              statusString = statuses[order.status] || 'Unknown';
             }
 
             return {
@@ -143,12 +141,27 @@ const MyOrdersPage = () => {
               rentalDuration: `${rentalStart} to ${rentalEnd}`,
               deliveryDate: rentalStart,
               total: order.totalAmount,
+              createdAt: order.createdAt || new Date().toISOString(),
+              productName: order.items?.map(i => i.name).join(', ') || 'Rental Item',
+              productImage: order.items?.[0]?.imageUrl || '',
+              productId: order.items?.[0]?.productId || order.items?.[0]?.id || 'p1',
+              category: order.items?.[0]?.category || 'General',
+              vendorName: 'RentX Partner Vendor',
+              pickupDate: rentalStart,
+              returnDate: rentalEnd,
+              rentalDurationDays: diffDays,
+              totalPaid: order.totalAmount || 0,
+              rentalCharges: (order.totalAmount || 0) * 0.8,
+              securityDeposit: (order.totalAmount || 0) * 0.1,
+              paymentStatus: order.paymentStatus || (String(statusString).toLowerCase() === 'cancelled' ? 'Refunded' : 'Paid'),
             };
           });
           setOrders(formattedOrders);
         }
       } catch (err) {
         console.error('Failed to fetch backend orders:', err);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
     fetchOrders();
@@ -341,7 +354,7 @@ const MyOrdersPage = () => {
   const renderEmptyState = () => (
     <Card sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', mt: 3, textAlign: 'center' }}>
       <CardContent sx={{ py: 8 }}>
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', bgcolor: 'grey.100', mb: 3 }}>
+        <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', bgcolor: 'action.selected', mb: 3 }}>
           <PackageOpen size={36} color="#64748b" />
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>No rentals yet</Typography>
@@ -353,20 +366,18 @@ const MyOrdersPage = () => {
     </Card>
   );
 
-  const filteredOrders = filterByTab(orders, tab);
-
 
   return (
     <Box sx={{
       minHeight: '100vh',
-      bgcolor: '#f8fafc',
+      bgcolor: 'background.default',
       '@media print': {
         bgcolor: '#fff',
         '.no-print': { display: 'none' }
       }
     }}>
       <Box className="no-print">
-        <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
+        <Navbar onSearchChange={() => { }} cartCount={cartCount} onLogout={handleLogout} />
       </Box>
 
       <Container maxWidth="xl" sx={{ pt: '94px', pb: 8 }}>
@@ -484,7 +495,7 @@ const MyOrdersPage = () => {
                       <Grid size={{ xs: 12, sm: 3, md: 2.5 }}>
                         <Box
                           component="img"
-                          src={orderItem.productImage}
+                          src={getImageUrl(orderItem.productImage)}
                           alt={orderItem.productName}
                           sx={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}
                         />
@@ -607,7 +618,7 @@ const MyOrdersPage = () => {
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 <Box
                   component="img"
-                  src={selectedOrder.productImage}
+                  src={getImageUrl(selectedOrder.productImage)}
                   alt={selectedOrder.productName}
                   sx={{ width: 80, height: 80, borderRadius: 2, objectFit: 'cover', border: '1px solid', borderColor: 'divider' }}
                 />

@@ -17,42 +17,11 @@ import {
   Divider,
 } from '@mui/material';
 import { Printer, ArrowLeft } from 'lucide-react';
-import { customerMockOrders } from '../../data/customerMocks';
+import { getOrder } from '../../api/checkoutApi';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
-const normalizeOrder = (o) => {
-  const pickup = o.rentalStart ? new Date(o.rentalStart) : new Date();
-  const retDate = o.rentalEnd ? new Date(o.rentalEnd) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const diffTime = Math.abs(retDate - pickup);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
 
-  const total = o.totalAmount || o.total || 5400;
-  const subtotal = o.subtotal || Math.round(total * 0.8);
-  const deposit = o.securityDeposit || Math.round(total * 0.1);
-
-  return {
-    id: o.id,
-    orderNumber: o.orderNumber || o.id,
-    transactionId: o.transactionId || 'TXN-998822',
-    productName: o.productName || o.itemName || 'Rental Item',
-    category: o.category || 'General',
-    vendorName: o.vendorName || 'RentX Partner Vendor',
-    pickupDate: pickup.toLocaleDateString(),
-    returnDate: retDate.toLocaleDateString(),
-    rentalDurationDays: diffDays,
-    rentalCharges: subtotal,
-    securityDeposit: deposit,
-    totalPaid: total,
-    status: o.status || 'Confirmed',
-    paymentStatus: o.paymentStatus || 'Paid',
-    paymentMethod: o.paymentMethod || 'Credit Card',
-    createdAt: o.createdAt || new Date().toISOString(),
-    taxes: o.taxes || Math.round(subtotal * 0.08),
-    platformFee: o.platformFee || 99,
-    items: o.items || []
-  };
-};
 
 const InvoicePage = () => {
   const { orderId } = useParams();
@@ -60,12 +29,48 @@ const InvoicePage = () => {
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('rental_orders') || '[]');
-    const allNormalized = [...saved, ...customerMockOrders].map(normalizeOrder);
-    const matched = allNormalized.find((o) => String(o.id) === String(orderId));
-    if (matched) {
-      setOrder(matched);
-    }
+    let isMounted = true;
+    const fetchOrder = async () => {
+      try {
+        const backendOrder = await getOrder(orderId);
+        if (isMounted && backendOrder) {
+          const pickup = backendOrder.pickupDate ? new Date(backendOrder.pickupDate) : new Date();
+          const retDate = backendOrder.returnDate ? new Date(backendOrder.returnDate) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+          const diffTime = Math.abs(retDate - pickup);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+
+          const total = backendOrder.totalAmount || 0;
+          const subtotal = total * 0.8;
+
+          const formatted = {
+            id: backendOrder.id,
+            orderNumber: backendOrder.orderNumber || backendOrder.id,
+            transactionId: backendOrder.paymentId || 'TXN-998822',
+            productName: backendOrder.items?.[0]?.name || 'Rental Item',
+            category: backendOrder.items?.[0]?.category || 'General',
+            vendorName: 'RentX Partner Vendor',
+            pickupDate: pickup.toLocaleDateString(),
+            returnDate: retDate.toLocaleDateString(),
+            rentalDurationDays: diffDays,
+            rentalCharges: subtotal,
+            securityDeposit: total * 0.1,
+            totalPaid: total,
+            status: backendOrder.status || 'Confirmed',
+            paymentStatus: backendOrder.paymentStatus || 'Paid',
+            paymentMethod: 'Credit Card', // Mocked since backend doesn't return payment method string
+            createdAt: backendOrder.createdAt || new Date().toISOString(),
+            taxes: Math.round(subtotal * 0.08),
+            platformFee: 99,
+            items: backendOrder.items || []
+          };
+          setOrder(formatted);
+        }
+      } catch (err) {
+        console.error('Failed to load invoice details', err);
+      }
+    };
+    fetchOrder();
+    return () => { isMounted = false; };
   }, [orderId]);
 
   if (!order) {
@@ -145,7 +150,7 @@ const InvoicePage = () => {
           {/* Items Table */}
           <TableContainer component={Box} sx={{ mb: 4, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
             <Table>
-              <TableHead sx={{ bgcolor: 'grey.50' }}>
+              <TableHead sx={{ bgcolor: 'action.hover' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Rental Item</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>

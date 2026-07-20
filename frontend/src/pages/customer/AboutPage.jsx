@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Box, Container, Card, CardContent, Typography, Button, Grid, Stack } from '@mui/material';
 import { ArrowLeft, ShieldCheck, Heart, Sparkles, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +36,7 @@ const AboutPage = () => {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Navbar onSearchChange={() => {}} cartCount={cartCount} onLogout={handleLogout} />
       <Container maxWidth="lg" sx={{ pt: '94px', pb: 8 }}>
         <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate(-1)} sx={{ mb: 3, borderRadius: 999, px: 2.25, py: 0.9 }}>
